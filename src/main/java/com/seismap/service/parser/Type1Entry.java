@@ -6,24 +6,13 @@ import com.seismap.service.model.DepthIndicator;
 import com.seismap.service.model.DistanceIndicator;
 import com.seismap.service.model.EventId;
 import com.seismap.service.parser.annotation.BooleanColumn;
+import com.seismap.service.parser.annotation.CharacterColumn;
+import com.seismap.service.parser.annotation.EnumeratedColumn;
+import com.seismap.service.parser.annotation.EnumerationMapping;
+import com.seismap.service.parser.annotation.FloatColumn;
 import com.seismap.service.parser.annotation.IntegerColumn;
 
 public class Type1Entry {
-	
-	public static final char FIX_ORIGIN_TIME_ON = 'F';
-	public static final char FIX_ORIGIN_TIME_OFF = ' ';
-
-	public static final char DISTANCE_INDICATOR_LOCAL = 'L';
-	public static final char DISTANCE_INDICATOR_REGIONAL = 'R';
-	public static final char DISTANCE_INDICATOR_DISTANT = 'D';
-
-	public static final char EVENT_ID_EXPLOSION = 'E';
-	public static final char EVENT_ID_PROBABLE_EXPLOSION = 'P';
-	public static final char EVENT_ID_VOLCANIC = 'V';
-	public static final char EVENT_ID_PROBABLE_VOLCANIC = 'Q';
-
-	public static final char DEPTH_INDICATOR_FIXED = 'F';
-	public static final char DEPTH_INDICATOR_STARTING_VALUE = 'S';
 
 	@IntegerColumn(position=2, digits=4)
 	private int year;
@@ -37,14 +26,23 @@ public class Type1Entry {
 	@BooleanColumn(position=11, on='F', off=' ')
 	private boolean fixOriginTime;
 
+	@IntegerColumn(position=12, digits=2)
 	private int hour;
 
+	@IntegerColumn(position=14, digits=2)
 	private int minutes;
 
+	@FloatColumn(position=17, integerDigits=4, decimalDigits=1)
 	private float seconds;
 
+	@CharacterColumn(position=21)
 	private char locationModelIndicator;
 
+	@EnumeratedColumn(position=22, mappings={
+			@EnumerationMapping(value='L', mapsTo="LOCAL"),
+			@EnumerationMapping(value='R', mapsTo="REGIONAL"),
+			@EnumerationMapping(value='D', mapsTo="DISTANT")
+	})
 	private DistanceIndicator distanceIndicator;
 
 	private EventId eventId;
