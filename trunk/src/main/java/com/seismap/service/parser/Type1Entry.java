@@ -1,9 +1,5 @@
 package com.seismap.service.parser;
 
-import com.seismap.service.model.DepthIndicator;
-import com.seismap.service.model.DistanceIndicator;
-import com.seismap.service.model.EventId;
-import com.seismap.service.model.MagnitudeType;
 import com.seismap.service.parser.annotation.BooleanField;
 import com.seismap.service.parser.annotation.CharacterField;
 import com.seismap.service.parser.annotation.Entry;
@@ -12,8 +8,16 @@ import com.seismap.service.parser.annotation.EnumerationMapping;
 import com.seismap.service.parser.annotation.FloatField;
 import com.seismap.service.parser.annotation.IntegerField;
 import com.seismap.service.parser.annotation.StringField;
+import com.seismap.service.parser.annotation.Whitespace;
+import com.seismap.service.parser.enumeration.DepthIndicator;
+import com.seismap.service.parser.enumeration.DistanceIndicator;
+import com.seismap.service.parser.enumeration.EventId;
+import com.seismap.service.parser.enumeration.MagnitudeType;
 
-@Entry(value = '1', type = EntryType.ONE)
+@Entry(value = '1', type = EntryType.ONE, whitespaces = {
+		@Whitespace(position = 1, length = 1),
+		@Whitespace(position = 6, length = 1),
+		@Whitespace(position = 16, length = 1) })
 public class Type1Entry extends AbstractEntry {
 
 	@IntegerField(position = 2, digits = 4)
@@ -128,216 +132,108 @@ public class Type1Entry extends AbstractEntry {
 		return year;
 	}
 
-	public void setYear(int year) {
-		this.year = year;
-	}
-
 	public int getMonth() {
 		return month;
-	}
-
-	public void setMonth(int month) {
-		this.month = month;
 	}
 
 	public int getDayOfMonth() {
 		return dayOfMonth;
 	}
 
-	public void setDayOfMonth(int dayOfMonth) {
-		this.dayOfMonth = dayOfMonth;
-	}
-
 	public boolean isFixOriginTime() {
 		return fixOriginTime;
-	}
-
-	public void setFixOriginTime(boolean fixOriginTime) {
-		this.fixOriginTime = fixOriginTime;
 	}
 
 	public int getHour() {
 		return hour;
 	}
 
-	public void setHour(int hour) {
-		this.hour = hour;
-	}
-
 	public int getMinutes() {
 		return minutes;
-	}
-
-	public void setMinutes(int minutes) {
-		this.minutes = minutes;
 	}
 
 	public float getSeconds() {
 		return seconds;
 	}
 
-	public void setSeconds(float seconds) {
-		this.seconds = seconds;
-	}
-
 	public char getLocationModelIndicator() {
 		return locationModelIndicator;
-	}
-
-	public void setLocationModelIndicator(char locationModelIndicator) {
-		this.locationModelIndicator = locationModelIndicator;
 	}
 
 	public DistanceIndicator getDistanceIndicator() {
 		return distanceIndicator;
 	}
 
-	public void setDistanceIndicator(DistanceIndicator distanceIndicator) {
-		this.distanceIndicator = distanceIndicator;
-	}
-
 	public EventId getEventId() {
 		return eventId;
-	}
-
-	public void setEventId(EventId eventId) {
-		this.eventId = eventId;
 	}
 
 	public float getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(float latitude) {
-		this.latitude = latitude;
-	}
-
 	public float getLongitude() {
 		return longitude;
-	}
-
-	public void setLongitude(float longitude) {
-		this.longitude = longitude;
 	}
 
 	public float getDepth() {
 		return depth;
 	}
 
-	public void setDepth(float depth) {
-		this.depth = depth;
-	}
-
 	public DepthIndicator getDepthIndicator() {
 		return depthIndicator;
-	}
-
-	public void setDepthIndicator(DepthIndicator depthIndicator) {
-		this.depthIndicator = depthIndicator;
 	}
 
 	public char getLocatingIndicator() {
 		return locatingIndicator;
 	}
 
-	public void setLocatingIndicator(char locatingIndicator) {
-		this.locatingIndicator = locatingIndicator;
-	}
-
 	public String getHypocenterReportingAgency() {
 		return hypocenterReportingAgency;
-	}
-
-	public void setHypocenterReportingAgency(String hypocenterReportingAgency) {
-		this.hypocenterReportingAgency = hypocenterReportingAgency;
 	}
 
 	public int getNumberOfStationsUsed() {
 		return numberOfStationsUsed;
 	}
 
-	public void setNumberOfStationsUsed(int numberOfStationsUsed) {
-		this.numberOfStationsUsed = numberOfStationsUsed;
-	}
-
 	public float getRmsOfTimeResiduals() {
 		return rmsOfTimeResiduals;
-	}
-
-	public void setRmsOfTimeResiduals(float rmsOfTimeResiduals) {
-		this.rmsOfTimeResiduals = rmsOfTimeResiduals;
 	}
 
 	public float getMagnitude1() {
 		return magnitude1;
 	}
 
-	public void setMagnitude1(float magnitude1) {
-		this.magnitude1 = magnitude1;
-	}
-
 	public MagnitudeType getMagnitude1Type() {
 		return magnitude1Type;
-	}
-
-	public void setMagnitude1Type(MagnitudeType magnitude1Type) {
-		this.magnitude1Type = magnitude1Type;
 	}
 
 	public String getMagnitude1ReportingAgency() {
 		return magnitude1ReportingAgency;
 	}
 
-	public void setMagnitude1ReportingAgency(String magnitude1ReportingAgency) {
-		this.magnitude1ReportingAgency = magnitude1ReportingAgency;
-	}
-
 	public float getMagnitude2() {
 		return magnitude2;
-	}
-
-	public void setMagnitude2(float magnitude2) {
-		this.magnitude2 = magnitude2;
 	}
 
 	public MagnitudeType getMagnitude2Type() {
 		return magnitude2Type;
 	}
 
-	public void setMagnitude2Type(MagnitudeType magnitude2Type) {
-		this.magnitude2Type = magnitude2Type;
-	}
-
 	public String getMagnitude2ReportingAgency() {
 		return magnitude2ReportingAgency;
-	}
-
-	public void setMagnitude2ReportingAgency(String magnitude2ReportingAgency) {
-		this.magnitude2ReportingAgency = magnitude2ReportingAgency;
 	}
 
 	public float getMagnitude3() {
 		return magnitude3;
 	}
 
-	public void setMagnitude3(float magnitude3) {
-		this.magnitude3 = magnitude3;
-	}
-
 	public MagnitudeType getMagnitude3Type() {
 		return magnitude3Type;
 	}
 
-	public void setMagnitude3Type(MagnitudeType magnitude3Type) {
-		this.magnitude3Type = magnitude3Type;
-	}
-
 	public String getMagnitude3ReportingAgency() {
 		return magnitude3ReportingAgency;
-	}
-
-	public void setMagnitude3ReportingAgency(String magnitude3ReportingAgency) {
-		this.magnitude3ReportingAgency = magnitude3ReportingAgency;
 	}
 
 }

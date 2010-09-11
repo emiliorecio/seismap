@@ -13,6 +13,7 @@ import com.seismap.service.parser.annotation.EnumerationMapping;
 import com.seismap.service.parser.annotation.FloatField;
 import com.seismap.service.parser.annotation.IntegerField;
 import com.seismap.service.parser.annotation.StringField;
+import com.seismap.service.parser.annotation.Whitespace;
 
 public class RowReader {
 
@@ -25,8 +26,8 @@ public class RowReader {
 				Field[] usedPositions) {
 			markUsed(field, position, length, usedPositions);
 			this.field = field;
-			this.startColumn = position;
-			this.endColumn = position + length;
+			this.startColumn = position - 1;
+			this.endColumn = position + length - 1;
 		}
 
 		public void read(AbstractEntry entry, int line, String content)
@@ -47,10 +48,11 @@ public class RowReader {
 				String value) throws InvalidDataException;
 	}
 
-	private static final int ROW_LENGTH = 80;
+	private static final int ROW_LENGTH = 79;
 	private char typeCharacter;
 	private FieldReader[] fieldReaders;
 	private Class<? extends AbstractEntry> entryClass;
+	private boolean[] whiteSpacePositions;
 
 	public RowReader(Class<? extends AbstractEntry> entryClass) {
 		Entry entry = entryClass.getAnnotation(Entry.class);
@@ -96,7 +98,59 @@ public class RowReader {
 			if (annotation instanceof StringField) {
 				processField(i, field, (StringField) annotation, usedPositions);
 			}
+		}
+		whiteSpacePositions = new boolean[ROW_LENGTH];
+		markWhitespaces(entryClass, entry.whitespaces(), usedPositions);
+		for (int i = 1; i <= ROW_LENGTH; i++) {
+			if (usedPositions[i - 1] == null && !whiteSpacePositions[i - 1]) {
+				throw new EntryDefinitionException(
+						"Position "
+								+ i
+								+ " not used for a field and not marked as whitespace: "
+								+ entryClass.getName());
+			}
+		}
+	}
 
+	private void markWhitespace(Class<? extends AbstractEntry> entryClass,
+			Whitespace whitespace, Field[] usedPositions) {
+		if (whitespace.position() < 1) {
+			throw new EntryDefinitionException(
+					"Whitespace position cannot be less than one: "
+							+ entryClass.getName());
+		}
+		if (whitespace.length() < 1) {
+			throw new EntryDefinitionException(
+					"Whitespace length cannot be less than one: "
+							+ entryClass.getName());
+		}
+		if (whitespace.position() + whitespace.length() > ROW_LENGTH + 1) {
+			throw new EntryDefinitionException(
+					"Whitespace exceeds the row length limit of " + ROW_LENGTH
+							+ " characters: " + entryClass.getName());
+		}
+		for (int i = whitespace.position(); i < whitespace.position()
+				+ whitespace.length(); i++) {
+			if (usedPositions[i - 1] != null) {
+				throw new EntryDefinitionException("Whitespace position " + i
+						+ " already used by field "
+						+ usedPositions[i - 1].getName() + ": "
+						+ entryClass.getName());
+			} else if (whiteSpacePositions[i - 1]) {
+				throw new EntryDefinitionException("Whitespace position " + i
+						+ " already marked as whitespace: "
+						+ entryClass.getName());
+			} else {
+				whiteSpacePositions[i - 1] = true;
+			}
+
+		}
+	}
+
+	private void markWhitespaces(Class<? extends AbstractEntry> entryClass,
+			Whitespace[] whitespaces, Field[] usedPositions) {
+		for (Whitespace whitespace : whitespaces) {
+			markWhitespace(entryClass, whitespace, usedPositions);
 		}
 	}
 
@@ -111,16 +165,9 @@ public class RowReader {
 
 	private void markUsed(Field field, int position, int length,
 			Field[] usedPositions) {
-		if (position + length > usedPositions.length) {
+		if (position < 1) {
 			throw new EntryDefinitionException(
-					"Field exceeds the row length limit of " + ROW_LENGTH
-							+ " characters: "
-							+ field.getDeclaringClass().getName() + "."
-							+ field.getName());
-		}
-		if (position < 0) {
-			throw new EntryDefinitionException(
-					"Field position cannot be negative: "
+					"Field position cannot be less than one: "
 							+ field.getDeclaringClass().getName() + "."
 							+ field.getName());
 		}
@@ -130,15 +177,22 @@ public class RowReader {
 							+ field.getDeclaringClass().getName() + "."
 							+ field.getName());
 		}
+		if (position + length > ROW_LENGTH + 1) {
+			throw new EntryDefinitionException(
+					"Field exceeds the row length limit of " + ROW_LENGTH
+							+ " characters: "
+							+ field.getDeclaringClass().getName() + "."
+							+ field.getName());
+		}
 		for (int i = position; i < position + length; i++) {
-			if (usedPositions[i] != null) {
+			if (usedPositions[i - 1] != null) {
 				throw new EntryDefinitionException("Field position " + i
 						+ " already used by field "
-						+ usedPositions[i].getName() + ": "
+						+ usedPositions[i - 1].getName() + ": "
 						+ field.getDeclaringClass().getName() + "."
 						+ field.getName());
 			} else {
-				usedPositions[i] = field;
+				usedPositions[i - 1] = field;
 			}
 
 		}
@@ -268,6 +322,9 @@ public class RowReader {
 			Object read(int line, int startColumn, int endColumn, String value)
 					throws InvalidDataException {
 				if (!isNumber(value, 0, integerDigits)) {
+					throw invalidData(line, startColumn, endColumn, value);
+				}
+				if (value.charAt(integerDigits) != '.') {
 					throw invalidData(line, startColumn, endColumn, value);
 				}
 				if (!isNumber(value, integerDigits + 1, annotation.digits())) {

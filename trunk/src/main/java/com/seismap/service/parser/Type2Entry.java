@@ -1,21 +1,35 @@
 package com.seismap.service.parser;
 
-import com.seismap.service.model.CulturalEffects;
-import com.seismap.service.model.DiastrophismCode;
-import com.seismap.service.model.IntensityScale;
-import com.seismap.service.model.MagnitudeIntensityType;
-import com.seismap.service.model.SeicheCode;
-import com.seismap.service.model.TsunamiCode;
-import com.seismap.service.model.UnusualEvents;
 import com.seismap.service.parser.annotation.CharacterField;
 import com.seismap.service.parser.annotation.Entry;
 import com.seismap.service.parser.annotation.EnumeratedField;
 import com.seismap.service.parser.annotation.EnumerationMapping;
 import com.seismap.service.parser.annotation.FloatField;
 import com.seismap.service.parser.annotation.IntegerField;
+import com.seismap.service.parser.annotation.StringField;
+import com.seismap.service.parser.annotation.Whitespace;
+import com.seismap.service.parser.enumeration.CulturalEffects;
+import com.seismap.service.parser.enumeration.DiastrophismCode;
+import com.seismap.service.parser.enumeration.IntensityScale;
+import com.seismap.service.parser.enumeration.MagnitudeIntensityType;
+import com.seismap.service.parser.enumeration.SeicheCode;
+import com.seismap.service.parser.enumeration.TsunamiCode;
+import com.seismap.service.parser.enumeration.UnusualEvents;
 
-@Entry(value = '2', type = EntryType.TWO)
+@Entry(value = '2', type = EntryType.TWO, whitespaces = {
+		@Whitespace(position = 1, length = 5),
+		@Whitespace(position = 21, length = 1),
+		@Whitespace(position = 27, length = 1),
+		@Whitespace(position = 33, length = 1),
+		@Whitespace(position = 40, length = 1),
+		@Whitespace(position = 48, length = 1),
+		@Whitespace(position = 71, length = 1),
+		@Whitespace(position = 76, length = 4) })
 public class Type2Entry extends AbstractEntry {
+
+	@StringField(position = 6, length = 15)
+	private String descriptiveText;
+
 	@EnumeratedField(position = 22, length = 1, mappings = {
 			@EnumerationMapping(value = "F", mapsTo = "SURFACE"),
 			@EnumerationMapping(value = "U", mapsTo = "UPLIFT"),
@@ -96,4 +110,86 @@ public class Type2Entry extends AbstractEntry {
 	@CharacterField(position = 72)
 	private char qualityRankReport;
 
+	@StringField(position = 73, length = 3)
+	private String reportingAgency;
+
+	public String getDescriptiveText() {
+		return descriptiveText;
+	}
+
+	public DiastrophismCode getDiastrophismCode() {
+		return diastrophismCode;
+	}
+
+	public TsunamiCode getTsunamiCode() {
+		return tsunamiCode;
+	}
+
+	public SeicheCode getSeicheCode() {
+		return seicheCode;
+	}
+
+	public CulturalEffects getCulturalEffects() {
+		return culturalEffects;
+	}
+
+	public UnusualEvents getUnusualEvents() {
+		return unusualEvents;
+	}
+
+	public int getMaxIntensity() {
+		return maxIntensity;
+	}
+
+	public char getMaxIntensityQualifier() {
+		return maxIntensityQualifier;
+	}
+
+	public IntensityScale getIntensityScale() {
+		return intensityScale;
+	}
+
+	public float getMacroseismicLatitude() {
+		return macroseismicLatitude;
+	}
+
+	public float getMacroseismicLongitude() {
+		return macroseismicLongitude;
+	}
+
+	public float getMacroseismicMagnitude() {
+		return macroseismicMagnitude;
+	}
+
+	public MagnitudeIntensityType getTypeOfMagnitude_I() {
+		return typeOfMagnitude_I;
+	}
+
+	public float getLogarithmRadiusFeltArea() {
+		return logarithmRadiusFeltArea;
+	}
+
+	public float getLogarithmAreaNumber1() {
+		return logarithmAreaNumber1;
+	}
+
+	public int getIntensityBoardering1() {
+		return intensityBoardering1;
+	}
+
+	public float getLogarithmAreaNumber2() {
+		return logarithmAreaNumber2;
+	}
+
+	public int getIntensityBoardering2() {
+		return intensityBoardering2;
+	}
+
+	public char getQualityRankReport() {
+		return qualityRankReport;
+	}
+
+	public String getReportingAgency() {
+		return reportingAgency;
+	}
 }
