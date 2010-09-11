@@ -92,7 +92,7 @@ public class Type1Entry extends AbstractEntry {
 			@EnumerationMapping(value = "S", mapsTo = "MS"),
 			@EnumerationMapping(value = "W", mapsTo = "MW"),
 			@EnumerationMapping(value = "G", mapsTo = "MBLG"),
-			@EnumerationMapping(value = "C", mapsTo = "MC"), })
+			@EnumerationMapping(value = "C", mapsTo = "MC") })
 	private MagnitudeType magnitude1Type;
 
 	@StringField(position = 61, length = 3)
@@ -107,7 +107,7 @@ public class Type1Entry extends AbstractEntry {
 			@EnumerationMapping(value = "S", mapsTo = "MS"),
 			@EnumerationMapping(value = "W", mapsTo = "MW"),
 			@EnumerationMapping(value = "G", mapsTo = "MBLG"),
-			@EnumerationMapping(value = "C", mapsTo = "MC"), })
+			@EnumerationMapping(value = "C", mapsTo = "MC") })
 	private MagnitudeType magnitude2Type;
 
 	@StringField(position = 69, length = 3)
@@ -122,7 +122,7 @@ public class Type1Entry extends AbstractEntry {
 			@EnumerationMapping(value = "S", mapsTo = "MS"),
 			@EnumerationMapping(value = "W", mapsTo = "MW"),
 			@EnumerationMapping(value = "G", mapsTo = "MBLG"),
-			@EnumerationMapping(value = "C", mapsTo = "MC"), })
+			@EnumerationMapping(value = "C", mapsTo = "MC") })
 	private MagnitudeType magnitude3Type;
 
 	@StringField(position = 77, length = 3)
