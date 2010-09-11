@@ -1,8 +1,9 @@
 package com.seismap.service.parser.annotation;
 
-public @interface IntegerColumn {
+public @interface StringColumn {
 
 	public int position();
 	
-	public int digits();
+	public int length();
+	
 }

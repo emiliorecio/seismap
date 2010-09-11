@@ -1,8 +1,11 @@
 package com.seismap.service.parser.annotation;
 
-public @interface IntegerColumn {
+public @interface BooleanColumn {
 
 	public int position();
 	
-	public int digits();
+	public char on();
+	
+	public char off();
+	
 }
