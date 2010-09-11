@@ -38,12 +38,12 @@ public class Type2Entry extends AbstractEntry {
 
 	@EnumeratedField(position = 23, length = 1, mappings = {
 			@EnumerationMapping(value = "T", mapsTo = "TSUNAMI_GENERATED"),
-			@EnumerationMapping(value = "Q", mapsTo = "POSSIBLE_TSUNAMI"), })
+			@EnumerationMapping(value = "Q", mapsTo = "POSSIBLE_TSUNAMI") })
 	private TsunamiCode tsunamiCode;
 
 	@EnumeratedField(position = 24, length = 1, mappings = {
 			@EnumerationMapping(value = "S", mapsTo = "SEICHE"),
-			@EnumerationMapping(value = "Q", mapsTo = "POSSIBLE_SEICHE"), })
+			@EnumerationMapping(value = "Q", mapsTo = "POSSIBLE_SEICHE") })
 	private SeicheCode seicheCode;
 
 	@EnumeratedField(position = 25, length = 1, mappings = {
@@ -89,7 +89,7 @@ public class Type2Entry extends AbstractEntry {
 	@EnumeratedField(position = 52, length = 1, mappings = {
 			@EnumerationMapping(value = "A", mapsTo = "MAGNITUDE_BASED_ON_FELT_AREA"),
 			@EnumerationMapping(value = "R", mapsTo = "MAGNITUDE_BASED_ON_RADIUS_AREA"),
-			@EnumerationMapping(value = "*", mapsTo = "MAGNITUDE_CUSTOM_CALCULATED"), })
+			@EnumerationMapping(value = "*", mapsTo = "MAGNITUDE_CUSTOM_CALCULATED") })
 	private MagnitudeIntensityType typeOfMagnitude_I;
 
 	@FloatField(position = 53, digits = 4, decimals = 2)
