@@ -1,7 +1,5 @@
 package com.seismap.service.parser;
 
-import javax.swing.text.Position;
-
 import com.seismap.service.model.DepthIndicator;
 import com.seismap.service.model.DistanceIndicator;
 import com.seismap.service.model.EventId;
