@@ -1,4 +1,4 @@
-package com.seismap.service.model;
+package com.seismap.service.parser.enumeration;
 
 public enum DistanceIndicator {
 
