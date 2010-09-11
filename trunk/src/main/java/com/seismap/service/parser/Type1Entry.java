@@ -4,85 +4,85 @@ import com.seismap.service.model.DepthIndicator;
 import com.seismap.service.model.DistanceIndicator;
 import com.seismap.service.model.EventId;
 import com.seismap.service.model.MagnitudeType;
-import com.seismap.service.parser.annotation.BooleanColumn;
-import com.seismap.service.parser.annotation.CharacterColumn;
+import com.seismap.service.parser.annotation.BooleanField;
+import com.seismap.service.parser.annotation.CharacterField;
 import com.seismap.service.parser.annotation.Entry;
-import com.seismap.service.parser.annotation.EnumeratedColumn;
+import com.seismap.service.parser.annotation.EnumeratedField;
 import com.seismap.service.parser.annotation.EnumerationMapping;
-import com.seismap.service.parser.annotation.FloatColumn;
-import com.seismap.service.parser.annotation.IntegerColumn;
-import com.seismap.service.parser.annotation.StringColumn;
+import com.seismap.service.parser.annotation.FloatField;
+import com.seismap.service.parser.annotation.IntegerField;
+import com.seismap.service.parser.annotation.StringField;
 
 @Entry(value = '1', type = EntryType.ONE)
-public class Type1Entry {
+public class Type1Entry extends AbstractEntry {
 
-	@IntegerColumn(position = 2, digits = 4)
+	@IntegerField(position = 2, digits = 4)
 	private int year;
 
-	@IntegerColumn(position = 7, digits = 2)
+	@IntegerField(position = 7, digits = 2)
 	private int month;
 
-	@IntegerColumn(position = 9, digits = 2)
+	@IntegerField(position = 9, digits = 2)
 	private int dayOfMonth;
 
-	@BooleanColumn(position = 11, on = 'F', off = ' ')
+	@BooleanField(position = 11, on = 'F', off = ' ')
 	private boolean fixOriginTime;
 
-	@IntegerColumn(position = 12, digits = 2)
+	@IntegerField(position = 12, digits = 2)
 	private int hour;
 
-	@IntegerColumn(position = 14, digits = 2)
+	@IntegerField(position = 14, digits = 2)
 	private int minutes;
 
-	@FloatColumn(position = 17, integerDigits = 4, decimalDigits = 1)
+	@FloatField(position = 17, digits = 4, decimals = 1)
 	private float seconds;
 
-	@CharacterColumn(position = 21)
+	@CharacterField(position = 21)
 	private char locationModelIndicator;
 
-	@EnumeratedColumn(position = 22, length = 1, mappings = {
+	@EnumeratedField(position = 22, length = 1, mappings = {
 			@EnumerationMapping(value = "L", mapsTo = "LOCAL"),
 			@EnumerationMapping(value = "R", mapsTo = "REGIONAL"),
 			@EnumerationMapping(value = "D", mapsTo = "DISTANT") })
 	private DistanceIndicator distanceIndicator;
 
-	@EnumeratedColumn(position = 23, length = 1, mappings = {
+	@EnumeratedField(position = 23, length = 1, mappings = {
 			@EnumerationMapping(value = "E", mapsTo = "EXPLOSION"),
 			@EnumerationMapping(value = "P", mapsTo = "PROBABLE_EXPLOSION"),
 			@EnumerationMapping(value = "V", mapsTo = "VOLCANIC"),
 			@EnumerationMapping(value = "Q", mapsTo = "PROBABLE_VOLCANIC") })
 	private EventId eventId;
 
-	@FloatColumn(position = 24, integerDigits = 7, decimalDigits = 3)
+	@FloatField(position = 24, digits = 7, decimals = 3)
 	private float latitude;
 
-	@FloatColumn(position = 31, integerDigits = 8, decimalDigits = 3)
+	@FloatField(position = 31, digits = 8, decimals = 3)
 	private float longitude;
 
-	@FloatColumn(position = 39, integerDigits = 5, decimalDigits = 1)
+	@FloatField(position = 39, digits = 5, decimals = 1)
 	private float depth;
 
-	@EnumeratedColumn(position = 44, length = 1, mappings = {
+	@EnumeratedField(position = 44, length = 1, mappings = {
 			@EnumerationMapping(value = "F", mapsTo = "FIXED"),
 			@EnumerationMapping(value = "S", mapsTo = "STARTING_VALUE") })
 	private DepthIndicator depthIndicator;
 
-	@CharacterColumn(position = 45)
+	@CharacterField(position = 45)
 	private char locatingIndicator;
 
-	@StringColumn(position = 46, length = 3)
+	@StringField(position = 46, length = 3)
 	private String hypocenterReportingAgency;
 
-	@IntegerColumn(position = 49, digits = 3)
+	@IntegerField(position = 49, digits = 3)
 	private int numberOfStationsUsed;
 
-	@FloatColumn(position = 52, integerDigits = 2, decimalDigits = 1)
-	private String rmsOfTimeResiduals;
+	@FloatField(position = 52, digits = 4, decimals = 1)
+	private float rmsOfTimeResiduals;
 
-	@FloatColumn(position = 56, integerDigits = 4, decimalDigits = 1)
+	@FloatField(position = 56, digits = 4, decimals = 1)
 	private float magnitude1;
 
-	@EnumeratedColumn(position = 60, length = 1, mappings = {
+	@EnumeratedField(position = 60, length = 1, mappings = {
 			@EnumerationMapping(value = "L", mapsTo = "ML"),
 			@EnumerationMapping(value = "B", mapsTo = "MB"),
 			@EnumerationMapping(value = "S", mapsTo = "MS"),
@@ -91,13 +91,13 @@ public class Type1Entry {
 			@EnumerationMapping(value = "C", mapsTo = "MC"), })
 	private MagnitudeType magnitude1Type;
 
-	@StringColumn(position = 61, length = 3)
+	@StringField(position = 61, length = 3)
 	private String magnitude1ReportingAgency;
 
-	@FloatColumn(position = 64, integerDigits = 4, decimalDigits = 1)
+	@FloatField(position = 64, digits = 4, decimals = 1)
 	private float magnitude2;
 
-	@EnumeratedColumn(position = 68, length = 1, mappings = {
+	@EnumeratedField(position = 68, length = 1, mappings = {
 			@EnumerationMapping(value = "L", mapsTo = "ML"),
 			@EnumerationMapping(value = "B", mapsTo = "MB"),
 			@EnumerationMapping(value = "S", mapsTo = "MS"),
@@ -106,13 +106,13 @@ public class Type1Entry {
 			@EnumerationMapping(value = "C", mapsTo = "MC"), })
 	private MagnitudeType magnitude2Type;
 
-	@StringColumn(position = 69, length = 3)
+	@StringField(position = 69, length = 3)
 	private String magnitude2ReportingAgency;
 
-	@FloatColumn(position = 72, integerDigits = 4, decimalDigits = 1)
+	@FloatField(position = 72, digits = 4, decimals = 1)
 	private float magnitude3;
 
-	@EnumeratedColumn(position = 76, length = 1, mappings = {
+	@EnumeratedField(position = 76, length = 1, mappings = {
 			@EnumerationMapping(value = "L", mapsTo = "ML"),
 			@EnumerationMapping(value = "B", mapsTo = "MB"),
 			@EnumerationMapping(value = "S", mapsTo = "MS"),
@@ -121,7 +121,7 @@ public class Type1Entry {
 			@EnumerationMapping(value = "C", mapsTo = "MC"), })
 	private MagnitudeType magnitude3Type;
 
-	@StringColumn(position = 77, length = 3)
+	@StringField(position = 77, length = 3)
 	private String magnitude3ReportingAgency;
 
 	public int getYear() {
@@ -260,11 +260,11 @@ public class Type1Entry {
 		this.numberOfStationsUsed = numberOfStationsUsed;
 	}
 
-	public String getRmsOfTimeResiduals() {
+	public float getRmsOfTimeResiduals() {
 		return rmsOfTimeResiduals;
 	}
 
-	public void setRmsOfTimeResiduals(String rmsOfTimeResiduals) {
+	public void setRmsOfTimeResiduals(float rmsOfTimeResiduals) {
 		this.rmsOfTimeResiduals = rmsOfTimeResiduals;
 	}
 
