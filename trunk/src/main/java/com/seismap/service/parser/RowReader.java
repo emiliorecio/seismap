@@ -205,7 +205,7 @@ public class RowReader {
 	private InvalidDataException invalidData(int line, int startColumn,
 			int endColumn, String value) throws InvalidDataException {
 		return new InvalidDataException("Illegal value at line: " + line
-				+ ", columns: " + startColumn + "-" + (endColumn - 1)
+				+ ", columns: " + (startColumn + 1) + "-" + endColumn
 				+ ", value=" + value);
 	}
 
@@ -377,6 +377,12 @@ public class RowReader {
 		}
 		for (FieldReader fieldReader : fieldReaders) {
 			fieldReader.read(entry, line, content);
+		}
+		for (int i = 0; i < whiteSpacePositions.length; i++) {
+			if (whiteSpacePositions[i] && content.charAt(i) != ' ') {
+				invalidData(line, i, i + 1, " ");
+			}
+
 		}
 		return entry;
 
