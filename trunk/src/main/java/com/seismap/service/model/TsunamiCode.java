@@ -1,4 +1,4 @@
-package src.main.java.com.seismap.service.model;
+package com.seismap.service.model;
 
 public enum TsunamiCode {
 	

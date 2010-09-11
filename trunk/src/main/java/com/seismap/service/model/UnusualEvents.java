@@ -1,13 +1,21 @@
-package src.main.java.com.seismap.service.model;
+package com.seismap.service.model;
 
 public enum UnusualEvents {
 
-	L = Liquefaction
-	G = Geysir/fumerol
-	S = Landslides/Avalanches
-	B = Sand blows
-	C = Cracking in the ground (not normal faulting).
-	V = Visual phenomena
-	O = Olfactory phenomena
-	M = More than one of the above observed.
+	LIQUEFACTION,
+	
+	GEYSIR_FUMEROL,
+	
+	LANDSLIDES_AVALANCHES,
+	
+	SAND_BLOWS,
+	
+	CRACKING_IN_THE_GROUND,
+	
+	VISUAL_PHENOMENA,
+	
+	OLFACTORY_PHENOMENA,
+	
+	MORE_THAN_ONE_OF_THE_ABOVE_OBSERVERD
+
 }
