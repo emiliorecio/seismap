@@ -4,6 +4,4 @@ public @interface CharacterColumn {
 
 	public int position();
 	
-	public EnumerationMapping[] enumerationMappings();
-	
 }
