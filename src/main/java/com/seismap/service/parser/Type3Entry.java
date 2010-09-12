@@ -9,7 +9,7 @@ import com.seismap.service.parser.annotation.Whitespace;
 		})
 public class Type3Entry extends AbstractEntry{
 	
-	@StringField(position = 2, length = 77)
+	@StringField(position = 2, length = 78)
 	private String textAnyThing;
 
 	public String getTextAnyThing() {

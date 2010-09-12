@@ -13,8 +13,11 @@ public class Parser {
 	}
 
 	public Parser() {
-		registerEntryType(Type1Entry.class);
-		registerEntryType(Type2Entry.class);
+//		registerEntryType(Type1Entry.class);
+//		registerEntryType(Type2Entry.class);
+		registerEntryType(Type3Entry.class);
+		registerEntryType(Type4Entry.class);
+		registerEntryType(Type5Entry.class);
 	}
 
 	public static void main(String[] args) {
