@@ -7,5 +7,11 @@ public enum EntryType {
 
 	THREE,
 
-	FOUR
+	FOUR,
+	
+	FIVE,
+	
+	SIX,
+	
+	SEVEN
 }
