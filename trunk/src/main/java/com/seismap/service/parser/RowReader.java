@@ -49,7 +49,8 @@ public class RowReader {
 	}
 
 	private static final int ROW_LENGTH = 79;
-	private char typeCharacter;
+	private char[] typeCharacters;
+	private char[] afterTypeCharacters;
 	private FieldReader[] fieldReaders;
 	private Class<? extends AbstractEntry> entryClass;
 	private boolean[] whiteSpacePositions;
@@ -60,7 +61,8 @@ public class RowReader {
 			throw new EntryDefinitionException("Missing @Entry annotation");
 		}
 		this.entryClass = entryClass;
-		this.typeCharacter = entry.value();
+		this.typeCharacters = entry.values();
+		this.afterTypeCharacters = entry.after();
 		Field[] fields = entryClass.getDeclaredFields();
 		Field[] usedPositions = new Field[ROW_LENGTH];
 		fieldReaders = new FieldReader[fields.length];
@@ -198,8 +200,12 @@ public class RowReader {
 		}
 	}
 
-	public char getTypeCharacter() {
-		return typeCharacter;
+	public char[] getTypeCharacters() {
+		return typeCharacters;
+	}
+	
+	public char[] getAfterTypeCharacters() {
+		return afterTypeCharacters;
 	}
 
 	private InvalidDataException invalidData(int line, int startColumn,

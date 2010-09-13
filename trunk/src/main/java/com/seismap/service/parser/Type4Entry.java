@@ -11,7 +11,7 @@ import com.seismap.service.parser.annotation.Whitespace;
 import com.seismap.service.parser.enumeration.InstrumentType;
 import com.seismap.service.parser.enumeration.Phase;
 
-@Entry(value = '4', type = EntryType.FOUR, whitespaces = {
+@Entry(values = {'4', ' '}, type = EntryType.FOUR, whitespaces = {
 		@Whitespace(position = 1, length = 1),
 		@Whitespace(position = 13, length = 1),
 		@Whitespace(position = 14, length = 1),
