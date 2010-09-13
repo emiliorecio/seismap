@@ -12,9 +12,11 @@ import com.seismap.service.parser.EntryType;
 @Retention(RUNTIME)
 public @interface Entry {
 
-	public char value();
+	public char[] values();
+
+	public char[] after() default { '*' };
 
 	public EntryType type();
-	
+
 	public Whitespace[] whitespaces();
 }
