@@ -7,7 +7,7 @@ import com.seismap.service.parser.annotation.IntegerField;
 import com.seismap.service.parser.annotation.ScientificNotationField;
 import com.seismap.service.parser.annotation.Whitespace;
 
-@Entry(id = "E", after = { "3" }, whitespaces = {
+@Entry(id = "E", after = { "1", "2", "3" }, whitespaces = {
 		@Whitespace(position = 1, length = 1),
 		@Whitespace(position = 9, length = 6),
 		@Whitespace(position = 21, length = 4),

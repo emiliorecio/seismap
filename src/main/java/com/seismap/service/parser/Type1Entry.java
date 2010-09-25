@@ -89,6 +89,7 @@ public class Type1Entry extends AbstractEntry {
 	private float magnitude1;
 
 	@EnumeratedField(position = 60, length = 1, mappings = {
+			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
 			@EnumerationMapping(value = "L", mapsTo = "ML"),
 			@EnumerationMapping(value = "B", mapsTo = "MB"),
 			@EnumerationMapping(value = "S", mapsTo = "MS"),
@@ -104,6 +105,7 @@ public class Type1Entry extends AbstractEntry {
 	private float magnitude2;
 
 	@EnumeratedField(position = 68, length = 1, mappings = {
+			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
 			@EnumerationMapping(value = "L", mapsTo = "ML"),
 			@EnumerationMapping(value = "B", mapsTo = "MB"),
 			@EnumerationMapping(value = "S", mapsTo = "MS"),
@@ -119,6 +121,7 @@ public class Type1Entry extends AbstractEntry {
 	private float magnitude3;
 
 	@EnumeratedField(position = 76, length = 1, mappings = {
+			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
 			@EnumerationMapping(value = "L", mapsTo = "ML"),
 			@EnumerationMapping(value = "B", mapsTo = "MB"),
 			@EnumerationMapping(value = "S", mapsTo = "MS"),

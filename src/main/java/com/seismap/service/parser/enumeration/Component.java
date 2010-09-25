@@ -1,15 +1,13 @@
 package com.seismap.service.parser.enumeration;
 
-public enum InstrumentType {
+public enum Component {
+	Z,
 	
-	B,
+	N,
 	
-	P,
+	E,
 	
-	SP,
+	T,
 	
-	IP,
-	
-	LP
-
+	R
 }
