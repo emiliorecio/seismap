@@ -51,6 +51,7 @@ public class Type1Entry extends AbstractEntry {
 	private DistanceIndicator distanceIndicator;
 
 	@EnumeratedField(position = 23, length = 1, mappings = {
+			@EnumerationMapping(value = " ", mapsTo = "UNSPECIFIED"),
 			@EnumerationMapping(value = "E", mapsTo = "EXPLOSION"),
 			@EnumerationMapping(value = "P", mapsTo = "PROBABLE_EXPLOSION"),
 			@EnumerationMapping(value = "V", mapsTo = "VOLCANIC"),
@@ -67,6 +68,7 @@ public class Type1Entry extends AbstractEntry {
 	private float depth;
 
 	@EnumeratedField(position = 44, length = 1, mappings = {
+			@EnumerationMapping(value = " ", mapsTo = "UNSPECIFIED"),
 			@EnumerationMapping(value = "F", mapsTo = "FIXED"),
 			@EnumerationMapping(value = "S", mapsTo = "STARTING_VALUE") })
 	private DepthIndicator depthIndicator;

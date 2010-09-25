@@ -4,7 +4,7 @@ import com.seismap.service.parser.annotation.Entry;
 import com.seismap.service.parser.annotation.StringField;
 import com.seismap.service.parser.annotation.Whitespace;
 
-@Entry(id = "6", after = { "4", "5" }, whitespaces = { @Whitespace(position = 1, length = 1) })
+@Entry(id = "6", after = {}, whitespaces = { @Whitespace(position = 1, length = 1) })
 public class Type6Entry extends AbstractEntry {
 
 	@StringField(position = 2, length = 78)
