@@ -120,31 +120,4 @@ public class Parser {
 
 	}
 
-	public static void main(String[] args) throws Exception {
-		Parser parser = new Parser();
-		FileInputStream fstream = new FileInputStream(
-				"C:\\workspaces\\My Dropbox\\Tesis\\select.out");
-		DataInputStream in = new DataInputStream(fstream);
-		final BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		parser.parse(new LogLineProvider() {
-
-			public String readLogLine(int lineNumber)
-					throws DataProviderException {
-				try {
-					return br.readLine();
-				} catch (IOException e) {
-					throw new DataProviderException(e);
-				}
-			}
-		}, new LogEventConsumer() {
-int c=0;
-			public void cosumeLogEvent(LogEvent logEvent) {
-				System.out.println("####################################");
-				System.out.println(logEvent);
-	c++;
-	System.out.println(c);
-			}
-		});
-		in.close();
-	}
 }
