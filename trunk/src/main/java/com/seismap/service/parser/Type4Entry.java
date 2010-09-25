@@ -11,8 +11,8 @@ import com.seismap.service.parser.annotation.Whitespace;
 import com.seismap.service.parser.enumeration.InstrumentType;
 import com.seismap.service.parser.enumeration.Phase;
 
-@Entry(id = "4", alternative = " ", after = { "2", "3", "4" }, whitespaces = {
-		@Whitespace(position = 1, length = 1),
+@Entry(id = "4", alternative = " ", after = { "1", "2", "3", "4", "6", "7",
+		"E", "I" }, whitespaces = { @Whitespace(position = 1, length = 1),
 		@Whitespace(position = 13, length = 1),
 		@Whitespace(position = 14, length = 1),
 		@Whitespace(position = 18, length = 1),

@@ -7,8 +7,10 @@ import com.seismap.service.parser.annotation.IntegerField;
 import com.seismap.service.parser.annotation.ScientificNotationField;
 import com.seismap.service.parser.annotation.Whitespace;
 
-@Entry(id = "E", after = { "4", "5", "6", "7", "F" }, whitespaces = {
+@Entry(id = "E", after = { "3" }, whitespaces = {
 		@Whitespace(position = 1, length = 1),
+		@Whitespace(position = 9, length = 6),
+		@Whitespace(position = 21, length = 4),
 		@Whitespace(position = 31, length = 2) })
 public class TypeEEntry extends AbstractEntry {
 
@@ -19,58 +21,56 @@ public class TypeEEntry extends AbstractEntry {
 	private int gap;
 
 	@FloatField(position = 15, digits = 6, decimals = 2)
-	private int originTimeError;
-	
+	private float originTimeError;
+
 	@FloatField(position = 25, digits = 6, decimals = 1)
-	private int latitudeError;
+	private float latitudeError;
 
 	@FloatField(position = 33, digits = 6, decimals = 1)
-	private int longitudeError;
+	private float longitudeError;
 
 	@FloatField(position = 39, digits = 5, decimals = 1)
-	private int depthError;
-	
+	private float depthError;
+
 	@ScientificNotationField(position = 44, digits = 12, exponentDigits = 4)
-	private int xyCovariance;
+	private float xyCovariance;
 
 	@ScientificNotationField(position = 56, digits = 12, exponentDigits = 4)
-	private int xzCovariance;
+	private float xzCovariance;
 
-	@ScientificNotationField(position = 68, digits = 14, exponentDigits = 4)
-	private int yzCovariance;
+	@ScientificNotationField(position = 68, digits = 12, exponentDigits = 4)
+	private float yzCovariance;
 
 	public int getGap() {
 		return gap;
 	}
 
-	public int getOriginTimeError() {
+	public float getOriginTimeError() {
 		return originTimeError;
 	}
 
-	public int getLatitudeError() {
+	public float getLatitudeError() {
 		return latitudeError;
 	}
 
-	public int getLongitudeError() {
+	public float getLongitudeError() {
 		return longitudeError;
 	}
 
-	public int getDepthError() {
+	public float getDepthError() {
 		return depthError;
 	}
 
-	public int getXyCovariance() {
+	public float getXyCovariance() {
 		return xyCovariance;
 	}
 
-	public int getXzCovariance() {
+	public float getXzCovariance() {
 		return xzCovariance;
 	}
 
-	public int getYzCovariance() {
+	public float getYzCovariance() {
 		return yzCovariance;
 	}
 
-	
-	
 }

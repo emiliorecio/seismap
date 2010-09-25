@@ -55,7 +55,8 @@ public class RowReader {
 				String value) throws InvalidDataException;
 	}
 
-	private static final int ROW_LENGTH = 79;
+	private static final int TOTAL_ROW_LENGTH = 80;
+	private int rowLength;
 	private String id;
 	private String[] alternativeIds;
 	private String[] afterIds;
@@ -63,23 +64,34 @@ public class RowReader {
 	private FieldReader[] fieldReaders;
 	private Class<? extends AbstractEntry> entryClass;
 	private boolean[] whiteSpacePositions;
+	private boolean terminator;
 
 	public RowReader(Class<? extends AbstractEntry> entryClass) {
 		Entry entry = entryClass.getAnnotation(Entry.class);
 		if (entry == null) {
-			throw new EntryDefinitionException("Missing @Entry annotation");
+			throw new EntryDefinitionException("Missing @Entry annotation: "
+					+ entryClass.getName());
 		}
 		this.entryClass = entryClass;
 		this.id = entry.id();
 		this.alternativeIds = entry.alternative();
 		this.afterIds = entry.after();
 		this.allIds = new String[alternativeIds.length + 1];
-		this.allIds[0] = id;
+		this.allIds[0] = this.id;
+		this.terminator = entry.terminator();
 		for (int i = 0; i < this.alternativeIds.length; i++) {
-			this.allIds[i + 1] = this.alternativeIds[i];
+			String alternativeId = this.alternativeIds[i];
+			if (alternativeId.length() != this.id.length()) {
+				throw new EntryDefinitionException("Alternative id '"
+						+ alternativeId
+						+ "' has different length than the regular id '" + id
+						+ "': '" + entryClass.getName());
+			}
+			this.allIds[i + 1] = alternativeId;
 		}
+		rowLength = TOTAL_ROW_LENGTH - this.id.length();
 		Field[] fields = entryClass.getDeclaredFields();
-		Field[] usedPositions = new Field[ROW_LENGTH];
+		Field[] usedPositions = new Field[rowLength];
 		fieldReaders = new FieldReader[fields.length];
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
@@ -141,9 +153,9 @@ public class RowReader {
 								+ entryClass.getName() + '.' + field.getName());
 			}
 		}
-		whiteSpacePositions = new boolean[ROW_LENGTH];
+		whiteSpacePositions = new boolean[rowLength];
 		markWhitespaces(entryClass, entry.whitespaces(), usedPositions);
-		for (int i = 1; i <= ROW_LENGTH; i++) {
+		for (int i = 1; i <= rowLength; i++) {
 			if (usedPositions[i - 1] == null && !whiteSpacePositions[i - 1]) {
 				throw new EntryDefinitionException(
 						"Position "
@@ -166,9 +178,9 @@ public class RowReader {
 					"Whitespace length cannot be less than one: "
 							+ entryClass.getName());
 		}
-		if (whitespace.position() + whitespace.length() > ROW_LENGTH + 1) {
+		if (whitespace.position() + whitespace.length() > rowLength + 1) {
 			throw new EntryDefinitionException(
-					"Whitespace exceeds the row length limit of " + ROW_LENGTH
+					"Whitespace exceeds the row length limit of " + rowLength
 							+ " characters: " + entryClass.getName());
 		}
 		for (int i = whitespace.position(); i < whitespace.position()
@@ -219,9 +231,9 @@ public class RowReader {
 							+ field.getDeclaringClass().getName() + "."
 							+ field.getName());
 		}
-		if (position + length > ROW_LENGTH + 1) {
+		if (position + length > rowLength + 1) {
 			throw new EntryDefinitionException(
-					"Field exceeds the row length limit of " + ROW_LENGTH
+					"Field exceeds the row length limit of " + rowLength
 							+ " characters: "
 							+ field.getDeclaringClass().getName() + "."
 							+ field.getName());
@@ -256,14 +268,22 @@ public class RowReader {
 		return afterIds;
 	}
 
+	public boolean isTerminator() {
+		return terminator;
+	}
+
 	private InvalidDataException invalidData(int line, int startColumn,
-			int endColumn, String value) throws InvalidDataException {
-		return new InvalidDataException("Illegal value at line: " + line
+			int endColumn, String value, Field field)
+			throws InvalidDataException {
+		return new InvalidDataException("Illegal value"
+				+ (field == null ? "" : "for "
+						+ field.getDeclaringClass().getName() + "."
+						+ field.getName()) + " at line: " + line
 				+ ", columns: " + (startColumn + 1) + "-" + endColumn
 				+ ", value=" + value);
 	}
 
-	private void processField(int index, Field field,
+	private void processField(int index, final Field field,
 			final BooleanField annotation, Field[] usedPositions) {
 		checkType(field, boolean.class);
 		fieldReaders[index] = new FieldReader(field, annotation.position(), 1,
@@ -278,7 +298,7 @@ public class RowReader {
 				} else if (c == annotation.off()) {
 					return false;
 				}
-				throw invalidData(line, startColumn, endColumn, value);
+				throw invalidData(line, startColumn, endColumn, value, field);
 			}
 
 		};
@@ -300,7 +320,7 @@ public class RowReader {
 		};
 	}
 
-	private void processField(int index, Field field,
+	private void processField(int index, final Field field,
 			final EnumeratedField annotation, Field[] usedPositions) {
 		checkType(field, Enum.class);
 		final Map<String, Enum<?>> map = new HashMap<String, Enum<?>>();
@@ -347,14 +367,15 @@ public class RowReader {
 					throws InvalidDataException {
 				Enum<?> mapsToConstant = map.get(value);
 				if (mapsToConstant == null) {
-					throw invalidData(line, startColumn, endColumn, value);
+					throw invalidData(line, startColumn, endColumn, value,
+							field);
 				}
 				return mapsToConstant;
 			}
 		};
 	}
 
-	private void processField(int index, Field field,
+	private void processField(int index, final Field field,
 			final FloatField annotation, Field[] usedPositions) {
 		checkType(field, float.class);
 		fieldReaders[index] = new FieldReader(field, annotation.position(),
@@ -374,13 +395,14 @@ public class RowReader {
 				try {
 					return Float.parseFloat(value);
 				} catch (NumberFormatException e) {
-					throw invalidData(line, startColumn, endColumn, value);
+					throw invalidData(line, startColumn, endColumn, value,
+							field);
 				}
 			}
 		};
 	}
 
-	private void processField(int index, Field field,
+	private void processField(int index, final Field field,
 			final IntegerField annotation, Field[] usedPositions) {
 		checkType(field, int.class);
 		fieldReaders[index] = new FieldReader(field, annotation.position(),
@@ -388,16 +410,18 @@ public class RowReader {
 			@Override
 			Object read(int line, int startColumn, int endColumn, String value)
 					throws InvalidDataException {
+				value = value.trim();
 				try {
 					return Integer.parseInt(value);
 				} catch (NumberFormatException e) {
-					throw invalidData(line, startColumn, endColumn, value);
+					throw invalidData(line, startColumn, endColumn, value,
+							field);
 				}
 			}
 		};
 	}
 
-	private void processField(int index, Field field,
+	private void processField(int index, final Field field,
 			final ScientificNotationField annotation, Field[] usedPositions) {
 		checkType(field, float.class);
 		fieldReaders[index] = new FieldReader(field, annotation.position(),
@@ -408,7 +432,8 @@ public class RowReader {
 				try {
 					return Float.parseFloat(value);
 				} catch (NumberFormatException e) {
-					throw invalidData(line, startColumn, endColumn, value);
+					throw invalidData(line, startColumn, endColumn, value,
+							field);
 				}
 			}
 		};
@@ -428,7 +453,7 @@ public class RowReader {
 		};
 	}
 
-	private void processField(int index, Field field,
+	private void processField(int index, final Field field,
 			final ConstantField annotation, Field[] usedPositions) {
 		checkType(field, String.class);
 		final String constantValue;
@@ -451,7 +476,8 @@ public class RowReader {
 			Object read(int line, int startColumn, int endColumn, String value)
 					throws InvalidDataException {
 				if (!value.equals(constantValue)) {
-					throw invalidData(line, startColumn, endColumn, value);
+					throw invalidData(line, startColumn, endColumn, value,
+							field);
 				}
 				return value;
 			}
@@ -474,7 +500,7 @@ public class RowReader {
 		}
 		for (int i = 0; i < whiteSpacePositions.length; i++) {
 			if (whiteSpacePositions[i] && content.charAt(i) != ' ') {
-				invalidData(line, i, i + 1, " ");
+				invalidData(line, i, i + 1, " ", null);
 			}
 
 		}

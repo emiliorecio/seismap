@@ -7,9 +7,9 @@ import com.seismap.service.parser.annotation.IntegerField;
 import com.seismap.service.parser.annotation.StringField;
 import com.seismap.service.parser.annotation.Whitespace;
 
-@Entry(id = "F", after = { "4", "5", "6", "7" }, whitespaces = {
+@Entry(id = "F", after = { }, whitespaces = {
 		@Whitespace(position = 37, length = 24),
-		@Whitespace(position = 64, length = 6),
+		@Whitespace(position = 64, length = 7),
 		@Whitespace(position = 77, length = 1) })
 public class TypeFEntry {
 
