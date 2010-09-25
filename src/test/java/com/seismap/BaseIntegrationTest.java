@@ -15,6 +15,6 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 		DependencyInjectionTestExecutionListener.class,
 		TransactionalTestExecutionListener.class })
 @TransactionConfiguration(transactionManager = "model_transactionManager")
-public abstract class BaseServiceIntegrationTest {
+public abstract class BaseIntegrationTest {
 
 }
