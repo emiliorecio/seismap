@@ -6,17 +6,16 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import com.seismap.service.parser.EntryType;
 
 @Target(TYPE)
 @Retention(RUNTIME)
 public @interface Entry {
 
-	public char[] values();
+	public String id();
+	
+	public String[] alternative() default {};
 
-	public char[] after() default { '*' };
-
-	public EntryType type();
+	public String[] after();
 
 	public Whitespace[] whitespaces();
 }

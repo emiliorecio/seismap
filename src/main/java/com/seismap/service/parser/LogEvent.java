@@ -5,6 +5,6 @@ import java.util.List;
 
 public class LogEvent {
 
-	private List<Type1Entry> type1Entries = new LinkedList<Type1Entry>();
+	private List<AbstractEntry> entries = new LinkedList<AbstractEntry>();
 	
 }
