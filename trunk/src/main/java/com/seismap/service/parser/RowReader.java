@@ -208,13 +208,17 @@ public class RowReader {
 		}
 	}
 
-	private void checkType(Field field, Class<?> expectedType) {
-		if (!expectedType.isAssignableFrom(field.getType())) {
-			throw new EntryDefinitionException(
-					"Field type incompatible with annotation at "
-							+ field.getDeclaringClass().getName() + "."
-							+ field.getName());
+	private void checkType(Field field, Class<?>... expectedTypes) {
+		for (Class<?> expectedType : expectedTypes) {
+			if (expectedType.isAssignableFrom(field.getType())) {
+				return;
+			}
+
 		}
+		throw new EntryDefinitionException(
+				"Field type incompatible with annotation at "
+						+ field.getDeclaringClass().getName() + "."
+						+ field.getName());
 	}
 
 	private void markUsed(Field field, int position, int length,
@@ -276,7 +280,7 @@ public class RowReader {
 			int endColumn, String value, Field field)
 			throws InvalidDataException {
 		return new InvalidDataException("Illegal value"
-				+ (field == null ? "" : "for "
+				+ (field == null ? "" : " for "
 						+ field.getDeclaringClass().getName() + "."
 						+ field.getName()) + " at line: " + line
 				+ ", columns: " + (startColumn + 1) + "-" + endColumn
@@ -384,16 +388,20 @@ public class RowReader {
 			Object read(int line, int startColumn, int endColumn, String value)
 					throws InvalidDataException {
 				int indexOfDot = value.indexOf('.');
+				String processedValue = value.trim();
+				if (processedValue.length() == 0) {
+					return 0.0f;
+				}
 				if (indexOfDot == -1) {
-					value = value.trim();
-					value = value.substring(0, value.length()
+					processedValue = processedValue.substring(0, processedValue
+							.length()
 							- annotation.decimals())
 							+ '.'
-							+ value.substring(value.length()
+							+ processedValue.substring(processedValue.length()
 									- annotation.decimals());
 				}
 				try {
-					return Float.parseFloat(value);
+					return Float.parseFloat(processedValue);
 				} catch (NumberFormatException e) {
 					throw invalidData(line, startColumn, endColumn, value,
 							field);
@@ -404,21 +412,44 @@ public class RowReader {
 
 	private void processField(int index, final Field field,
 			final IntegerField annotation, Field[] usedPositions) {
-		checkType(field, int.class);
-		fieldReaders[index] = new FieldReader(field, annotation.position(),
-				annotation.digits(), usedPositions) {
-			@Override
-			Object read(int line, int startColumn, int endColumn, String value)
-					throws InvalidDataException {
-				value = value.trim();
-				try {
-					return Integer.parseInt(value);
-				} catch (NumberFormatException e) {
-					throw invalidData(line, startColumn, endColumn, value,
-							field);
+		checkType(field, int.class, long.class);
+		if (field.getType() == int.class) {
+			fieldReaders[index] = new FieldReader(field, annotation.position(),
+					annotation.digits(), usedPositions) {
+				@Override
+				Object read(int line, int startColumn, int endColumn,
+						String value) throws InvalidDataException {
+					String processedValue = value.trim();
+					if (processedValue.length() == 0) {
+						return 0;
+					}
+					try {
+						return Integer.parseInt(processedValue);
+					} catch (NumberFormatException e) {
+						throw invalidData(line, startColumn, endColumn, value,
+								field);
+					}
 				}
-			}
-		};
+			};
+		} else {
+			fieldReaders[index] = new FieldReader(field, annotation.position(),
+					annotation.digits(), usedPositions) {
+				@Override
+				Object read(int line, int startColumn, int endColumn,
+						String value) throws InvalidDataException {
+					String processedValue = value.trim();
+					if (processedValue.length() == 0) {
+						return 0;
+					}
+					try {
+						return Long.parseLong(processedValue);
+					} catch (NumberFormatException e) {
+						throw invalidData(line, startColumn, endColumn, value,
+								field);
+					}
+				}
+			};
+		}
 	}
 
 	private void processField(int index, final Field field,
@@ -429,8 +460,12 @@ public class RowReader {
 			@Override
 			Object read(int line, int startColumn, int endColumn, String value)
 					throws InvalidDataException {
+				String processedValue = value.trim();
+				if (processedValue.length() == 0) {
+					return 0.0f;
+				}
 				try {
-					return Float.parseFloat(value);
+					return Float.parseFloat(processedValue);
 				} catch (NumberFormatException e) {
 					throw invalidData(line, startColumn, endColumn, value,
 							field);

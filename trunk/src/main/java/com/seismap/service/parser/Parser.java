@@ -37,7 +37,8 @@ public class Parser {
 		this((Class<? extends AbstractEntry>[]) new Class<?>[] {
 				Type0Entry.class, Type1Entry.class, Type2Entry.class,
 				Type3Entry.class, Type4Entry.class, Type6Entry.class,
-				Type7Entry.class, TypeEEntry.class, TypeFEntry.class });
+				Type7Entry.class, TypeEEntry.class, TypeFEntry.class,
+				TypeIEntry.class });
 
 	}
 
@@ -136,10 +137,12 @@ public class Parser {
 				}
 			}
 		}, new LogEventConsumer() {
-
+int c=0;
 			public void cosumeLogEvent(LogEvent logEvent) {
 				System.out.println("####################################");
 				System.out.println(logEvent);
+	c++;
+	System.out.println(c);
 			}
 		});
 		in.close();

@@ -10,6 +10,14 @@ public enum Phase {
 	
 	P,
 	
-	S	
+	S,
+	
+	AM,
+	
+	I,
+	
+	PG_LOWERCASE,
+	
+	SG
 
 }
