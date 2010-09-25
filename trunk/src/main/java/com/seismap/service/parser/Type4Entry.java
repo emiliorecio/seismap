@@ -1,7 +1,6 @@
 package com.seismap.service.parser;
 
 import com.seismap.service.parser.annotation.BooleanField;
-import com.seismap.service.parser.annotation.CharacterField;
 import com.seismap.service.parser.annotation.Entry;
 import com.seismap.service.parser.annotation.EnumeratedField;
 import com.seismap.service.parser.annotation.EnumerationMapping;
