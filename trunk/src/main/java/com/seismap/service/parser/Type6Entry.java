@@ -4,18 +4,13 @@ import com.seismap.service.parser.annotation.Entry;
 import com.seismap.service.parser.annotation.StringField;
 import com.seismap.service.parser.annotation.Whitespace;
 
-@Entry(id = "3", after = "2", whitespaces = {
-		@Whitespace(position = 1, length = 1)
-		})
-public class Type3Entry extends AbstractEntry{
-	
+@Entry(id = "6", after = { "4", "5" }, whitespaces = { @Whitespace(position = 1, length = 1) })
+public class Type6Entry extends AbstractEntry {
+
 	@StringField(position = 2, length = 78)
-	private String anyText;
+	private String traceDataFileNames;
 
-	public String getAnyText() {
-		return anyText;
+	public String getTraceDataFileNames() {
+		return traceDataFileNames;
 	}
-	
-	
-
 }

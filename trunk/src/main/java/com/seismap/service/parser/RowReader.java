@@ -2,16 +2,19 @@ package com.seismap.service.parser;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.seismap.service.parser.annotation.BooleanField;
 import com.seismap.service.parser.annotation.CharacterField;
+import com.seismap.service.parser.annotation.ConstantField;
 import com.seismap.service.parser.annotation.Entry;
 import com.seismap.service.parser.annotation.EnumeratedField;
 import com.seismap.service.parser.annotation.EnumerationMapping;
 import com.seismap.service.parser.annotation.FloatField;
 import com.seismap.service.parser.annotation.IntegerField;
+import com.seismap.service.parser.annotation.ScientificNotationField;
 import com.seismap.service.parser.annotation.StringField;
 import com.seismap.service.parser.annotation.Whitespace;
 
@@ -21,6 +24,7 @@ public class RowReader {
 		private Field field;
 		private int startColumn;
 		private int endColumn;
+		private boolean readOnly;
 
 		public FieldReader(Field field, int position, int length,
 				Field[] usedPositions) {
@@ -28,19 +32,22 @@ public class RowReader {
 			this.field = field;
 			this.startColumn = position - 1;
 			this.endColumn = position + length - 1;
+			this.readOnly = Modifier.isFinal(field.getModifiers());
 		}
 
 		public void read(AbstractEntry entry, int line, String content)
 				throws InvalidDataException {
 			String value = content.substring(startColumn, endColumn);
 			Object object = read(line, startColumn, endColumn, value);
-			try {
-				field.setAccessible(true);
-				field.set(entry, object);
-			} catch (IllegalArgumentException e) {
-				throw new EntryDefinitionException(e);
-			} catch (IllegalAccessException e) {
-				throw new EntryDefinitionException(e);
+			if (!readOnly) {
+				try {
+					field.setAccessible(true);
+					field.set(entry, object);
+				} catch (IllegalArgumentException e) {
+					throw new EntryDefinitionException(e);
+				} catch (IllegalAccessException e) {
+					throw new EntryDefinitionException(e);
+				}
 			}
 		}
 
@@ -49,8 +56,10 @@ public class RowReader {
 	}
 
 	private static final int ROW_LENGTH = 79;
-	private char[] typeCharacters;
-	private char[] afterTypeCharacters;
+	private String id;
+	private String[] alternativeIds;
+	private String[] afterIds;
+	private String[] allIds;
 	private FieldReader[] fieldReaders;
 	private Class<? extends AbstractEntry> entryClass;
 	private boolean[] whiteSpacePositions;
@@ -61,8 +70,14 @@ public class RowReader {
 			throw new EntryDefinitionException("Missing @Entry annotation");
 		}
 		this.entryClass = entryClass;
-		this.typeCharacters = entry.values();
-		this.afterTypeCharacters = entry.after();
+		this.id = entry.id();
+		this.alternativeIds = entry.alternative();
+		this.afterIds = entry.after();
+		this.allIds = new String[alternativeIds.length + 1];
+		this.allIds[0] = id;
+		for (int i = 0; i < this.alternativeIds.length; i++) {
+			this.allIds[i + 1] = this.alternativeIds[i];
+		}
 		Field[] fields = entryClass.getDeclaredFields();
 		Field[] usedPositions = new Field[ROW_LENGTH];
 		fieldReaders = new FieldReader[fields.length];
@@ -80,25 +95,50 @@ public class RowReader {
 								+ entryClass.getName() + "." + field.getName());
 			}
 			Annotation annotation = annotations[0];
-			if (annotation instanceof BooleanField) {
-				processField(i, field, (BooleanField) annotation, usedPositions);
-			}
-			if (annotation instanceof CharacterField) {
-				processField(i, field, (CharacterField) annotation,
-						usedPositions);
-			}
-			if (annotation instanceof EnumeratedField) {
-				processField(i, field, (EnumeratedField) annotation,
-						usedPositions);
-			}
-			if (annotation instanceof FloatField) {
-				processField(i, field, (FloatField) annotation, usedPositions);
-			}
-			if (annotation instanceof IntegerField) {
-				processField(i, field, (IntegerField) annotation, usedPositions);
-			}
-			if (annotation instanceof StringField) {
-				processField(i, field, (StringField) annotation, usedPositions);
+			if (!Modifier.isStatic(field.getModifiers())
+					&& !Modifier.isFinal(field.getModifiers())) {
+				if (annotation instanceof BooleanField) {
+					processField(i, field, (BooleanField) annotation,
+							usedPositions);
+				} else if (annotation instanceof CharacterField) {
+					processField(i, field, (CharacterField) annotation,
+							usedPositions);
+				} else if (annotation instanceof EnumeratedField) {
+					processField(i, field, (EnumeratedField) annotation,
+							usedPositions);
+				} else if (annotation instanceof FloatField) {
+					processField(i, field, (FloatField) annotation,
+							usedPositions);
+				} else if (annotation instanceof IntegerField) {
+					processField(i, field, (IntegerField) annotation,
+							usedPositions);
+				} else if (annotation instanceof ScientificNotationField) {
+					processField(i, field,
+							(ScientificNotationField) annotation, usedPositions);
+				} else if (annotation instanceof StringField) {
+					processField(i, field, (StringField) annotation,
+							usedPositions);
+				} else {
+					throw new EntryDefinitionException(
+							"Invalid annotation for instance field "
+									+ entryClass.getName() + '.'
+									+ field.getName() + ": " + annotation);
+				}
+			} else if (Modifier.isStatic(field.getModifiers())
+					&& Modifier.isFinal(field.getModifiers())) {
+				if (annotation instanceof ConstantField) {
+					processField(i, field, (ConstantField) annotation,
+							usedPositions);
+				} else {
+					throw new EntryDefinitionException(
+							"Invalid annotation for static final field "
+									+ entryClass.getName() + '.'
+									+ field.getName() + ": " + annotation);
+				}
+			} else {
+				throw new EntryDefinitionException(
+						"Field must be instance non-final, or static final: "
+								+ entryClass.getName() + '.' + field.getName());
 			}
 		}
 		whiteSpacePositions = new boolean[ROW_LENGTH];
@@ -200,12 +240,20 @@ public class RowReader {
 		}
 	}
 
-	public char[] getTypeCharacters() {
-		return typeCharacters;
+	public String[] getAllIds() {
+		return allIds;
 	}
-	
-	public char[] getAfterTypeCharacters() {
-		return afterTypeCharacters;
+
+	public String getId() {
+		return id;
+	}
+
+	public String[] getAlternativeIds() {
+		return alternativeIds;
+	}
+
+	public String[] getAfterIds() {
+		return afterIds;
 	}
 
 	private InvalidDataException invalidData(int line, int startColumn,
@@ -306,37 +354,28 @@ public class RowReader {
 		};
 	}
 
-	private boolean isNumber(String value, int start, int length) {
-		int end = start + length;
-		for (int i = start; i < end; i++) {
-			char c = value.charAt(i);
-			if (c < '0' || c > '9') {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	private void processField(int index, Field field,
 			final FloatField annotation, Field[] usedPositions) {
 		checkType(field, float.class);
-		final int integerDigits = annotation.digits() - annotation.decimals()
-				- 1;
 		fieldReaders[index] = new FieldReader(field, annotation.position(),
 				annotation.digits(), usedPositions) {
 			@Override
 			Object read(int line, int startColumn, int endColumn, String value)
 					throws InvalidDataException {
-				if (!isNumber(value, 0, integerDigits)) {
+				int indexOfDot = value.indexOf('.');
+				if (indexOfDot == -1) {
+					value = value.trim();
+					value = value.substring(0, value.length()
+							- annotation.decimals())
+							+ '.'
+							+ value.substring(value.length()
+									- annotation.decimals());
+				}
+				try {
+					return Float.parseFloat(value);
+				} catch (NumberFormatException e) {
 					throw invalidData(line, startColumn, endColumn, value);
 				}
-				if (value.charAt(integerDigits) != '.') {
-					throw invalidData(line, startColumn, endColumn, value);
-				}
-				if (!isNumber(value, integerDigits + 1, annotation.digits())) {
-					throw invalidData(line, startColumn, endColumn, value);
-				}
-				return Float.parseFloat(value);
 			}
 		};
 	}
@@ -349,10 +388,28 @@ public class RowReader {
 			@Override
 			Object read(int line, int startColumn, int endColumn, String value)
 					throws InvalidDataException {
-				if (!isNumber(value, 0, annotation.digits())) {
+				try {
+					return Integer.parseInt(value);
+				} catch (NumberFormatException e) {
 					throw invalidData(line, startColumn, endColumn, value);
 				}
-				return Integer.parseInt(value);
+			}
+		};
+	}
+
+	private void processField(int index, Field field,
+			final ScientificNotationField annotation, Field[] usedPositions) {
+		checkType(field, float.class);
+		fieldReaders[index] = new FieldReader(field, annotation.position(),
+				annotation.digits(), usedPositions) {
+			@Override
+			Object read(int line, int startColumn, int endColumn, String value)
+					throws InvalidDataException {
+				try {
+					return Float.parseFloat(value);
+				} catch (NumberFormatException e) {
+					throw invalidData(line, startColumn, endColumn, value);
+				}
 			}
 		};
 	}
@@ -365,6 +422,37 @@ public class RowReader {
 			@Override
 			Object read(int line, int startColumn, int endColumn, String value)
 					throws InvalidDataException {
+				return value;
+			}
+
+		};
+	}
+
+	private void processField(int index, Field field,
+			final ConstantField annotation, Field[] usedPositions) {
+		checkType(field, String.class);
+		final String constantValue;
+		try {
+			field.setAccessible(true);
+			constantValue = (String) field.get(null);
+		} catch (IllegalArgumentException e) {
+			throw new EntryDefinitionException(e);
+		} catch (IllegalAccessException e) {
+			throw new EntryDefinitionException(e);
+		}
+		if (constantValue == null) {
+			throw new EntryDefinitionException(
+					"Constant value must not be null: " + entryClass.getName()
+							+ '.' + field.getName());
+		}
+		fieldReaders[index] = new FieldReader(field, annotation.position(),
+				constantValue.length(), usedPositions) {
+			@Override
+			Object read(int line, int startColumn, int endColumn, String value)
+					throws InvalidDataException {
+				if (!value.equals(constantValue)) {
+					throw invalidData(line, startColumn, endColumn, value);
+				}
 				return value;
 			}
 

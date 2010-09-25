@@ -16,7 +16,7 @@ import com.seismap.service.parser.enumeration.SeicheCode;
 import com.seismap.service.parser.enumeration.TsunamiCode;
 import com.seismap.service.parser.enumeration.UnusualEvents;
 
-@Entry(values = '2', type = EntryType.TWO, whitespaces = {
+@Entry(id = "2", after = "1", whitespaces = {
 		@Whitespace(position = 1, length = 5),
 		@Whitespace(position = 21, length = 1),
 		@Whitespace(position = 27, length = 1),
