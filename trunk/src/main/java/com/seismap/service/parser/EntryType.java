@@ -13,5 +13,9 @@ public enum EntryType {
 	
 	SIX,
 	
-	SEVEN
+	SEVEN,
+	
+	F,
+	
+	E
 }
