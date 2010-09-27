@@ -21,7 +21,7 @@ public class ParserTest {
 		count = 0;
 		Parser parser = new Parser();
 		InputStream inputStream = ParserTest.class.getClassLoader()
-				.getResourceAsStream("datafiles/sample.data");
+				.getResourceAsStream("datafiles/sample2.data");
 		Assert.assertNotNull(inputStream);
 		DataInputStream in = new DataInputStream(inputStream);
 		final BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -40,7 +40,8 @@ public class ParserTest {
 			}
 		});
 		in.close();
-		Assert.assertEquals(682, count);
+		System.out.println("Total line processed: "+count);
+		Assert.assertEquals(2205, count);
 	}
 
 }
