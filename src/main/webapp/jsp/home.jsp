@@ -1,14 +1,114 @@
 <%@page contentType="text/html"%>
 <%@page pageEncoding="UTF-8"%>
 <%@ page session="false"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<title>SeisMap Server</title>
-	</head>
-	<body>
-		<h1>SeisMap Server</h1>
-		<h2>Welcome</h2>
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>SeisMap Server</title>
+    
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+    <script type="text/javascript">
+      document.write('<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markermanager/1.0/src/markermanager' + (document.location.search.indexOf('packed') > -1 ? '_packed' : '') + '.js"><' + '/script>');
+    </script>
+    <script type="text/javascript">
+    //<![CDATA[
+
+    var IMAGES = [ 'sun', 'rain', 'snow', 'storm' ];
+    var ICONS = [];
+    var map = null;
+    var mgr = null;
+
+    
+    function setupMap() {
+      var myOptions = {
+        zoom: 4,
+        center: new google.maps.LatLng(48.25, 11.00),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      map = new google.maps.Map(document.getElementById('map'), myOptions);
+
+      var listener = google.maps.event.addListener(map, 'bounds_changed', function(){
+          setupWeatherMarkers();
+          google.maps.event.removeListener(listener);
+      });
+    }
+
+    function getWeatherIcon() {
+      var i = Math.floor(IMAGES.length*Math.random());
+      if (!ICONS[i]) {          
+        var iconImage = new google.maps.MarkerImage('images/' + IMAGES[i] + '.png',
+            new google.maps.Size(32, 32),
+            new google.maps.Point(0,0),
+            new google.maps.Point(0, 32)
+        );
+        
+        var iconShadow = new google.maps.MarkerImage('images/' + IMAGES[i] + '.png',
+            new google.maps.Size(32, 59),
+            new google.maps.Point(0,0),
+            new google.maps.Point(0, 32)
+        );
+        
+        var iconShape = {
+            coord: [1, 1, 1, 32, 32, 32, 32, 1],
+            type: 'poly'
+        };
+
+        ICONS[i] = { 
+          icon : iconImage,
+          shadow: iconShadow,
+          shape : iconShape
+        };
+        
+      }
+      return ICONS[i];
+    }
+
+    function getRandomPoint() {
+      var lat = 48.25 + (Math.random() - 0.5) * 14.5;
+      var lng = 11.00 + (Math.random() - 0.5) * 36.0;
+      return new google.maps.LatLng(Math.round(lat * 10) / 10, Math.round(lng * 10) / 10);
+    }
+
+    function getWeatherMarkers(n) {
+      var batch = [];
+      for (var i = 0; i < n; ++i) {
+        var tmpIcon = getWeatherIcon();  
+        
+        batch.push(new google.maps.Marker({
+            position: getRandomPoint(),
+            //shadow: tmpIcon.shadow,
+            //icon: tmpIcon.icon,
+            //shape: tmpIcon.shape,
+            title: 'Weather marker'
+            })
+        );        
+      }
+      return batch;
+    }
+
+    function setupWeatherMarkers() {
+      mgr = new MarkerManager(map);
+      
+      google.maps.event.addListener(mgr, 'loaded', function(){
+          mgr.addMarkers(getWeatherMarkers(20), 3);
+          mgr.addMarkers(getWeatherMarkers(200), 6);
+          mgr.addMarkers(getWeatherMarkers(1000), 8);
+          
+          mgr.refresh();          
+      });      
+    }
+    //]]>
+    </script>
+
+  </head>
+
+  <body onload="setupMap()">
+    <div id="map" style="margin: 5px auto; width: 500px; height: 400px"></div>
+    <div style="text-align: center; font-size: large;">
+      Random Weather Map
+    </div>
+  </body>
 </html>
+
