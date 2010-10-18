@@ -1,7 +1,6 @@
 package com.seismap.model.entity;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -69,8 +68,8 @@ public class Event {
 		return date;
 	}
 
-	public List<Magnitude> getMagnitudes() {
-		return Collections.unmodifiableList(magnitudes);
+	public Magnitude[] getMagnitudes() {
+		return magnitudes.toArray(new Magnitude[magnitudes.size()]);
 	}
 
 }

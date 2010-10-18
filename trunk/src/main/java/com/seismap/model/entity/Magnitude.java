@@ -19,7 +19,7 @@ public class Magnitude {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private MagnitudeType magnitudeType;
+	private MagnitudeType type;
 
 	@Column(nullable = false)
 	private float value;
@@ -28,10 +28,10 @@ public class Magnitude {
 	@JoinColumn(nullable = false)
 	private Agency reportingAgency;
 
-	public Magnitude(Agency reportingAgency, MagnitudeType magnitudeType,
+	public Magnitude(Agency reportingAgency, MagnitudeType type,
 			float value) {
 		this.reportingAgency = reportingAgency;
-		this.magnitudeType = magnitudeType;
+		this.type = type;
 		this.value = value;
 	}
 
@@ -39,32 +39,16 @@ public class Magnitude {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public MagnitudeType getMagnitudeType() {
-		return magnitudeType;
-	}
-
-	public void setMagnitudeType(MagnitudeType magnitudeType) {
-		this.magnitudeType = magnitudeType;
+	public MagnitudeType getType() {
+		return type;
 	}
 
 	public float getValue() {
 		return value;
 	}
 
-	public void setValue(float value) {
-		this.value = value;
-	}
-
 	public Agency getReportingAgency() {
 		return reportingAgency;
-	}
-
-	public void setReportingAgency(Agency reportingAgency) {
-		this.reportingAgency = reportingAgency;
 	}
 
 }
