@@ -4,15 +4,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-    <title>SeisMap Server</title>
-    
-    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-    <script type="text/javascript">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>SeisMap Server</title>
+
+<script type="text/javascript"
+	src="/js/mootools/mootools-core-1.3-full-nocompat.js"></script>
+<script type="text/javascript"
+	src="http://maps.google.com/maps/api/js?sensor=true"></script>
+<script type="text/javascript">
       document.write('<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markermanager/1.0/src/markermanager' + (document.location.search.indexOf('packed') > -1 ? '_packed' : '') + '.js"><' + '/script>');
     </script>
-    <script type="text/javascript">
+<script type="text/javascript">
     //<![CDATA[
 
     var IMAGES = [ 'sun', 'rain', 'snow', 'storm' ];
@@ -99,16 +102,34 @@
           mgr.refresh();          
       });      
     }
+
+    function getEvents() {alert('x');
+//ESTA BOSTA NO ANDA MILO, MAMALA VOS
+    var filter =
+           {
+                dateRange: {minimum: null, maximum: null},
+                latitudeRange: {minimum: null, maximum: null}, 
+                longitudeRange: {minimum: null, maximum: null},
+                depthRange: {minimum: null, maximum: null},
+                magnitudeRanges: {
+                    MB:{minimum: null, maximum: null},
+                }
+           };
+        alert(JSON.encode(filter));
+    	var jsonRequest = new Request.JSON({url: '/view/rest/event/get', onSuccess: function(response){
+    		   alert(response.events.length);
+    	    }}).post(JSON.encode(filter));
+    }
     //]]>
     </script>
 
-  </head>
+</head>
 
-  <body onload="setupMap()">
-    <div id="map" style="margin: 5px auto; width: 500px; height: 400px"></div>
-    <div style="text-align: center; font-size: large;">
-      Random Weather Map
-    </div>
-  </body>
+<body onload="setupMap()">
+<div id="map" style="margin: 5px auto; width: 500px; height: 400px"></div>
+<div style="text-align: center; font-size: large;">Random Weather
+Map</div>
+<button onclick="getEvents()">getEvents</button>
+</body>
 </html>
 
