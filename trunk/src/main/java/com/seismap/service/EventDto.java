@@ -2,29 +2,27 @@ package com.seismap.service;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-@XmlRootElement
+
 public class EventDto {
 
-	@XmlAttribute(required = true)
+	@JsonProperty
 	private long id;
 
-	@XmlAttribute(required = true)
+	@JsonProperty
 	private float latitude;
 
-	@XmlAttribute(required = true)
+	@JsonProperty
 	private float longitude;
 
-	@XmlAttribute(required = true)
+	@JsonProperty
 	private float depth;
 
-	@XmlAttribute(required = true)
+	@JsonProperty
 	private Date date;
 
-	@XmlElement(required = true)
+	@JsonProperty
 	private MagnitudeDto[] magnitudes;
 
 	public EventDto(long id, float latitude, float longitude, float depth,

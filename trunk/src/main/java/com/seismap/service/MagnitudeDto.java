@@ -1,24 +1,21 @@
 package com.seismap.service;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.seismap.model.entity.MagnitudeType;
 
-@XmlRootElement
 public class MagnitudeDto {
 
-	@XmlAttribute(required = true)
+	@JsonProperty
 	private long id;
 
-	@XmlAttribute(required = true)
+	@JsonProperty
 	private MagnitudeType type;
 
-	@XmlAttribute(required = true)
+	@JsonProperty
 	private float value;
 
-	@XmlElement
+	@JsonProperty
 	private AgencyDto reportingAgency;
 
 	public MagnitudeDto(long id, MagnitudeType type, float value,

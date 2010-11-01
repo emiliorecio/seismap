@@ -1,15 +1,13 @@
 package com.seismap.service;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-@XmlRootElement(name = "agency")
 public class AgencyDto {
 
-	@XmlAttribute(required = true)
+	@JsonProperty
 	private long id;
 
-	@XmlAttribute(required = true)
+	@JsonProperty
 	private String code;
 
 	public AgencyDto(long id, String code) {
