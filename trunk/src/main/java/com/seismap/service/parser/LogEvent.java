@@ -13,6 +13,9 @@ public class LogEvent {
 		this.entries = entries;
 	}
 
+	public Map<String, List<AbstractEntry>> getLogEvent(){
+		return this.entries;
+	}
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this);
