@@ -1,12 +1,10 @@
 package com.seismap.service;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-@XmlRootElement
 public class EventsGetResponseDto {
 
-	@XmlElement(required = true)
+	@JsonProperty
 	private EventDto[] events;
 
 	public EventsGetResponseDto(EventDto[] events) {

@@ -1,18 +1,16 @@
 package com.seismap.service;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-@XmlRootElement
 public class RangeDto<T> {
 
-	@XmlAttribute(required = false)
+	@JsonProperty
 	private T minimum;
 
-	@XmlAttribute(required = false)
+	@JsonProperty
 	private T maximum;
 
-	protected RangeDto() {
+	public RangeDto() {
 
 	}
 

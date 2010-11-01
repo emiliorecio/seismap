@@ -3,30 +3,28 @@ package com.seismap.service;
 import java.util.Date;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.seismap.model.entity.MagnitudeType;
 
-@XmlRootElement
 public class EventsGetRequestDto {
 
-	@XmlElement(required = true)
+	@JsonProperty
 	private RangeDto<Date> dateRange;
 
-	@XmlElement(required = true)
+	@JsonProperty
 	private RangeDto<Float> latitudeRange;
 
-	@XmlElement(required = true)
+	@JsonProperty
 	private RangeDto<Float> longitudeRange;
 
-	@XmlElement(required = true)
+	@JsonProperty
 	private RangeDto<Float> depthRange;
 
-	@XmlElement(required = true)
+	@JsonProperty
 	private Map<MagnitudeType, RangeDto<Float>> magnitudeRanges;
 
-	protected EventsGetRequestDto() {
+	public EventsGetRequestDto() {
 
 	}
 
