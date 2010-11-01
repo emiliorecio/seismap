@@ -104,7 +104,7 @@
     }
 
     function getEvents() {alert('x');
-//ESTA BOSTA NO ANDA MILO, MAMALA VOS
+
     var filter =
            {
                 dateRange: {minimum: null, maximum: null},
@@ -115,10 +115,13 @@
                     MB:{minimum: null, maximum: null},
                 }
            };
-        alert(JSON.encode(filter));
-    	var jsonRequest = new Request.JSON({url: '/view/rest/event/get', onSuccess: function(response){
+    var filter='{"dateRange":{"minimum":null,"maximum":null},"latitudeRange":{"minimum":null,"maximum":null},"longitudeRange":{"minimum":null,"maximum":null},"depthRange":{"minimum":null,"maximum":null},"magnitudeRanges":{"MB":{"minimum":null,"maximum":null}}}';
+    	var jsonRequest = new Request.JSON({
+    		 headers: { 'Content-Type': 'application/json' }, urlEncoded: false,
+        	url: '/view/rest/event/get', onSuccess: function(response){
+        	
     		   alert(response.events.length);
-    	    }}).post(JSON.encode(filter));
+    	    }}).post(filter);
     }
     //]]>
     </script>
