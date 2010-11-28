@@ -6,9 +6,9 @@ import org.apache.commons.httpclient.methods.GetMethod;
 public abstract class WebApplicationBaseIT {
 
 	private static final String PORT_STRING = System.getenv("SEISMAP_PORT");
-	private static final int PORT = (PORT_STRING == null ? 7000 : Integer
+	private static final Integer PORT = (PORT_STRING == null ? 7000 : Integer
 			.parseInt(PORT_STRING));
-	private static final String CONTEXT = "seismap";
+	private static final String CONTEXT = null;
 
 	public static class Response {
 
@@ -31,7 +31,10 @@ public abstract class WebApplicationBaseIT {
 	}
 
 	protected String getBaseUrl() {
-		return "http://localhost:" + getPort() + "/" + getContext() + "/";
+		Integer port = getPort();
+		String context = getContext();
+		return "http://localhost" + (port == null ? "" : ":" + port)
+				+ (context == null ? "" : "/" + context) + "/";
 	}
 
 	protected String getAbsoluteUri(String uri) {
