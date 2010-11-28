@@ -1,4 +1,0 @@
-#summary One-sentence summary of this page.
-
-= Zoom Level Google Maps =
-http://code.google.com/apis/maps/documentation/staticmaps/#Zoomlevels
