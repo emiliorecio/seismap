@@ -24,7 +24,11 @@
     }
 
 	var zoomLevels = {
-		ML:
+		ML: {
+			minimum:1, 
+			maximum:12,
+			cut:5
+		}
 	};
     
     var IMAGES = [ 'sun', 'rain', 'snow', 'storm' ];
@@ -105,6 +109,7 @@
         var bounds = map.getBounds();
     	var filter =
            {
+    	        
                 dateRange: {minimum: null, maximum: null},
                 latitudeRange: {minimum: bounds.getSouthWest().lat(), maximum: bounds.getNorthEast().lat()}, 
                 longitudeRange: {minimum: bounds.getSouthWest().lng(), maximum: bounds.getNorthEast().lng()},
