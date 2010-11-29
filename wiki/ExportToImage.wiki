@@ -1,3 +1,4 @@
+#summary Create images from google maps
 = Export Google Maps to image=
 
-[http://code.google.com/apis/maps/documentation/staticmaps/ Export Image - API GOOGLE V2]
+[http://code.google.com/apis/maps/documentation/staticmaps/ Export Image - Google Maps API V2]
