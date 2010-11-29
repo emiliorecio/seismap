@@ -1,4 +1,4 @@
-= Zoom Base Scale Filter=
+= Zoom Based Scale Filter=
 
 Zmin=0  (Zoom minimo de cercania definido por la API de Google)
 Zcut=valor del zoom a partir del cual un zoom menor provee exactamente los mismos resultados
