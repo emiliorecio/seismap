@@ -30,6 +30,12 @@
 			cut:5
 		}
 	};
+	
+	var zoomLevelGoogle = {
+			Zmax:21,
+			Zmin:0,
+			Zcut:10
+	};
     
     var IMAGES = [ 'sun', 'rain', 'snow', 'storm' ];
     var ICONS = [];
@@ -40,7 +46,8 @@
     function setupMap() {
       var myOptions = {
         zoom: 4,
-        center: new google.maps.LatLng(48.25, 11.00),
+        //center: new google.maps.LatLng(48.25, 11.00),
+        center: new google.maps.LatLng(-36.5, -64.5),
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       map = new google.maps.Map(document.getElementById('map'), myOptions);
@@ -121,7 +128,7 @@
         log('Retrieving ' + JSON.encode(filter));
         function addMarkers(events) {
 			var markers = [];
-			for (var i=0; i<events.length; i++) {
+			for (var i=0; i<events.length && i<10; i++) {
 				var event = events[i];
 				if(loadedEventsIds[event.id] == undefined) {
 					loadedEventsIds[event.id] = true;
@@ -150,6 +157,12 @@
                
     	    }}).post(JSON.encode(filter));
     }
+    
+    function getCenter(){
+    	if (map != null){
+    		alert(map.getCenter());
+    	}
+    }
 
     var timerId = null;
     function setupWeatherMarkers() {
@@ -165,6 +178,13 @@
             	timerId = setTimeout(timer, 2000);
         	});      
       }
+    function clearText(){
+    	var textArea = document.getElementById("log");
+    	textArea.value="";
+    }
+    function getZoom(){
+    	alert(map.getZoom());
+    }
     //]]>
     </script>
 
@@ -175,6 +195,9 @@
 <div style="text-align: center; font-size: large;">Random Weather
 Map</div>
 <button onclick="getEvents()">getEvents</button>
+<button onclick="getCenter()">getCenter</button>
+<button onclick="clearText()">clearText</button>
+<button onclick="getZoom()">getZoom</button>
 <br/>
 <textarea id="log" rows="15" cols="200"></textarea>
 </body>
