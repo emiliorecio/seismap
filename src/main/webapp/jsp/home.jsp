@@ -194,12 +194,16 @@
 <div id="map" style="margin: 5px auto; width: 500px; height: 400px"></div>
 <div style="text-align: center; font-size: large;">Random Weather
 Map</div>
+<div>
 <button onclick="getEvents()">getEvents</button>
 <button onclick="getCenter()">getCenter</button>
 <button onclick="clearText()">clearText</button>
 <button onclick="getZoom()">getZoom</button>
 <br/>
+</div>
+<div>
 <textarea id="log" rows="15" cols="200"></textarea>
+</div>
 </body>
 </html>
 
