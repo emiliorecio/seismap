@@ -1,3 +1,3 @@
 = Export Google Maps to image=
 
-[http://code.google.com/apis/maps/documentation/staticmaps/ |API GOOGLE V2 - Export Image]
+[http://code.google.com/apis/maps/documentation/staticmaps/ API GOOGLE V2 - Export Image]
