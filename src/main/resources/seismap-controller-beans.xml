@@ -22,7 +22,9 @@
 		<constructor-arg ref="service_eventService" />
 	</bean>
 
-    <bean id="controller_adminConsoleController" class="com.seismap.controller.AdminConsoleController" />
+    <bean id="controller_adminConsoleController" class="com.seismap.controller.AdminConsoleController">
+    	<constructor-arg ref="service_dataLoadService"/>
+    </bean>
 
 	<bean id="controller_viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">

@@ -3,7 +3,6 @@ package com.seismap.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.seismap.service.EventService;
@@ -22,8 +21,7 @@ public class EventRestController {
 
 	@RequestMapping(value = "/get")
 	@ResponseBody
-	public EventsGetResponseDto get(
-			@RequestBody EventsGetRequestDto request) {
+	public EventsGetResponseDto get(@RequestBody EventsGetRequestDto request) {
 		return eventService.get(request);
 	}
 }

@@ -19,6 +19,9 @@ public class Agency {
 	@Column(nullable = false)
 	private String code;
 
+	protected Agency() {
+	}
+
 	public Agency(String code) {
 		this.code = code;
 	}

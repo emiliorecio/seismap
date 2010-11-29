@@ -18,6 +18,15 @@
 <script type="text/javascript">
     //<![CDATA[
 
+    function log(text) {
+        var log=document.getElementById('log');
+        log.value =text+'\n'+log.value;
+    }
+
+	var zoomLevels = {
+		ML:
+	};
+    
     var IMAGES = [ 'sun', 'rain', 'snow', 'storm' ];
     var ICONS = [];
     var map = null;
@@ -74,7 +83,7 @@
       return new google.maps.LatLng(Math.round(lat * 10) / 10, Math.round(lng * 10) / 10);
     }
 
-    function getWeatherMarkers(n) {
+	function getWeatherMarkers(n) {
       var batch = [];
       for (var i = 0; i < n; ++i) {
         var tmpIcon = getWeatherIcon();  
@@ -91,38 +100,66 @@
       return batch;
     }
 
-    function setupWeatherMarkers() {
-      mgr = new MarkerManager(map);
-      
-      google.maps.event.addListener(mgr, 'loaded', function(){
-          mgr.addMarkers(getWeatherMarkers(20), 3);
-          mgr.addMarkers(getWeatherMarkers(200), 6);
-          mgr.addMarkers(getWeatherMarkers(1000), 8);
-          
-          mgr.refresh();          
-      });      
-    }
-
-    function getEvents() {alert('x');
-
-    var filter =
+	var loadedEventsIds = {};
+    function loadEvents() {
+        var bounds = map.getBounds();
+    	var filter =
            {
                 dateRange: {minimum: null, maximum: null},
-                latitudeRange: {minimum: null, maximum: null}, 
-                longitudeRange: {minimum: null, maximum: null},
+                latitudeRange: {minimum: bounds.getSouthWest().lat(), maximum: bounds.getNorthEast().lat()}, 
+                longitudeRange: {minimum: bounds.getSouthWest().lng(), maximum: bounds.getNorthEast().lng()},
                 depthRange: {minimum: null, maximum: null},
                 magnitudeRanges: {
-                    MB:{minimum: null, maximum: null},
+                    ML:{minimum: null, maximum: null},
                 }
            };
-    var filter='{"dateRange":{"minimum":null,"maximum":null},"latitudeRange":{"minimum":null,"maximum":null},"longitudeRange":{"minimum":null,"maximum":null},"depthRange":{"minimum":null,"maximum":null},"magnitudeRanges":{"MB":{"minimum":null,"maximum":null}}}';
+        log('Retrieving ' + JSON.encode(filter));
+        function addMarkers(events) {
+			var markers = [];
+			for (var i=0; i<events.length; i++) {
+				var event = events[i];
+				if(loadedEventsIds[event.id] == undefined) {
+					loadedEventsIds[event.id] = true;
+					markers.push(new google.maps.Marker({
+				            position: new google.maps.LatLng(event.latitude, event.longitude),
+				            //shadow: tmpIcon.shadow,
+				            //icon: tmpIcon.icon,
+				            //shape: tmpIcon.shape,
+				            title: 'Event' + event.id
+				            })
+				        );  
+				}
+			}
+			log("Markers added " + markers.length);
+			if (markers.length > 0) {
+            	mgr.addMarkers(markers, 1);
+            	mgr.refresh();
+			}
+        }
     	var jsonRequest = new Request.JSON({
     		 headers: { 'Content-Type': 'application/json' }, urlEncoded: false,
         	url: '/view/rest/event/get', onSuccess: function(response){
         	
-    		   alert(response.events.length);
-    	    }}).post(filter);
+    		   log("Obtained " + response.events.length);
+    		   addMarkers(response.events);
+               
+    	    }}).post(JSON.encode(filter));
     }
+
+    var timerId = null;
+    function setupWeatherMarkers() {
+        mgr = new MarkerManager(map);
+        google.maps.event.addListener(map, 'bounds_changed', function() {
+            	if (timerId != null) {
+                	clearTimeout(timerId);
+            	}
+            	function timer() {
+            		timerId=null;
+            		loadEvents();
+            	}
+            	timerId = setTimeout(timer, 2000);
+        	});      
+      }
     //]]>
     </script>
 
@@ -133,6 +170,8 @@
 <div style="text-align: center; font-size: large;">Random Weather
 Map</div>
 <button onclick="getEvents()">getEvents</button>
+<br/>
+<textarea id="log" rows="15" cols="200"></textarea>
 </body>
 </html>
 

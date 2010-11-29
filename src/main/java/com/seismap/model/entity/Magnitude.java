@@ -28,8 +28,11 @@ public class Magnitude {
 	@JoinColumn(nullable = false)
 	private Agency reportingAgency;
 
-	public Magnitude(Agency reportingAgency, MagnitudeType type,
-			float value) {
+	protected Magnitude() {
+
+	}
+
+	public Magnitude(Agency reportingAgency, MagnitudeType type, float value) {
 		this.reportingAgency = reportingAgency;
 		this.type = type;
 		this.value = value;
