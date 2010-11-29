@@ -18,4 +18,9 @@
 		<constructor-arg ref="model_eventRepositoty" />
 	</bean>
 
+	<bean id="service_dataLoadService" class="com.seismap.service.impl.DataLoadServiceImpl">
+		<constructor-arg ref="model_eventRepositoty" />
+		<constructor-arg ref="model_agencyRepositoty" />
+	</bean>
+
 </beans>

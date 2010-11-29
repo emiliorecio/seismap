@@ -64,4 +64,8 @@
     <bean id="model_eventRepositoty" class="com.seismap.model.repository.impl.EventRepositoryImpl">
         <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
     </bean>
+
+    <bean id="model_agencyRepositoty" class="com.seismap.model.repository.impl.AgencyRepositoryImpl">
+        <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
+    </bean>
 </beans>

@@ -2,20 +2,30 @@ package com.seismap.controller;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.seismap.service.DataLoadService;
+import com.seismap.service.parser.DataProviderException;
+import com.seismap.service.parser.InvalidDataException;
+
 @Controller
 @RequestMapping("admin")
-public class AdminConsoleController {
+public class AdminConsoleController implements InitializingBean {
 
-	// TODO: desharcodear
-	private File dataFilesDirectory = new File(
-			"C:\\workspaces\\seismap\\trunk\\src\\test\\resources\\datafiles");
+	private DataLoadService dataLoadService;
+
+	public AdminConsoleController(DataLoadService dataLoadService) {
+		this.dataLoadService = dataLoadService;
+	}
+
+	private File dataFilesDirectory = null;
 
 	public File getDataFilesDirectory() {
 		return dataFilesDirectory;
@@ -44,7 +54,8 @@ public class AdminConsoleController {
 
 	@RequestMapping("load-data-file")
 	@ResponseBody
-	public boolean loadDataFile(final @RequestParam String file, ModelMap model) {
+	public boolean loadDataFile(final @RequestParam String file, ModelMap model)
+			throws InvalidDataException, DataProviderException, IOException {
 		File[] files = dataFilesDirectory.listFiles(new FilenameFilter() {
 
 			public boolean accept(File dir, String name) {
@@ -54,7 +65,19 @@ public class AdminConsoleController {
 		if (files.length == 0) {
 			throw new IllegalArgumentException("No such file: " + file);
 		}
-		// TODO: llamar al servicio aca
+		dataLoadService.load(files[0].getAbsolutePath());
 		return true;
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		if (dataFilesDirectory == null) {
+			throw new IllegalStateException("dataFilesDirectoy is null");
+		}
+		if (!dataFilesDirectory.exists()) {
+			throw new IllegalStateException(
+					"dataFilesDirectoy does not exist: "
+							+ dataFilesDirectory.getAbsolutePath());
+		}
+
 	}
 }

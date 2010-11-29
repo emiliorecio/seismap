@@ -8,6 +8,6 @@ import com.seismap.service.parser.InvalidDataException;
 
 public interface DataLoadService {
 	
-	void dataLoadService(String file) throws InvalidDataException, DataProviderException, IOException;
+	void load(String file) throws InvalidDataException, DataProviderException, IOException;
 
 }
