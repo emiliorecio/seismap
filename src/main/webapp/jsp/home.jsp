@@ -47,7 +47,8 @@
       var myOptions = {
         zoom: 4,
         //center: new google.maps.LatLng(48.25, 11.00),
-        center: new google.maps.LatLng(-36.5, -64.5),
+        //center: new google.maps.LatLng(-36.5, -64.5), ARGENTINA
+        center: new google.maps.LatLng(-10, 24),
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       map = new google.maps.Map(document.getElementById('map'), myOptions);
@@ -158,11 +159,6 @@
     	    }}).post(JSON.encode(filter));
     }
     
-    function getCenter(){
-    	if (map != null){
-    		alert(map.getCenter());
-    	}
-    }
 
     var timerId = null;
     function setupWeatherMarkers() {
@@ -185,6 +181,19 @@
     function getZoom(){
     	alert(map.getZoom());
     }
+    function getCenter(){
+    	if (map != null){
+    		alert(map.getCenter() + " CENTRO");
+    	}
+    	
+    	var latLng = {lat: map.getCenter().lat(), lng: map.getCenter().lng()};
+    	latLng.lng = latLng.lng%360;
+		alert(latLng.lat + " " + latLng.lng);
+    	alert(map.getCenter() + " CENTRO");
+    }
+    function getModule(){
+    	
+    }
     //]]>
     </script>
 
@@ -199,6 +208,7 @@ Map</div>
 <button onclick="getCenter()">getCenter</button>
 <button onclick="clearText()">clearText</button>
 <button onclick="getZoom()">getZoom</button>
+<button onclick="getModule()">Modulo</button>
 <br/>
 </div>
 <div>
