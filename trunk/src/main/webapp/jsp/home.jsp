@@ -23,18 +23,28 @@
         log.value =text+'\n'+log.value;
     }
 
-	var zoomLevels = {
-		ML: {
-			minimum:1, 
-			maximum:12,
-			cut:5
-		}
+	var scaleLimits = {
+	    ML: {
+	        minimum:1, 
+	        maximum:7,
+	        cut:6.5
+	    },
+        MC: {
+            minimum:1, 
+            maximum:12,
+            cut:10
+        },
+        MW: {
+            minimum:1, 
+            maximum:7,
+            cut:6.5
+        }
 	};
 	
-	var zoomLevelGoogle = {
-			Zmax:21,
-			Zmin:0,
-			Zcut:10
+	var googleZoomLevel = {
+			minimum:0,
+            maximum:20,
+			cut:3
 	};
     
     var IMAGES = [ 'sun', 'rain', 'snow', 'storm' ];
@@ -112,6 +122,43 @@
       return batch;
     }
 
+    function getScaleVisibleMinimum(scale) {
+        var effectiveZoom = map.getZoom();
+        if (effectiveZoom < googleZoomLevel.cut) {
+        	effectiveZoom = googleZoomLevel.cut;
+        }
+        var normalizedZoom = (googleZoomLevel.maximum - effectiveZoom) / (googleZoomLevel.maximum - googleZoomLevel.cut);
+        var smin= (scaleLimits[scale].cut - scaleLimits[scale].minimum) * normalizedZoom + scaleLimits[scale].minimum;
+        log('z=' + map.getZoom() + ' effectiveZoom=' + effectiveZoom + ' normalizedZoom=' + normalizedZoom + ' smin=' + smin);
+        return smin;
+    }
+
+    function getScaleVisibleMaximum(scale) {
+        return null;
+    }
+
+    function getMagnitudeVisibleZoom(scale, magnitude) {
+        if (scaleLimits[scale] == undefined) {
+            log ('define limits for ' + scale);
+        }
+        var visibleZoom = googleZoomLevel.maximum - (googleZoomLevel.maximum - googleZoomLevel.cut) * (magnitude - scaleLimits[scale].minimum) / (scaleLimits[scale].cut - scaleLimits[scale].minimum);
+        if (visibleZoom <= googleZoomLevel.cut) {
+            visibleZoom = googleZoomLevel.minimum;
+        }
+        return visibleZoom;
+    }
+
+    function getEventVisibleZoom(event) {
+        var minimumVisibleZoom = googleZoomLevel.maximum;
+        for (var i = 0; i < event.magnitudes.length; i++) {
+            var magnitude = event.magnitudes[i];
+            var magnitudeVisibleZoom = getMagnitudeVisibleZoom(magnitude.type, magnitude.value);
+        	minimumVisibleZoom = Math.min(magnitudeVisibleZoom, minimumVisibleZoom);
+        }
+        //log(' visibleZoom=' + minimumVisibleZoom + ' ' + JSON.encode(event.magnitudes));
+        return Math.round(minimumVisibleZoom);
+    }
+	
 	var loadedEventsIds = {};
     function loadEvents() {
         var bounds = map.getBounds();
@@ -123,16 +170,21 @@
                 longitudeRange: {minimum: bounds.getSouthWest().lng(), maximum: bounds.getNorthEast().lng()},
                 depthRange: {minimum: null, maximum: null},
                 magnitudeRanges: {
-                    ML:{minimum: null, maximum: null},
+                    ML:{minimum: getScaleVisibleMinimum('ML'), maximum: getScaleVisibleMaximum('ML')},
                 }
            };
         log('Retrieving ' + JSON.encode(filter));
         function addMarkers(events) {
-			var markers = [];
-			for (var i=0; i<events.length && i<10; i++) {
+			var markersByZoom = {};
+			for (var i=0; i<events.length; i++) {
 				var event = events[i];
 				if(loadedEventsIds[event.id] == undefined) {
 					loadedEventsIds[event.id] = true;
+					var zoom = getEventVisibleZoom(event);
+					if(markersByZoom[zoom] == undefined) {
+						markersByZoom[zoom] = [];
+					}
+					var markers = markersByZoom[zoom];
 					markers.push(new google.maps.Marker({
 				            position: new google.maps.LatLng(event.latitude, event.longitude),
 				            //shadow: tmpIcon.shadow,
@@ -143,10 +195,13 @@
 				        );  
 				}
 			}
-			log("Markers added " + markers.length);
-			if (markers.length > 0) {
-            	mgr.addMarkers(markers, 1);
-            	mgr.refresh();
+			for (var zoom in markersByZoom) {
+			    var markers = markersByZoom[zoom];
+				log("Markers added at zoom " + zoom + ":" + markers.length);
+				if (markers.length > 0) {
+	            	mgr.addMarkers(markers, zoom);
+	            	mgr.refresh();
+				}
 			}
         }
     	var jsonRequest = new Request.JSON({
