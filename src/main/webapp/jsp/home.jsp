@@ -238,15 +238,19 @@
     }
     function getCenter(){
     	if (map != null){
-    		alert(map.getCenter() + " CENTRO");
-    	}
-    	
-    	var latLng = {lat: map.getCenter().lat(), lng: map.getCenter().lng()};
-    	latLng.lng = latLng.lng%360;
-		alert(latLng.lat + " " + latLng.lng);
-    	alert(map.getCenter() + " CENTRO");
+    		alert("CENTRO: " + map.getCenter());
+    	}    	
     }
     function getModule(){
+    	var latLng = {lat: map.getCenter().lat(), lng: map.getCenter().lng()};
+    	latLng.lng = latLng.lng%360;
+    	if ((latLng.lng >= 0) && (latLng.lng >= 180)){
+        	latLng.lng = (latLng.lng-360);  
+         }
+        else if ((latLng.lng < 0) && (latLng.lng <= -180)){
+        	latLng.lng = (latLng.lng+360);
+        }
+		alert(latLng.lat + " " + latLng.lng);        
     	
     }
     //]]>
@@ -256,8 +260,7 @@
 
 <body onload="setupMap()">
 <div id="map" style="margin: 5px auto; width: 500px; height: 400px"></div>
-<div style="text-align: center; font-size: large;">Random Weather
-Map</div>
+<div style="text-align: center; font-size: large;">Random Weather Map</div>
 <div>
 <button onclick="getEvents()">getEvents</button>
 <button onclick="getCenter()">getCenter</button>
