@@ -28,7 +28,7 @@ Scut=valor a partir del cual cualquier sismo es visible siempre
 Smin= Minimo de la escala sismica (ej: Mercalli = 1)
 
 
-S = (Scut - Smin)*Zn + Smin (S = valor de escala minima que requieren los sismos para ser mostrados con el nivel de zoom actual)
+S = (Scut - Smin)`*` Zn + Smin (S = valor de escala minima que requieren los sismos para ser mostrados con el nivel de zoom actual)
 
 
 Smin<=S<=Smax
