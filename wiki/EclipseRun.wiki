@@ -1,4 +1,4 @@
-#Configuration to run Jetty in Eclipse
+#summary Configuration to run Jetty in Eclipse
 
 = Eclipse configuration =
 
@@ -17,7 +17,5 @@ Remote Java App
 Project: seismap
 Host: localhost
 Port: 4000
-
-
 
 
