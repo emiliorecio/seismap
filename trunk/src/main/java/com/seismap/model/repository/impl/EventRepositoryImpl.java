@@ -37,19 +37,35 @@ public class EventRepositoryImpl extends HibernateDaoSupport implements
 		}
 		// latitude filter
 		if (latitudeRange.getMinimum() != null) {
-			criteria.add(Restrictions.ge("latitude", latitudeRange.getMinimum()));
+			criteria.add(Restrictions
+					.ge("latitude", latitudeRange.getMinimum()));
 		}
 		if (latitudeRange.getMaximum() != null) {
-			criteria.add(Restrictions.le("latitude", latitudeRange.getMaximum()));
+			criteria.add(Restrictions
+					.le("latitude", latitudeRange.getMaximum()));
 		}
 		// longitude filter
-		if (longitudeRange.getMinimum() != null) {
-			criteria.add(Restrictions.ge("longitude",
-					longitudeRange.getMinimum()));
-		}
-		if (longitudeRange.getMaximum() != null) {
-			criteria.add(Restrictions.le("longitude",
-					longitudeRange.getMaximum()));
+
+		if (longitudeRange.getMinimum() != null
+				&& longitudeRange.getMaximum() != null) {
+			if (longitudeRange.getMinimum() <= longitudeRange.getMaximum()) {
+				criteria.add(Restrictions.ge("longitude", longitudeRange
+						.getMinimum()));
+				criteria.add(Restrictions.le("longitude", longitudeRange
+						.getMaximum()));
+			} else {
+				criteria.add(Restrictions.or(Restrictions.ge("longitude",
+						longitudeRange.getMinimum()), Restrictions.le(
+						"longitude", longitudeRange.getMaximum())));
+			}
+		} else if (longitudeRange.getMinimum() != null
+				&& longitudeRange.getMaximum() == null) {
+			criteria.add(Restrictions.ge("longitude", longitudeRange
+					.getMinimum()));
+		} else if (longitudeRange.getMinimum() == null
+				&& longitudeRange.getMaximum() != null) {
+			criteria.add(Restrictions.le("longitude", longitudeRange
+					.getMaximum()));
 		}
 		// depth filter
 		if (depthRange.getMinimum() != null) {
@@ -72,12 +88,12 @@ public class EventRepositoryImpl extends HibernateDaoSupport implements
 			Range<Float> range = magnitudeRange.getValue();
 			Criterion criterion = Restrictions.eq("type", type);
 			if (range.getMinimum() != null) {
-				criterion = Restrictions.and(criterion,
-						Restrictions.ge("value", range.getMinimum()));
+				criterion = Restrictions.and(criterion, Restrictions.ge(
+						"value", range.getMinimum()));
 			}
 			if (range.getMaximum() != null) {
-				criterion = Restrictions.and(criterion,
-						Restrictions.le("value", range.getMaximum()));
+				criterion = Restrictions.and(criterion, Restrictions.le(
+						"value", range.getMaximum()));
 			}
 
 			if (magnitudeRangeCriteria == null) {
