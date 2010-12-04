@@ -43,8 +43,7 @@
 	
 	var googleZoomLevel = {
 			minimum:0,
-            maximum:20,
-			cut:3
+            maximum:20
 	};
     
     var IMAGES = [ 'sun', 'rain', 'snow', 'storm' ];
@@ -123,13 +122,9 @@
     }
 
     function getScaleVisibleMinimum(scale) {
-        var effectiveZoom = map.getZoom();
-        if (effectiveZoom < googleZoomLevel.cut) {
-        	effectiveZoom = googleZoomLevel.cut;
-        }
-        var normalizedZoom = (googleZoomLevel.maximum - effectiveZoom) / (googleZoomLevel.maximum - googleZoomLevel.cut);
+        var normalizedZoom = 1 -  map.getZoom() / googleZoomLevel.maximum;
         var smin= (scaleLimits[scale].cut - scaleLimits[scale].minimum) * normalizedZoom + scaleLimits[scale].minimum;
-        log('z=' + map.getZoom() + ' effectiveZoom=' + effectiveZoom + ' normalizedZoom=' + normalizedZoom + ' smin=' + smin);
+        log('z=' + map.getZoom() + ' normalizedZoom=' + normalizedZoom + ' smin=' + smin);
         return smin;
     }
 
@@ -141,10 +136,8 @@
         if (scaleLimits[scale] == undefined) {
             log ('define limits for ' + scale);
         }
-        var visibleZoom = googleZoomLevel.maximum - (googleZoomLevel.maximum - googleZoomLevel.cut) * (magnitude - scaleLimits[scale].minimum) / (scaleLimits[scale].cut - scaleLimits[scale].minimum);
-        if (visibleZoom <= googleZoomLevel.cut) {
-            visibleZoom = googleZoomLevel.minimum;
-        }
+        var effectiveMagnitude = magnitude > scaleLimits[scale].cut ? scaleLimits[scale].cut: magnitude;
+        var visibleZoom = (1 - ((effectiveMagnitude - scaleLimits[scale].minimum) / (scaleLimits[scale].cut - scaleLimits[scale].minimum))) * googleZoomLevel.maximum; 
         return visibleZoom;
     }
 
@@ -155,8 +148,8 @@
             var magnitudeVisibleZoom = getMagnitudeVisibleZoom(magnitude.type, magnitude.value);
         	minimumVisibleZoom = Math.min(magnitudeVisibleZoom, minimumVisibleZoom);
         }
-        //log(' visibleZoom=' + minimumVisibleZoom + ' ' + JSON.encode(event.magnitudes));
-        return Math.round(minimumVisibleZoom);
+        //log(' visibleZoom=' + minimumVisibleZoom + ' ' + JSON.encode(event/*.magnitudes*/));
+        return Math.ceil(minimumVisibleZoom);
     }
 	
 	var loadedEventsIds = {};
@@ -171,6 +164,8 @@
                 depthRange: {minimum: null, maximum: null},
                 magnitudeRanges: {
                     ML:{minimum: getScaleVisibleMinimum('ML'), maximum: getScaleVisibleMaximum('ML')},
+                    MC:{minimum: getScaleVisibleMinimum('MC'), maximum: getScaleVisibleMaximum('MC')},
+                    MW:{minimum: getScaleVisibleMinimum('MW'), maximum: getScaleVisibleMaximum('MW')},
                 }
            };
         log('Retrieving ' + JSON.encode(filter));
@@ -241,17 +236,14 @@
     		alert("CENTRO: " + map.getCenter());
     	}    	
     }
-    function getModule(){
-    	var latLng = {lat: map.getCenter().lat(), lng: map.getCenter().lng()};
-    	latLng.lng = latLng.lng%360;
-    	if ((latLng.lng >= 0) && (latLng.lng >= 180)){
-        	latLng.lng = (latLng.lng-360);  
-         }
-        else if ((latLng.lng < 0) && (latLng.lng <= -180)){
-        	latLng.lng = (latLng.lng+360);
+    function getLongitude(longitude){
+    	longitude = longitude % 360;
+    	if ((longitude >= 0) && (longitude >= 180)) {
+    		longitude = (longitude - 360);  
+        } else if ((longitude < 0) && (longitude <= - 180)) {
+        	longitude = (longitude + 360);
         }
-		alert(latLng.lat + " " + latLng.lng);        
-    	
+		return longitude;
     }
     //]]>
     </script>
