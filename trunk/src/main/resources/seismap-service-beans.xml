@@ -14,6 +14,8 @@
 		</property>
 	</bean>
 
+	<bean id="service_geometryFactory" class="com.vividsolutions.jts.geom.GeometryFactory" />
+
 	<bean id="service_eventService" class="com.seismap.service.impl.EventServiceImpl">
 		<constructor-arg ref="model_eventRepositoty" />
 	</bean>
@@ -21,6 +23,7 @@
 	<bean id="service_dataLoadService" class="com.seismap.service.impl.DataLoadServiceImpl">
 		<constructor-arg ref="model_eventRepositoty" />
 		<constructor-arg ref="model_agencyRepositoty" />
+		<constructor-arg ref="service_geometryFactory" />
 	</bean>
 
 </beans>

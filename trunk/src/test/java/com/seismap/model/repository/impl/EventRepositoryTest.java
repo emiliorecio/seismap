@@ -20,6 +20,9 @@ import com.seismap.model.entity.Magnitude;
 import com.seismap.model.entity.MagnitudeType;
 import com.seismap.model.repository.EventRepository;
 import com.seismap.model.repository.Range;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 public class EventRepositoryTest extends BaseIntegrationTest {
 
@@ -28,6 +31,9 @@ public class EventRepositoryTest extends BaseIntegrationTest {
 
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
+
+	@Autowired
+	private GeometryFactory geometryFactory;
 
 	private Event event1;
 
@@ -42,6 +48,10 @@ public class EventRepositoryTest extends BaseIntegrationTest {
 		return map;
 	}
 
+	private Point createLocation(double latitude, double longitude) {
+		return geometryFactory.createPoint(new Coordinate(latitude, longitude));
+	}
+
 	@Test
 	@Transactional
 	public void put() {
@@ -49,7 +59,8 @@ public class EventRepositoryTest extends BaseIntegrationTest {
 		hibernateTemplate.save(agency);
 		Magnitude magnitude = new Magnitude(agency, MagnitudeType.MB, 1.2f);
 		List<Magnitude> magnitudes = Collections.singletonList(magnitude);
-		Event event = new Event(1.2f, 3.4f, 5.6f, new Date(), magnitudes);
+		Event event = new Event(createLocation(1.2f, 3.4f), 5.6f, new Date(),
+				magnitudes);
 		repository.put(event);
 	}
 
@@ -71,15 +82,15 @@ public class EventRepositoryTest extends BaseIntegrationTest {
 		Magnitude magnitude2b = new Magnitude(agency1,
 				magnitudeType2b == null ? MagnitudeType.MB : magnitudeType2b,
 				magnitudeValue2b == null ? 1.0f : magnitudeValue2b);
-		event1 = new Event(latitude1 == null ? 1.0f : latitude1,
-				latitude1 == null ? 1.0f : latitude1, longitude1 == null ? 1.0f
-						: longitude1, date1 == null ? new Date() : date1,
-				Arrays.asList(new Magnitude[] { magnitude1 }));
+		event1 = new Event(createLocation(latitude1 == null ? 1.0f : latitude1,
+				longitude1 == null ? 1.0f : longitude1), depth1 == null ? 1.0f
+				: depth1, date1 == null ? new Date() : date1, Arrays
+				.asList(new Magnitude[] { magnitude1 }));
 		hibernateTemplate.save(event1);
-		event2 = new Event(latitude2 == null ? 1.0f : latitude2,
-				longitude2 == null ? 1.0f : longitude2, depth2 == null ? 1.0f
-						: depth2, date2 == null ? new Date() : date2, Arrays
-						.asList(new Magnitude[] { magnitude2a, magnitude2b }));
+		event2 = new Event(createLocation(latitude2 == null ? 1.0f : latitude2,
+				longitude2 == null ? 1.0f : longitude2), depth2 == null ? 1.0f
+				: depth2, date2 == null ? new Date() : date2, Arrays
+				.asList(new Magnitude[] { magnitude2a, magnitude2b }));
 		hibernateTemplate.save(event2);
 	}
 
