@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+  <activeProfiles>
+    <activeProfile>seismap-test</activeProfile>
+  </activeProfiles>
+  <profiles>
+    <profile>
+      <id>seismap-test</id>
+      <properties>
+        <seismap.db.host>localhost</seismap.db.host>
+        <seismap.db.port>5432</seismap.db.port>
+        <seismap.db.name>postgis</seismap.db.name>
+        <seismap.db.username>postgres</seismap.db.username>
+        <seismap.db.password>postgres</seismap.db.password>
+        <seismap.db.hbm2ddl>create-drop</seismap.db.hbm2ddl>
+        <seismap.db.verbose>false</seismap.db.verbose>
+      </properties>
+    </profile>
+  </profiles>
+</settings>
