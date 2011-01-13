@@ -24,23 +24,28 @@ import com.seismap.service.parser.DataProviderException;
 import com.seismap.service.parser.InvalidDataException;
 import com.seismap.service.parser.LogEvent;
 import com.seismap.service.parser.Parser;
+import com.seismap.service.parser.Type1Entry;
 import com.seismap.service.parser.Parser.LogEventConsumer;
 import com.seismap.service.parser.Parser.LogLineProvider;
-import com.seismap.service.parser.Type1Entry;
 import com.seismap.service.parser.enumeration.MagnitudeType;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 public class DataLoadServiceImpl implements DataLoadService {
 
 	private AgencyRepository agencyRepository;
 	private EventRepository eventRepository;
+	private GeometryFactory geometryFactory;
 
 	protected DataLoadServiceImpl() {
 	}
-	
+
 	public DataLoadServiceImpl(AgencyRepository agencyRepository,
-			EventRepository eventRepository) {
+			EventRepository eventRepository, GeometryFactory geometryFactory) {
 		this.agencyRepository = agencyRepository;
 		this.eventRepository = eventRepository;
+		this.geometryFactory = geometryFactory;
 	}
 
 	private class DatabaseLogEventConsumer implements LogEventConsumer {
@@ -58,9 +63,9 @@ public class DataLoadServiceImpl implements DataLoadService {
 				if (date == null) {
 					Calendar calendar = Calendar.getInstance();
 
-					calendar.set(entry.getYear(), entry.getMonth(),
-							entry.getDayOfMonth(), entry.getHour(),
-							entry.getMinutes(), (int) entry.getSeconds());
+					calendar.set(entry.getYear(), entry.getMonth(), entry
+							.getDayOfMonth(), entry.getHour(), entry
+							.getMinutes(), (int) entry.getSeconds());
 					date = calendar.getTime();
 					longitude = entry.getLongitude();
 					latitude = entry.getLatitude();
@@ -68,23 +73,24 @@ public class DataLoadServiceImpl implements DataLoadService {
 
 				}
 				if (entry.getMagnitude1Type() != MagnitudeType.BLANK) {
-					magnitudes.add(getMagnituede(entry.getMagnitude1(),
-							entry.getMagnitude1ReportingAgency(),
-							entry.getMagnitude1Type()));
+					magnitudes.add(getMagnituede(entry.getMagnitude1(), entry
+							.getMagnitude1ReportingAgency(), entry
+							.getMagnitude1Type()));
 				}
 				if (entry.getMagnitude2Type() != MagnitudeType.BLANK) {
-					magnitudes.add(getMagnituede(entry.getMagnitude2(),
-							entry.getMagnitude2ReportingAgency(),
-							entry.getMagnitude2Type()));
+					magnitudes.add(getMagnituede(entry.getMagnitude2(), entry
+							.getMagnitude2ReportingAgency(), entry
+							.getMagnitude2Type()));
 				}
 				if (entry.getMagnitude3Type() != MagnitudeType.BLANK) {
-					magnitudes.add(getMagnituede(entry.getMagnitude3(),
-							entry.getMagnitude3ReportingAgency(),
-							entry.getMagnitude3Type()));
+					magnitudes.add(getMagnituede(entry.getMagnitude3(), entry
+							.getMagnitude3ReportingAgency(), entry
+							.getMagnitude3Type()));
 				}
 			}
-			Event event = new Event(latitude, longitude, depth, date,
-					magnitudes);
+			Point location = geometryFactory.createPoint(new Coordinate(
+					latitude, longitude));
+			Event event = new Event(location, depth, date, magnitudes);
 			eventRepository.put(event);
 		}
 

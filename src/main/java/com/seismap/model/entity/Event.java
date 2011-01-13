@@ -12,6 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Type;
+
+import com.vividsolutions.jts.geom.Point;
+
 @Entity
 public class Event {
 
@@ -20,10 +24,8 @@ public class Event {
 	private Long id;
 
 	@Column(nullable = false)
-	private float latitude;
-
-	@Column(nullable = false)
-	private float longitude;
+	@Type(type = "org.hibernatespatial.GeometryUserType")
+	private Point location;
 
 	@Column(nullable = false)
 	private float depth;
@@ -39,10 +41,9 @@ public class Event {
 
 	}
 
-	public Event(float latitude, float longitude, float depth, Date date,
+	public Event(Point location, float depth, Date date,
 			List<Magnitude> magnitudes) {
-		this.latitude = latitude;
-		this.longitude = longitude;
+		this.location = location;
 		this.depth = depth;
 		this.date = date;
 		this.magnitudes = new ArrayList<Magnitude>(magnitudes);
@@ -52,12 +53,12 @@ public class Event {
 		return id;
 	}
 
-	public float getLatitude() {
-		return latitude;
+	public double getLatitude() {
+		return location.getX();
 	}
 
-	public float getLongitude() {
-		return longitude;
+	public double getLongitude() {
+		return location.getY();
 	}
 
 	public float getDepth() {

@@ -153,6 +153,7 @@
     }
 	
 	var loadedEventsIds = {};
+	var loadedEventsCount = 0;
     function loadEvents() {
         var bounds = map.getBounds();
     	var filter =
@@ -174,6 +175,7 @@
 			for (var i=0; i<events.length; i++) {
 				var event = events[i];
 				if(loadedEventsIds[event.id] == undefined) {
+					loadedEventsCount++;
 					loadedEventsIds[event.id] = true;
 					var zoom = getEventVisibleZoom(event);
 					if(markersByZoom[zoom] == undefined) {
@@ -258,7 +260,7 @@
 <button onclick="getCenter()">getCenter</button>
 <button onclick="clearText()">clearText</button>
 <button onclick="getZoom()">getZoom</button>
-<button onclick="getModule()">Modulo</button>
+<button onclick="alert(loadedEventsCount)">getLoadedCount</button>
 <br/>
 </div>
 <div>

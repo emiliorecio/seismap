@@ -4,17 +4,16 @@ import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-
 public class EventDto {
 
 	@JsonProperty
 	private long id;
 
 	@JsonProperty
-	private float latitude;
+	private double latitude;
 
 	@JsonProperty
-	private float longitude;
+	private double longitude;
 
 	@JsonProperty
 	private float depth;
@@ -25,7 +24,7 @@ public class EventDto {
 	@JsonProperty
 	private MagnitudeDto[] magnitudes;
 
-	public EventDto(long id, float latitude, float longitude, float depth,
+	public EventDto(long id, double latitude, double longitude, float depth,
 			Date date, MagnitudeDto[] magnitudes) {
 		this.id = id;
 		this.latitude = latitude;
@@ -39,11 +38,11 @@ public class EventDto {
 		return id;
 	}
 
-	public float getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 
-	public float getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 
