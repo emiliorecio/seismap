@@ -22,9 +22,11 @@
 		<constructor-arg ref="service_eventService" />
 	</bean>
 
-    <bean id="controller_adminConsoleController" class="com.seismap.controller.AdminConsoleController">
-    	<constructor-arg ref="service_dataLoadService"/>
-    </bean>
+	<bean id="controller_adminConsoleController" class="com.seismap.controller.AdminConsoleController">
+		<constructor-arg ref="service_dataLoadService" />
+	</bean>
+
+	<bean id="controller_mapImageController" class="com.seismap.controller.MapImageController" />
 
 	<bean id="controller_viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -34,17 +36,22 @@
 		<property name="suffix" value=".jsp" />
 	</bean>
 
-	<bean id="controller_marshallingHttpMessageConverter"
-		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
-	</bean>
-
 	<bean id="controller_annotationMethodHandlerAdapter"
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 		<property name="messageConverters">
 			<util:list id="beanList">
-				<ref bean="controller_marshallingHttpMessageConverter" />
+                <bean
+                    class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+                <bean
+                    class="org.springframework.http.converter.ResourceHttpMessageConverter" />
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter" />
+				<bean class="org.springframework.http.converter.FormHttpMessageConverter" />
+				<bean
+					class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+				<bean
+					class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
 			</util:list>
 		</property>
 	</bean>
-
 </beans>
