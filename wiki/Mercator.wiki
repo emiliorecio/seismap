@@ -1,0 +1,5 @@
+#Definitions, links and sources about coordinates, tile bounds and projection
+
+[http://en.wikipedia.org/wiki/Mercator_projection Mercator definition]
+[http://facstaff.unca.edu/mcmcclur/GoogleMaps/Projections/GoogleCoords.html Coordinate Systems on Google Maps]
+[http://www.maptiler.org/google-maps-coordinates-tile-bounds-projection/ Source code MERCA_TOOOORRRRR!]
