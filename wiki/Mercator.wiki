@@ -1,4 +1,4 @@
-#Definitions, links and sources about coordinates, tile bounds and projection
+#summary Definitions, links and sources about coordinates, tile bounds and projection
 
 [http://en.wikipedia.org/wiki/Mercator_projection Mercator definition]
 
