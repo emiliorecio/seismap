@@ -1,3 +1,6 @@
 #summary Postgres Geometry, Geography
 
- http://osgeo-org.1803224.n2.nabble.com/Cannot-get-a-PostGIS-layer-to-render-in-Mapserver-td4776199.html
+ http://blog.cleverelephant.ca/2009/11/geography-and-mapserver.html
+
+
+ http://postgis.refractions.net/documentation/manual-1.5SVN/ch04.html
