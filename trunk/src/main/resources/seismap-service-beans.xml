@@ -14,7 +14,13 @@
 		</property>
 	</bean>
 
-	<bean id="service_geometryFactory" class="com.vividsolutions.jts.geom.GeometryFactory" />
+	<bean id="service_geometryFactory" class="com.vividsolutions.jts.geom.GeometryFactory">
+		<constructor-arg>
+			<bean class="com.vividsolutions.jts.geom.PrecisionModel" />
+		</constructor-arg>
+		<constructor-arg value="4326"/>
+	</bean>
+
 
 	<bean id="service_eventService" class="com.seismap.service.impl.EventServiceImpl">
 		<constructor-arg ref="model_eventRepositoty" />
