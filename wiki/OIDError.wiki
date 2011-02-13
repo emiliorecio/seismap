@@ -1,3 +1,3 @@
-#summary One-sentence summary of this page.
+#summary Harry Potter nos explica como solucionar este problema en Postgres
 
 [http://camaronbitmap.blogspot.com/2008/08/mapserver-postgis-y-los-oid.html OID ERROR]
