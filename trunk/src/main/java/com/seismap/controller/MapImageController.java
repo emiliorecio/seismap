@@ -29,6 +29,11 @@ public class MapImageController {
 	@RequestMapping("view/{zoom}/{x}/{y}")
 	public ResponseEntity<byte[]> view(@PathVariable int zoom,
 			@PathVariable int x, @PathVariable int y) throws IOException {
+		String baseDir = System.getProperty("seismap.base.dir");
+		if (baseDir == null) {
+			throw new IOException("set -Dseismap.base.dir=/path/to/seismap");
+		}
+		String mapServerDir = baseDir + "/src/main/mapserver/";
 		MercatorCoordinatesConverter converter = new MercatorCoordinatesConverter(
 				256);
 
@@ -36,8 +41,7 @@ public class MapImageController {
 				y, zoom);
 		LatitudeLongitudeBounds bounds = googleTile
 				.getLatitudeLongitudeBounds();
-		String mapDef = IOUtils.toString(new FileInputStream(
-				"c:\\temp\\mapserver\\tile.map"));
+		String mapDef = IOUtils.toString(new FileInputStream(mapServerDir + "/map/tile.map"));
 		mapDef = mapDef.replace("${minLatitude}", Double.toString(bounds
 				.getMinLatitude()));
 		mapDef = mapDef.replace("${minLongitude}", Double.toString(bounds
@@ -46,8 +50,10 @@ public class MapImageController {
 				.getMaxLatitude()));
 		mapDef = mapDef.replace("${maxLongitude}", Double.toString(bounds
 				.getMaxLongitude()));
-		String defFile = "c:\\temp\\mapserver\\tiles\\" + zoom + '-' + x
-				+ '-' + y + ".map";
+		mapDef = mapDef.replace("${mapServerDir}", mapServerDir);
+		String tilesDir = baseDir + "/target/tiles";
+		new File(tilesDir).mkdirs();
+		String defFile = tilesDir + "/" + zoom + '-' + x + '-' + y + ".map";
 		IOUtils.write(mapDef, new FileOutputStream(defFile));
 
 		mapObj map = new mapObj(defFile);

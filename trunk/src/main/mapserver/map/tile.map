@@ -1,0 +1,67 @@
+MAP
+NAME "Zone Samples"
+SIZE 256 256
+IMAGECOLOR 255 255 255
+STATUS ON
+EXTENT ${minLatitude} ${minLongitude} ${maxLatitude} ${maxLongitude}
+UNITS METERS
+FONTSET "${mapServerDir}/fonts/fonts.list"
+CONFIG "PROJ_LIB" "${mapServerDir}/nad" 
+
+SYMBOL
+  NAME "circle"
+  TYPE ellipse
+  FILLED true
+  POINTS
+    1 1
+  END
+END
+
+LAYER
+    CONNECTIONTYPE postgis
+    CONNECTION "host=localhost dbname=postgis user=postgres password=postgres port=5432"
+    DATA "location FROM event USING UNIQUE oid USING SRID=4326"
+    NAME "event"
+    TYPE POINT
+    STATUS ON
+    LABELITEM "id"
+    CLASS
+        SIZE 10
+        STYLE
+            COLOR 255 0 0
+            OUTLINECOLOR 0 0 0
+            SYMBOL "circle"
+        END
+        TEXT ([id], [depth])
+        LABEL
+            COLOR 255 0 0
+            FONT verdana
+                TYPE TRUETYPE
+                SIZE 7
+                POSITION LC
+                WRAP " "
+            END
+        END
+    END
+    PROJECTION
+        "init=epsg:4326"
+    END
+END
+
+OUTPUTFORMAT
+    NAME gif
+    DRIVER "GD/GIF"
+    MIMETYPE "image/gif"
+    IMAGEMODE PC256
+    EXTENSION "gif"
+    TRANSPARENT ON
+END
+
+OUTPUTFORMAT
+    NAME png24
+    DRIVER "GD/PNG"
+    MIMETYPE "image/png"
+    EXTENSION PNG
+    IMAGEMODE RGBA
+    TRANSPARENT ON
+END
