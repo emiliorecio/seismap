@@ -101,6 +101,14 @@ function load() {
       };            
       return layer;
     }
+    // Seismap Layer
+    function getSeismapLayer() {
+      var layer = new GTileLayer(copyrightCollection, min, max);
+      layer.getTileUrl = function (a,b) {
+        return "http://localhost:7000/view/mapimage/view/" + b + "/" + a.x + "/" + a.y;
+      };            
+      return layer;
+    }
     // Forest Layer
     function getForestLayer() {
       var layer = new GTileLayer(copyrightCollection, min, max);
@@ -274,6 +282,9 @@ function load() {
       // Street Button
       streetButton = document.createElement("div");
       streetButton.innerHTML = "Roads'n&nbsp;Rails";
+      // Seismap Button
+      seismapButton = document.createElement("div");
+      seismapButton.innerHTML = "Seismap";
       // Forest Button
       forestButton = document.createElement("div");
       forestButton.innerHTML = "Forest&nbsp;Areas";
@@ -387,6 +398,18 @@ function load() {
           streetLayer.visible = true;
         }
         me.toggleButton_HBr(streetButton, streetLayer.visible);
+      });  
+      // Listener fuer Seismap Button
+      GEvent.addDomListener(seismapButton, "click", function() {
+        if (seismapLayer.visible) {
+          map.removeOverlay(seismapLayer);
+          seismapLayer.visible = false;
+        }
+        else {
+          map.addOverlay(seismapLayer);
+          seismapLayer.visible = true;
+        }
+        me.toggleButton_HBr(seismapButton, seismapLayer.visible);
       });  
       // Listener fuer Forest Button
       GEvent.addDomListener(forestButton, "click", function() {
@@ -550,6 +573,8 @@ function load() {
       expandedDiv.appendChild(brElement);            
       expandedDiv.appendChild(streetButton); 
       expandedDiv.appendChild(brElement);       
+      expandedDiv.appendChild(seismapButton);
+      expandedDiv.appendChild(brElement);       
       expandedDiv.appendChild(forestButton);
       expandedDiv.appendChild(brElement);    
       expandedDiv.appendChild(tundraButton);    
@@ -667,6 +692,9 @@ function load() {
     // Tile Layer
     tileLayer = new GTileLayerOverlay(getTileLayer());
     tileLayer.visible = false;
+    // Seismap Layer
+    seismapLayer = new GTileLayerOverlay(getSeismapLayer());
+    seismapLayer.visible = false;
     // Forest Layer
     forestLayer = new GTileLayerOverlay(getForestLayer());
     forestLayer.visible = false;

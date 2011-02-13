@@ -2,20 +2,22 @@ package com.seismap.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import sun.misc.IOUtils;
+import com.seismap.service.impl.MercatorCoordinatesConverter;
+import com.seismap.service.impl.MercatorCoordinatesConverter.GoogleTilePosition;
+import com.seismap.service.impl.MercatorCoordinatesConverter.LatitudeLongitudeBounds;
+
 import edu.umn.gis.mapscript.imageObj;
 import edu.umn.gis.mapscript.mapObj;
 import edu.umn.gis.mapscript.mapscript;
@@ -24,24 +26,44 @@ import edu.umn.gis.mapscript.mapscript;
 @RequestMapping("mapimage")
 public class MapImageController {
 
-	@RequestMapping("view")
-	public ResponseEntity<byte[]> view() throws IOException {
-		mapObj map = new mapObj("c:\\temp\\mapserver\\csharptutorial.map");
-		map.selectOutputFormat("gif");
+	@RequestMapping("view/{zoom}/{x}/{y}")
+	public ResponseEntity<byte[]> view(@PathVariable int zoom,
+			@PathVariable int x, @PathVariable int y) throws IOException {
+		MercatorCoordinatesConverter converter = new MercatorCoordinatesConverter(
+				256);
+
+		GoogleTilePosition googleTile = converter.createGoogleTilePosition(x,
+				y, zoom);
+		LatitudeLongitudeBounds bounds = googleTile
+				.getLatitudeLongitudeBounds();
+		String mapDef = IOUtils.toString(new FileInputStream(
+				"c:\\temp\\mapserver\\tile.map"));
+		mapDef = mapDef.replace("${minLatitude}", Double.toString(bounds
+				.getMinLatitude()));
+		mapDef = mapDef.replace("${minLongitude}", Double.toString(bounds
+				.getMinLongitude()));
+		mapDef = mapDef.replace("${maxLatitude}", Double.toString(bounds
+				.getMaxLatitude()));
+		mapDef = mapDef.replace("${maxLongitude}", Double.toString(bounds
+				.getMaxLongitude()));
+		String defFile = "c:\\temp\\mapserver\\tiles\\" + zoom + '-' + x
+				+ '-' + y + ".map";
+		IOUtils.write(mapDef, new FileOutputStream(defFile));
+
+		mapObj map = new mapObj(defFile);
+		map.selectOutputFormat("png24");
 		imageObj image = map.draw();
 		// Image image = new Image
 		// byte[] bytes = image.getBytes();
 		File file = File.createTempFile("seismap_", ".gif");
 		mapscript.msSaveImage(map, image, file.getAbsolutePath());
-		Resource resoure = new FileSystemResource(file);
+		// Resource resoure = new FileSystemResource(file);
 
 		// image.save(, map);
-		InputStream stream = new FileInputStream(file);
-		byte[] bytes = IOUtils.readFully(stream, -1, false);
+		byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
 		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.setContentType(MediaType.IMAGE_GIF);
-		return new ResponseEntity<byte[]>(bytes, responseHeaders,
-				HttpStatus.OK);
+		responseHeaders.setContentType(MediaType.IMAGE_PNG);
+		return new ResponseEntity<byte[]>(bytes, responseHeaders, HttpStatus.OK);
 
 	}
 }

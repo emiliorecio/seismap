@@ -2,12 +2,12 @@ package com.seismap.service.impl;
 
 public class MercatorCoordinatesConverter {
 
-	public static class LatitudeLongitudePosition {
+	public class LatitudeLongitudePosition {
 
 		private double latitude;
 		private double longitude;
 
-		public LatitudeLongitudePosition(double latitude, double longitude) {
+		private LatitudeLongitudePosition(double latitude, double longitude) {
 			this.latitude = latitude;
 			this.longitude = longitude;
 		}
@@ -21,14 +21,16 @@ public class MercatorCoordinatesConverter {
 		}
 	}
 
-	public static class PixelPosition {
+	private class PixelPosition {
 
 		private int x;
 		private int y;
+		private int zoom;
 
-		public PixelPosition(int x, int y) {
+		private PixelPosition(int x, int y, int zoom) {
 			this.x = x;
 			this.y = y;
+			this.zoom = zoom;
 		}
 
 		public int getX() {
@@ -39,14 +41,18 @@ public class MercatorCoordinatesConverter {
 			return y;
 		}
 
+		public int getZoom() {
+			return zoom;
+		}
+
 	}
 
-	public static class SphericalMercatorPosition {
+	private class SphericalMercatorPosition {
 
 		private double x;
 		private double y;
 
-		public SphericalMercatorPosition(double x, double y) {
+		private SphericalMercatorPosition(double x, double y) {
 			this.x = x;
 			this.y = y;
 		}
@@ -61,14 +67,16 @@ public class MercatorCoordinatesConverter {
 
 	}
 
-	public static class TmsTilePosition {
+	public class TmsTilePosition {
 
 		private int x;
 		private int y;
+		private int zoom;
 
-		public TmsTilePosition(int x, int y) {
+		private TmsTilePosition(int x, int y, int zoom) {
 			this.x = x;
 			this.y = y;
+			this.zoom = zoom;
 		}
 
 		public int getX() {
@@ -79,16 +87,30 @@ public class MercatorCoordinatesConverter {
 			return y;
 		}
 
+		public int getZoom() {
+			return zoom;
+		}
+
+		private LatitudeLongitudeBounds latitudeLongitudeBounds = null;
+
+		public LatitudeLongitudeBounds getLatitudeLongitudeBounds() {
+			if (latitudeLongitudeBounds == null) {
+				latitudeLongitudeBounds = tileLatitudeLongitudeBounds(this);
+			}
+			return latitudeLongitudeBounds;
+		}
 	}
 
-	public static class GoogleTilePosition {
+	public class GoogleTilePosition {
 
 		private int x;
 		private int y;
+		private int zoom;
 
-		public GoogleTilePosition(int x, int y) {
+		private GoogleTilePosition(int x, int y, int zoom) {
 			this.x = x;
 			this.y = y;
+			this.zoom = zoom;
 		}
 
 		public int getX() {
@@ -99,34 +121,36 @@ public class MercatorCoordinatesConverter {
 			return y;
 		}
 
-	}
-
-	public static class QuadTreeTilePosition {
-
-		private String key;
-
-		public QuadTreeTilePosition(String key) {
-			this.key = key;
+		public int getZoom() {
+			return zoom;
 		}
 
-		public String getKey() {
-			return key;
+		private TmsTilePosition tmsTilePosition = null;
+
+		public TmsTilePosition getTmsTilePosition() {
+			if (tmsTilePosition == null) {
+				tmsTilePosition = googleTileToTile(this);
+			}
+			return tmsTilePosition;
 		}
 
+		public LatitudeLongitudeBounds getLatitudeLongitudeBounds() {
+			return getTmsTilePosition().getLatitudeLongitudeBounds();
+		}
 	}
 
-	public static class LatitudeLongitudeBounds {
+	public class LatitudeLongitudeBounds {
 		private LatitudeLongitudePosition max;
 		private LatitudeLongitudePosition min;
 
-		public LatitudeLongitudeBounds(LatitudeLongitudePosition max,
+		private LatitudeLongitudeBounds(LatitudeLongitudePosition max,
 				LatitudeLongitudePosition min) {
 			this.max = max;
 			this.min = min;
 		}
 
-		public LatitudeLongitudeBounds(double minLatitude, double minLongitude,
-				double maxLatitude, double maxLongitude) {
+		private LatitudeLongitudeBounds(double minLatitude,
+				double minLongitude, double maxLatitude, double maxLongitude) {
 			this(new LatitudeLongitudePosition(minLatitude, minLongitude),
 					new LatitudeLongitudePosition(maxLatitude, maxLongitude));
 		}
@@ -138,20 +162,36 @@ public class MercatorCoordinatesConverter {
 		public LatitudeLongitudePosition getMin() {
 			return min;
 		}
+
+		public double getMinLatitude() {
+			return min.getLatitude();
+		}
+
+		public double getMinLongitude() {
+			return min.getLongitude();
+		}
+
+		public double getMaxLatitude() {
+			return max.getLatitude();
+		}
+
+		public double getMaxLongitude() {
+			return max.getLongitude();
+		}
 	}
 
-	public static class SphericalMercatorBounds {
+	private class SphericalMercatorBounds {
 		private SphericalMercatorPosition max;
 		private SphericalMercatorPosition min;
 
-		public SphericalMercatorBounds(SphericalMercatorPosition max,
+		private SphericalMercatorBounds(SphericalMercatorPosition max,
 				SphericalMercatorPosition min) {
 			this.max = max;
 			this.min = min;
 		}
 
-		public SphericalMercatorBounds(double minLatitude, double minLongitude,
-				double maxLatitude, double maxLongitude) {
+		private SphericalMercatorBounds(double minLatitude,
+				double minLongitude, double maxLatitude, double maxLongitude) {
 			this(new SphericalMercatorPosition(minLatitude, minLongitude),
 					new SphericalMercatorPosition(maxLatitude, maxLongitude));
 		}
@@ -177,6 +217,14 @@ public class MercatorCoordinatesConverter {
 		// 156543.03392804062 for tileSize 256 pixels
 		this.originShift = 2 * Math.PI * EARTH_RADIUS / 2.0;
 		// 20037508.342789244
+	}
+
+	public GoogleTilePosition createGoogleTilePosition(int x, int y, int zoom) {
+		return new GoogleTilePosition(x, y, zoom);
+	}
+
+	public TmsTilePosition createTmsTilePosition(int x, int y, int zoom) {
+		return new TmsTilePosition(x, y, zoom);
 	}
 
 	public SphericalMercatorPosition latitudeLongitudeToSphericalMercator(
@@ -209,10 +257,11 @@ public class MercatorCoordinatesConverter {
 	}
 
 	public SphericalMercatorPosition pixelToSphericalMercator(
-			PixelPosition pixelPosition, int zoom) {
+			PixelPosition pixelPosition) {
 		// "Converts pixel coordinates in given zoom level of pyramid to EPSG:900913"
 		int px = pixelPosition.getX();
 		int py = pixelPosition.getY();
+		int zoom = pixelPosition.getZoom();
 
 		double res = this.resolution(zoom);
 		double mx = px * res - this.originShift;
@@ -229,59 +278,62 @@ public class MercatorCoordinatesConverter {
 		double res = this.resolution(zoom);
 		int px = (int) ((mx + this.originShift) / res);
 		int py = (int) ((my + this.originShift) / res);
-		return new PixelPosition(px, py);
+		return new PixelPosition(px, py, zoom);
 	}
 
-	public TmsTilePosition pixelToTmsTile(PixelPosition pixelPosition) {
-		// "Returns a tile covering region in given pixel coordinates"
+	public TmsTilePosition pixelToTile(PixelPosition pixelPosition) {
+		// "Returns a tmsTilePosition covering region in given pixel coordinates"
 		int px = pixelPosition.getX();
 		int py = pixelPosition.getY();
+		int zoom = pixelPosition.getZoom();
 
 		int tx = (int) (Math.ceil(px / (float) this.tileSize) - 1);
 		int ty = (int) (Math.ceil(py / (float) this.tileSize) - 1);
-		return new TmsTilePosition(tx, ty);
+		return new TmsTilePosition(tx, ty, zoom);
 	}
 
-	public PixelPosition pixelsToRaster(PixelPosition pixelPosition, int zoom) {
+	public PixelPosition pixelsToRaster(PixelPosition pixelPosition) {
 		// "Move the origin of pixel coordinates to top-left corner"
 		int px = pixelPosition.getX();
 		int py = pixelPosition.getY();
+		int zoom = pixelPosition.getZoom();
 
 		int mapSize = this.tileSize << zoom;
-		return new PixelPosition(px, mapSize - py);
+		return new PixelPosition(px, mapSize - py, zoom);
 	}
 
-	public TmsTilePosition SphericalMercatorToTmsTile(
+	public TmsTilePosition SphericalMercatorToTile(
 			SphericalMercatorPosition sphericalMercatorPosition, int zoom) {
-		// "Returns tile for given mercator coordinates"
+		// "Returns tmsTilePosition for given mercator coordinates"
 
 		PixelPosition pixelPosition = this.sphericalMercatorToPixel(
 				sphericalMercatorPosition, zoom);
-		return this.pixelToTmsTile(pixelPosition);
+		return this.pixelToTile(pixelPosition);
 	}
 
-	public SphericalMercatorBounds tmsTileShpericalMercatorBounds(
-			TmsTilePosition tilePosition, int zoom) {
-		// "Returns bounds of the given tile in EPSG:900913 coordinates"
+	public SphericalMercatorBounds tileShpericalMercatorBounds(
+			TmsTilePosition tilePosition) {
+		// "Returns bounds of the given tmsTilePosition in EPSG:900913 coordinates"
 		int tx = tilePosition.getX();
 		int ty = tilePosition.getY();
+		int zoom = tilePosition.getZoom();
 
 		SphericalMercatorPosition min = this
 				.pixelToSphericalMercator(new PixelPosition(tx * this.tileSize,
-						ty * this.tileSize), zoom);
-		SphericalMercatorPosition max = this.pixelToSphericalMercator(
-				new PixelPosition((tx + 1) * this.tileSize, (ty + 1)
-						* this.tileSize), zoom);
+						ty * this.tileSize, zoom));
+		SphericalMercatorPosition max = this
+				.pixelToSphericalMercator(new PixelPosition((tx + 1)
+						* this.tileSize, (ty + 1) * this.tileSize, zoom));
 		return new SphericalMercatorBounds(min.getX(), min.getY(), max.getX(),
 				max.getY());
 	}
 
-	public LatitudeLongitudeBounds tmsTileLatitudeLongitudeBounds(
-			TmsTilePosition tilePosition, int zoom) {
-		// "Returns bounds of the given tile in latutude/longitude using WGS84 datum"
+	public LatitudeLongitudeBounds tileLatitudeLongitudeBounds(
+			TmsTilePosition tilePosition) {
+		// "Returns bounds of the given tmsTilePosition in latutude/longitude using WGS84 datum"
 
-		SphericalMercatorBounds bounds = this.tmsTileShpericalMercatorBounds(
-				tilePosition, zoom);
+		SphericalMercatorBounds bounds = this
+				.tileShpericalMercatorBounds(tilePosition);
 		LatitudeLongitudePosition min = this
 				.sphericalMercatorToLatitudeLongitude(bounds.getMin());
 		LatitudeLongitudePosition max = this
@@ -294,7 +346,7 @@ public class MercatorCoordinatesConverter {
 		// "Resolution (meters/pixel) for given zoom level (measured at Equator)"
 
 		// s return (2 * math.pi * 6378137) / (self.tileSize * 2**zoom)
-		return this.initialResolution / (2 ^ zoom);
+		return this.initialResolution / (Math.pow(2, zoom));
 	}
 
 	public int zoomForPixelSize(int pixelSize) {
@@ -308,46 +360,25 @@ public class MercatorCoordinatesConverter {
 		return 0;
 	}
 
-	public GoogleTilePosition tmsTileToGoogleTile(TmsTilePosition tilePosition, int zoom) {
-		// "Converts TMS tile coordinates to Google Tile coordinates"
+	public GoogleTilePosition tileToGoogleTile(TmsTilePosition tilePosition) {
+		// "Converts TMS tmsTilePosition coordinates to Google Tile coordinates"
 		int tx = tilePosition.getX();
 		int ty = tilePosition.getY();
+		int zoom = tilePosition.getZoom();
+		// # coordinate origin is moved from bottom-left to top-left corner of
+		// the extent
+		return new GoogleTilePosition(tx, ((int)Math.pow(2, zoom) - 1) - ty, zoom);
+	}
+
+	public TmsTilePosition googleTileToTile(GoogleTilePosition tilePosition) {
+		// "Converts Google tmsTilePosition coordinates to  TMS Tile coordinates"
+		int tx = tilePosition.getX();
+		int ty = tilePosition.getY();
+		int zoom = tilePosition.getZoom();
 
 		// # coordinate origin is moved from bottom-left to top-left corner of
 		// the extent
-		return new GoogleTilePosition(tx, (2 ^ zoom - 1) - ty);
-	}
-	
-	public TmsTilePosition googleTileToTmsTile(GoogleTilePosition tilePosition, int zoom) {
-		// "Converts Google tile coordinates to  TMS Tile coordinates"
-		int tx = tilePosition.getX();
-		int ty = tilePosition.getY();
-
-		// # coordinate origin is moved from bottom-left to top-left corner of
-		// the extent
-		return new TmsTilePosition(tx, (2 ^ zoom - 1) - ty);
+		return new TmsTilePosition(tx, ((int)Math.pow(2, zoom) - 1) - ty, zoom);
 	}
 
-	public QuadTreeTilePosition tmsTileToQuadTreeTile(TmsTilePosition tilePosition, int zoom) {
-		// "Converts TMS tile coordinates to Microsoft QuadTree"
-		int tx = tilePosition.getX();
-		int ty = tilePosition.getY();
-
-		String quadKey = "";
-		ty = (2 ^ zoom - 1) - ty;
-		for (int i = zoom; i > 0; i--) {
-			int digit = 0;
-			int mask = 1 << (i - 1);
-			if ((tx & mask) != 0) {
-				digit += 1;
-			}
-			if ((ty & mask) != 0) {
-				digit += 2;
-			}
-			quadKey += digit;
-
-		}
-		return new QuadTreeTilePosition(quadKey);
-	}
-	
 }
