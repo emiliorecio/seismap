@@ -313,13 +313,6 @@
             <artifactId>commons-io</artifactId>
             <version>2.0.1</version>
         </dependency>
-		<dependency>
-			<groupId>org.mapserver</groupId>
-			<artifactId>mapscript-dll</artifactId>
-			<version>5.6.5</version>
-			<scope>runtime</scope>
-			<type>dll</type>
-		</dependency>
         <!--  Test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>

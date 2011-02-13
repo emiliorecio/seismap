@@ -1,0 +1,48 @@
+CREATE TABLE agency
+(
+  id BIGINT NOT NULL,
+  code CHARACTER VARYING(3) NOT NULL,
+  CONSTRAINT agency_pkey PRIMARY KEY (id),
+  CONSTRAINT agency_code_key UNIQUE (code)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE agency OWNER TO postgres;
+
+
+CREATE TABLE event
+(
+  id BIGINT NOT NULL,
+  date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  depth REAL NOT NULL,
+  CONSTRAINT event_pkey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=TRUE
+);
+ALTER TABLE event OWNER TO postgres;
+
+CREATE INDEX event_oid ON event (oid);
+
+SELECT AddGeometryColumn('event', 'location', 4326, 'POINT', 2);
+
+CREATE TABLE magnitude
+(
+  id BIGINT NOT NULL,
+  "type" CHARACTER VARYING(8) NOT NULL,
+  "value" REAL NOT NULL,
+  reportingagency_id BIGINT NOT NULL,
+  magnitudes_id BIGINT NOT NULL,
+  CONSTRAINT magnitude_pkey PRIMARY KEY (id),
+  CONSTRAINT fk_magnitudes_id FOREIGN KEY (magnitudes_id)
+      REFERENCES event (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT fk_reportingagency_id FOREIGN KEY (reportingagency_id)
+      REFERENCES agency (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE magnitude OWNER TO postgres;

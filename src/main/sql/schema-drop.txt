@@ -1,0 +1,6 @@
+DROP TABLE magnitude;
+DROP TABLE agency;
+
+SELECT DropGeometryColumn('event', 'location');
+DROP INDEX event_oid;
+DROP TABLE event;
