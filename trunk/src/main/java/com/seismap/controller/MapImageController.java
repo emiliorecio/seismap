@@ -57,15 +57,11 @@ public class MapImageController {
 		IOUtils.write(mapDef, new FileOutputStream(defFile));
 
 		mapObj map = new mapObj(defFile);
-		map.selectOutputFormat("png24");
+		map.setTransparent(1);	
 		imageObj image = map.draw();
-		// Image image = new Image
-		// byte[] bytes = image.getBytes();
-		File file = File.createTempFile("seismap_", ".gif");
+		File file = File.createTempFile("seismap_", ".png");
 		mapscript.msSaveImage(map, image, file.getAbsolutePath());
-		// Resource resoure = new FileSystemResource(file);
-
-		// image.save(, map);
+		System.out.println(file.getAbsolutePath());
 		byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.setContentType(MediaType.IMAGE_PNG);
