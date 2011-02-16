@@ -61,7 +61,6 @@ public class MapImageController {
 		imageObj image = map.draw();
 		File file = File.createTempFile("seismap_", ".png");
 		mapscript.msSaveImage(map, image, file.getAbsolutePath());
-		System.out.println(file.getAbsolutePath());
 		byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.setContentType(MediaType.IMAGE_PNG);
