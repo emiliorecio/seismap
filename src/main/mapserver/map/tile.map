@@ -1,19 +1,38 @@
 MAP
-NAME "Zone Samples"
-SIZE 256 256
-IMAGECOLOR 255 255 255
+NAME TEST
 STATUS ON
+SIZE 256 256
 EXTENT ${minLatitude} ${minLongitude} ${maxLatitude} ${maxLongitude}
 UNITS METERS
-FONTSET "${mapServerDir}/fonts/fonts.list"
-CONFIG "PROJ_LIB" "${mapServerDir}/nad" 
+IMAGECOLOR 255 255 255
+IMAGETYPE PNG24
+TRANSPARENT TRUE
+FONTSET "D:/Workspace/seismap/src/main/mapserver/fonts/fonts.list"
+CONFIG	"PROJ_LIB" "D:/Workspace/seismap/src/main/mapserver/nad/" 
+CONFIG "MS_ERRORFILE" "d:/temp/errormap.log"
+CONFIG "ON_MISSING_DATA" "LOG"
+CONFIG "CPL_DEBUG" "ON"
+CONFIG "PROJ_DEBUG" "ON"
 
+DEBUG 5
+ WEB
+   IMAGEPATH "D:/temp/datos/temp"
+   IMAGEURL "D:/temp/datos/temp"
+ END
+ 
+ LEGEND
+   TRANSPARENT TRUE
+ END
+
+ SCALEBAR
+   TRANSPARENT TRUE
+ END
 SYMBOL
   NAME "circle"
   TYPE ellipse
   FILLED true
   POINTS
-    1 1
+    2 2
   END
 END
 
@@ -28,13 +47,13 @@ LAYER
     CLASS
         SIZE 10
         STYLE
-            COLOR 255 0 0
+            COLOR 255 255 0
             OUTLINECOLOR 0 0 0
             SYMBOL "circle"
         END
         TEXT ([id], [depth])
         LABEL
-            COLOR 255 0 0
+            COLOR 255 255 0
             FONT verdana
                 TYPE TRUETYPE
                 SIZE 7
@@ -43,25 +62,20 @@ LAYER
             END
         END
     END
-    PROJECTION
-        "init=epsg:4326"
-    END
+    #PROJECTION
+    #    "init=epsg:4326"
+    #END
 END
 
-OUTPUTFORMAT
-    NAME gif
-    DRIVER "GD/GIF"
-    MIMETYPE "image/gif"
-    IMAGEMODE PC256
-    EXTENSION "gif"
-    TRANSPARENT ON
-END
 
 OUTPUTFORMAT
-    NAME png24
-    DRIVER "GD/PNG"
-    MIMETYPE "image/png"
-    EXTENSION PNG
-    IMAGEMODE RGBA
-    TRANSPARENT ON
+	NAME "PNG_mapscript"
+	DRIVER AGG/PNG
+	IMAGEMODE RGBA
+	MIMETYPE "image/png; mode=24bit"
+	EXTENSION PNG
+	TRANSPARENT TRUE
+	#FORMATOPTION "QUANTIZE_FORCE=on"
+	#FORMATOPTION "QUANTIZE_DITHER=off"
+	#FORMATOPTION "QUANTIZE_COLORS=256"
 END
