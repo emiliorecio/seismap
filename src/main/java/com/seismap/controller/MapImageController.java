@@ -33,7 +33,8 @@ public class MapImageController {
 		if (baseDir == null) {
 			throw new IOException("set -Dseismap.base.dir=/path/to/seismap");
 		}
-		String mapServerDir = baseDir + "/src/main/mapserver/";
+		String mapServerDir = baseDir + "/src/main/mapserver";
+		String mapServerOutDir = baseDir + "/target/mapserver";
 		MercatorCoordinatesConverter converter = new MercatorCoordinatesConverter(
 				256);
 
@@ -51,8 +52,11 @@ public class MapImageController {
 		mapDef = mapDef.replace("${maxLongitude}", Double.toString(bounds
 				.getMaxLongitude()));
 		mapDef = mapDef.replace("${mapServerDir}", mapServerDir);
-		String tilesDir = baseDir + "/target/tiles";
+		mapDef = mapDef.replace("${mapServerOutDir}", mapServerOutDir);
+		String tilesDir = mapServerOutDir + "/tiles";
 		new File(tilesDir).mkdirs();
+		new File(mapServerOutDir).mkdirs();
+		new File(mapServerOutDir  + "/log").mkdirs();
 		String defFile = tilesDir + "/" + zoom + '-' + x + '-' + y + ".map";
 		IOUtils.write(mapDef, new FileOutputStream(defFile));
 
