@@ -97,37 +97,37 @@ public class Type4Entry extends AbstractEntry {
 	private float seconds;
 
 	@IntegerField(position = 30, digits = 4)
-	private int duration;
+	private Integer duration;
 
 	@FloatField(position = 34, digits = 7, decimals = 1)
-	private float amplitude;
+	private Float amplitude;
 
 	@FloatField(position = 42, digits = 4, decimals = 0)
-	private float periodSeconds;
+	private Float periodSeconds;
 
 	@FloatField(position = 47, digits = 5, decimals = 0)
-	private float directionOfAproach;
+	private Float directionOfAproach;
 
 	@FloatField(position = 53, digits = 4, decimals = 0)
-	private float phaseVelocity;
+	private Float phaseVelocity;
 
 	@FloatField(position = 57, digits = 4, decimals = 0)
-	private float angleOfIncidence;
+	private Float angleOfIncidence;
 
 	@IntegerField(position = 61, digits = 3)
-	private int azimuthResidual;
+	private Integer azimuthResidual;
 
 	@FloatField(position = 64, digits = 5, decimals = 1)
-	private float travelTimeResidual;
+	private Float travelTimeResidual;
 
 	@IntegerField(position = 69, digits = 2)
-	private int weight;
+	private Integer weight;
 
 	@FloatField(position = 71, digits = 5, decimals = 0)
-	private float epicentralDistance;
+	private Float epicentralDistance;
 
 	@IntegerField(position = 77, digits = 3)
-	private int azimuthAtSource;
+	private Integer azimuthAtSource;
 
 	public String getStationName() {
 		return stationName;
@@ -173,47 +173,47 @@ public class Type4Entry extends AbstractEntry {
 		return seconds;
 	}
 
-	public int getDuration() {
+	public Integer getDuration() {
 		return duration;
 	}
 
-	public float getAmplitude() {
+	public Float getAmplitude() {
 		return amplitude;
 	}
 
-	public float getPeriodSeconds() {
+	public Float getPeriodSeconds() {
 		return periodSeconds;
 	}
 
-	public float getDirectionOfAproach() {
+	public Float getDirectionOfAproach() {
 		return directionOfAproach;
 	}
 
-	public float getPhaseVelocity() {
+	public Float getPhaseVelocity() {
 		return phaseVelocity;
 	}
 
-	public float getAngleOfIncidence() {
+	public Float getAngleOfIncidence() {
 		return angleOfIncidence;
 	}
 
-	public int getAzimuthResidual() {
+	public Integer getAzimuthResidual() {
 		return azimuthResidual;
 	}
 
-	public float getTravelTimeResidual() {
+	public Float getTravelTimeResidual() {
 		return travelTimeResidual;
 	}
 
-	public int getWeight() {
+	public Integer getWeight() {
 		return weight;
 	}
 
-	public float getEpicentralDistance() {
+	public Float getEpicentralDistance() {
 		return epicentralDistance;
 	}
 
-	public int getAzimuthAtSource() {
+	public Integer getAzimuthAtSource() {
 		return azimuthAtSource;
 	}
 

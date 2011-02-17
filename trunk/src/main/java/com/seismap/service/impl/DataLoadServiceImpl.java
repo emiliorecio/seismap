@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,9 +52,9 @@ public class DataLoadServiceImpl implements DataLoadService {
 	private class DatabaseLogEventConsumer implements LogEventConsumer {
 		public void cosumeLogEvent(LogEvent logEvent) {
 			Date date = null;
-			float longitude = 0;
-			float latitude = 0;
-			float depth = 0;
+			Float longitude = null;
+			Float latitude = null;
+			Float depth = null;
 			List<Type1Entry> type1Entries = logEvent.getEntries("1");
 			if (type1Entries.isEmpty()) {
 				throw new SeismapException("No Type1 entry found in log event");
@@ -61,11 +62,10 @@ public class DataLoadServiceImpl implements DataLoadService {
 			List<Magnitude> magnitudes = new LinkedList<Magnitude>();
 			for (Type1Entry entry : type1Entries) {
 				if (date == null) {
-					Calendar calendar = Calendar.getInstance();
-
-					calendar.set(entry.getYear(), entry.getMonth(), entry
-							.getDayOfMonth(), entry.getHour(), entry
-							.getMinutes(), (int) entry.getSeconds());
+					Calendar calendar = new GregorianCalendar(entry.getYear(),
+							entry.getMonth(), entry.getDayOfMonth(), entry
+									.getHour(), entry.getMinutes(), (int) entry
+									.getSeconds());
 					date = calendar.getTime();
 					longitude = entry.getLongitude();
 					latitude = entry.getLatitude();
@@ -88,9 +88,13 @@ public class DataLoadServiceImpl implements DataLoadService {
 							.getMagnitude3Type()));
 				}
 			}
+			if (latitude == null || longitude == null || depth == null) { 
+				System.out.println("Warning: incomplete event " + date);
+				return;
+			}
 			Point location = geometryFactory.createPoint(new Coordinate(
-					latitude, longitude));
-			Event event = new Event(location, depth, date, magnitudes);
+					latitude.floatValue(), longitude.floatValue()));
+			Event event = new Event(location, depth.floatValue(), date, magnitudes);
 			eventRepository.put(event);
 		}
 

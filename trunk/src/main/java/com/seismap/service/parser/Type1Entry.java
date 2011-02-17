@@ -59,13 +59,13 @@ public class Type1Entry extends AbstractEntry {
 	private EventId eventId;
 
 	@FloatField(position = 24, digits = 7, decimals = 3)
-	private float latitude;
+	private Float latitude;
 
 	@FloatField(position = 31, digits = 8, decimals = 3)
-	private float longitude;
+	private Float longitude;
 
 	@FloatField(position = 39, digits = 5, decimals = 1)
-	private float depth;
+	private Float depth;
 
 	@EnumeratedField(position = 44, length = 1, mappings = {
 			@EnumerationMapping(value = " ", mapsTo = "UNSPECIFIED"),
@@ -83,10 +83,10 @@ public class Type1Entry extends AbstractEntry {
 	private int numberOfStationsUsed;
 
 	@FloatField(position = 52, digits = 4, decimals = 1)
-	private float rmsOfTimeResiduals;
+	private Float rmsOfTimeResiduals;
 
 	@FloatField(position = 56, digits = 4, decimals = 1)
-	private float magnitude1;
+	private Float magnitude1;
 
 	@EnumeratedField(position = 60, length = 1, mappings = {
 			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
@@ -102,7 +102,7 @@ public class Type1Entry extends AbstractEntry {
 	private String magnitude1ReportingAgency;
 
 	@FloatField(position = 64, digits = 4, decimals = 1)
-	private float magnitude2;
+	private Float magnitude2;
 
 	@EnumeratedField(position = 68, length = 1, mappings = {
 			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
@@ -118,7 +118,7 @@ public class Type1Entry extends AbstractEntry {
 	private String magnitude2ReportingAgency;
 
 	@FloatField(position = 72, digits = 4, decimals = 1)
-	private float magnitude3;
+	private Float magnitude3;
 
 	@EnumeratedField(position = 76, length = 1, mappings = {
 			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
@@ -173,15 +173,15 @@ public class Type1Entry extends AbstractEntry {
 		return eventId;
 	}
 
-	public float getLatitude() {
+	public Float getLatitude() {
 		return latitude;
 	}
 
-	public float getLongitude() {
+	public Float getLongitude() {
 		return longitude;
 	}
 
-	public float getDepth() {
+	public Float getDepth() {
 		return depth;
 	}
 
@@ -201,11 +201,11 @@ public class Type1Entry extends AbstractEntry {
 		return numberOfStationsUsed;
 	}
 
-	public float getRmsOfTimeResiduals() {
+	public Float getRmsOfTimeResiduals() {
 		return rmsOfTimeResiduals;
 	}
 
-	public float getMagnitude1() {
+	public Float getMagnitude1() {
 		return magnitude1;
 	}
 
@@ -217,7 +217,7 @@ public class Type1Entry extends AbstractEntry {
 		return magnitude1ReportingAgency;
 	}
 
-	public float getMagnitude2() {
+	public Float getMagnitude2() {
 		return magnitude2;
 	}
 
@@ -229,7 +229,7 @@ public class Type1Entry extends AbstractEntry {
 		return magnitude2ReportingAgency;
 	}
 
-	public float getMagnitude3() {
+	public Float getMagnitude3() {
 		return magnitude3;
 	}
 

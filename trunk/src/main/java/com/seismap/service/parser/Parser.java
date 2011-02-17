@@ -93,6 +93,9 @@ public class Parser {
 		String previousLineId = "^";
 		Map<String, List<AbstractEntry>> entries = new HashMap<String, List<AbstractEntry>>();
 		while ((line = logLineProvider.readLogLine(lineNumber)) != null) {
+			if (line==" 2009 1218 2032 47.5 L                       SJA  0                            1") {
+				System.out.println("AHAHHHH!!!");
+			}
 			RowReader reader = getReader(line, previousLineId, lineNumber);
 			AbstractEntry entry = reader.read(lineNumber, line);
 			List<AbstractEntry> entriesOfSameType = entries.get(reader.getId());
