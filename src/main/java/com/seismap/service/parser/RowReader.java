@@ -298,9 +298,9 @@ public class RowReader {
 					throws InvalidDataException {
 				char c = value.charAt(0);
 				if (c == annotation.on()) {
-					return true;
+					return Boolean.TRUE;
 				} else if (c == annotation.off()) {
-					return false;
+					return Boolean.FALSE;
 				}
 				throw invalidData(line, startColumn, endColumn, value, field);
 			}
@@ -318,7 +318,7 @@ public class RowReader {
 			Object read(int line, int startColumn, int endColumn, String value)
 					throws InvalidDataException {
 				char c = value.charAt(0);
-				return c;
+				return Character.valueOf(c);
 			}
 
 		};
@@ -381,7 +381,7 @@ public class RowReader {
 
 	private void processField(int index, final Field field,
 			final FloatField annotation, Field[] usedPositions) {
-		checkType(field, float.class);
+		checkType(field, float.class, Float.class);
 		fieldReaders[index] = new FieldReader(field, annotation.position(),
 				annotation.digits(), usedPositions) {
 			@Override
@@ -390,7 +390,12 @@ public class RowReader {
 				int indexOfDot = value.indexOf('.');
 				String processedValue = value.trim();
 				if (processedValue.length() == 0) {
-					return 0.0f;
+					if (field.getType() == Float.class) {
+						return null;
+					} else {
+						throw invalidData(line, startColumn, endColumn, value,
+								field);
+					}
 				}
 				if (indexOfDot == -1) {
 					processedValue = processedValue.substring(0, processedValue
@@ -401,7 +406,7 @@ public class RowReader {
 									- annotation.decimals());
 				}
 				try {
-					return Float.parseFloat(processedValue);
+					return Float.valueOf(processedValue);
 				} catch (NumberFormatException e) {
 					throw invalidData(line, startColumn, endColumn, value,
 							field);
@@ -412,8 +417,8 @@ public class RowReader {
 
 	private void processField(int index, final Field field,
 			final IntegerField annotation, Field[] usedPositions) {
-		checkType(field, int.class, long.class);
-		if (field.getType() == int.class) {
+		checkType(field, int.class, Integer.class, long.class, Long.class);
+		if (field.getType() == int.class || field.getType() == Integer.class) {
 			fieldReaders[index] = new FieldReader(field, annotation.position(),
 					annotation.digits(), usedPositions) {
 				@Override
@@ -421,10 +426,15 @@ public class RowReader {
 						String value) throws InvalidDataException {
 					String processedValue = value.trim();
 					if (processedValue.length() == 0) {
-						return 0;
+						if (field.getType() == Integer.class) {
+							return null;
+						} else {
+							throw invalidData(line, startColumn, endColumn,
+									value, field);
+						}
 					}
 					try {
-						return Integer.parseInt(processedValue);
+						return Integer.valueOf(processedValue);
 					} catch (NumberFormatException e) {
 						throw invalidData(line, startColumn, endColumn, value,
 								field);
@@ -439,10 +449,15 @@ public class RowReader {
 						String value) throws InvalidDataException {
 					String processedValue = value.trim();
 					if (processedValue.length() == 0) {
-						return 0;
+						if (field.getType() == Long.class) {
+							return null;
+						} else {
+							throw invalidData(line, startColumn, endColumn,
+									value, field);
+						}
 					}
 					try {
-						return Long.parseLong(processedValue);
+						return Long.valueOf(processedValue);
 					} catch (NumberFormatException e) {
 						throw invalidData(line, startColumn, endColumn, value,
 								field);
@@ -462,10 +477,10 @@ public class RowReader {
 					throws InvalidDataException {
 				String processedValue = value.trim();
 				if (processedValue.length() == 0) {
-					return 0.0f;
+					return Float.valueOf(0.0f);
 				}
 				try {
-					return Float.parseFloat(processedValue);
+					return Float.valueOf(processedValue);
 				} catch (NumberFormatException e) {
 					throw invalidData(line, startColumn, endColumn, value,
 							field);
