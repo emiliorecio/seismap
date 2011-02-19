@@ -18,7 +18,11 @@
 		<constructor-arg>
 			<bean class="com.vividsolutions.jts.geom.PrecisionModel" />
 		</constructor-arg>
-		<constructor-arg value="4326"/>
+		<constructor-arg value="900913" />
+	</bean>
+
+	<bean id="service_coordinatesConverter" class="com.seismap.service.impl.CoordinatesConverter">
+		<constructor-arg value="256" />
 	</bean>
 
 

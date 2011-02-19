@@ -1,13 +1,14 @@
 package com.seismap.service.impl;
 
-public class MercatorCoordinatesConverter {
+public class CoordinatesConverter {
 
 	public class LatitudeLongitudePosition {
 
 		private double latitude;
 		private double longitude;
 
-		private LatitudeLongitudePosition(double latitude, double longitude) {
+		private LatitudeLongitudePosition(double latitude, double longitude,
+				SphericalMercatorPosition sphericalMercatorPosition) {
 			this.latitude = latitude;
 			this.longitude = longitude;
 		}
@@ -19,9 +20,19 @@ public class MercatorCoordinatesConverter {
 		public double getLongitude() {
 			return longitude;
 		}
+
+		private SphericalMercatorPosition sphericalMercatorPosition = null;
+
+		public SphericalMercatorPosition getSphericalMercatorPosition() {
+			if (sphericalMercatorPosition == null) {
+				sphericalMercatorPosition = latitudeLongitudeToSphericalMercator(this);
+			}
+			return sphericalMercatorPosition;
+		}
+
 	}
 
-	private class PixelPosition {
+	public class PixelPosition {
 
 		private int x;
 		private int y;
@@ -47,7 +58,7 @@ public class MercatorCoordinatesConverter {
 
 	}
 
-	private class SphericalMercatorPosition {
+	public class SphericalMercatorPosition {
 
 		private double x;
 		private double y;
@@ -99,6 +110,15 @@ public class MercatorCoordinatesConverter {
 			}
 			return latitudeLongitudeBounds;
 		}
+
+		private SphericalMercatorBounds sphericalMercatorBounds = null;
+
+		public SphericalMercatorBounds getSphericalMercatorBounds() {
+			if (sphericalMercatorBounds == null) {
+				sphericalMercatorBounds = tileShpericalMercatorBounds(this);
+			}
+			return sphericalMercatorBounds;
+		}
 	}
 
 	public class GoogleTilePosition {
@@ -107,10 +127,12 @@ public class MercatorCoordinatesConverter {
 		private int y;
 		private int zoom;
 
-		private GoogleTilePosition(int x, int y, int zoom) {
+		private GoogleTilePosition(int x, int y, int zoom,
+				TmsTilePosition tmsTilePosition) {
 			this.x = x;
 			this.y = y;
 			this.zoom = zoom;
+			this.tmsTilePosition = tmsTilePosition;
 		}
 
 		public int getX() {
@@ -137,22 +159,20 @@ public class MercatorCoordinatesConverter {
 		public LatitudeLongitudeBounds getLatitudeLongitudeBounds() {
 			return getTmsTilePosition().getLatitudeLongitudeBounds();
 		}
+
+		public SphericalMercatorBounds getSphericalMercatorBounds() {
+			return getTmsTilePosition().getSphericalMercatorBounds();
+		}
 	}
 
 	public class LatitudeLongitudeBounds {
 		private LatitudeLongitudePosition max;
 		private LatitudeLongitudePosition min;
 
-		private LatitudeLongitudeBounds(LatitudeLongitudePosition max,
-				LatitudeLongitudePosition min) {
-			this.max = max;
+		private LatitudeLongitudeBounds(LatitudeLongitudePosition min,
+				LatitudeLongitudePosition max) {
 			this.min = min;
-		}
-
-		private LatitudeLongitudeBounds(double minLatitude,
-				double minLongitude, double maxLatitude, double maxLongitude) {
-			this(new LatitudeLongitudePosition(minLatitude, minLongitude),
-					new LatitudeLongitudePosition(maxLatitude, maxLongitude));
+			this.max = max;
 		}
 
 		public LatitudeLongitudePosition getMax() {
@@ -180,20 +200,14 @@ public class MercatorCoordinatesConverter {
 		}
 	}
 
-	private class SphericalMercatorBounds {
+	public class SphericalMercatorBounds {
 		private SphericalMercatorPosition max;
 		private SphericalMercatorPosition min;
 
-		private SphericalMercatorBounds(SphericalMercatorPosition max,
-				SphericalMercatorPosition min) {
-			this.max = max;
+		private SphericalMercatorBounds(SphericalMercatorPosition min,
+				SphericalMercatorPosition max) {
 			this.min = min;
-		}
-
-		private SphericalMercatorBounds(double minLatitude,
-				double minLongitude, double maxLatitude, double maxLongitude) {
-			this(new SphericalMercatorPosition(minLatitude, minLongitude),
-					new SphericalMercatorPosition(maxLatitude, maxLongitude));
+			this.max = max;
 		}
 
 		public SphericalMercatorPosition getMax() {
@@ -203,6 +217,23 @@ public class MercatorCoordinatesConverter {
 		public SphericalMercatorPosition getMin() {
 			return min;
 		}
+
+		public double getMinY() {
+			return min.getY();
+		}
+
+		public double getMinX() {
+			return min.getX();
+		}
+
+		public double getMaxY() {
+			return max.getY();
+		}
+
+		public double getMaxX() {
+			return max.getX();
+		}
+
 	}
 
 	private static final int EARTH_RADIUS = 6378137;
@@ -210,7 +241,7 @@ public class MercatorCoordinatesConverter {
 	private double originShift;
 	private double initialResolution;
 
-	public MercatorCoordinatesConverter(int tileSize) {
+	public CoordinatesConverter(int tileSize) {
 		// "Initialize the TMS Global Mercator pyramid"
 		this.tileSize = tileSize;
 		this.initialResolution = 2 * Math.PI * EARTH_RADIUS / this.tileSize;
@@ -220,14 +251,19 @@ public class MercatorCoordinatesConverter {
 	}
 
 	public GoogleTilePosition createGoogleTilePosition(int x, int y, int zoom) {
-		return new GoogleTilePosition(x, y, zoom);
+		return new GoogleTilePosition(x, y, zoom, null);
 	}
 
 	public TmsTilePosition createTmsTilePosition(int x, int y, int zoom) {
 		return new TmsTilePosition(x, y, zoom);
 	}
 
-	public SphericalMercatorPosition latitudeLongitudeToSphericalMercator(
+	public LatitudeLongitudePosition createLatitudeLongitudePosition(
+			double latitude, double longitude) {
+		return new LatitudeLongitudePosition(latitude, longitude, null);
+	}
+
+	private SphericalMercatorPosition latitudeLongitudeToSphericalMercator(
 			LatitudeLongitudePosition latitudeLongitude) {
 		// "Converts given lat/lon in WGS84 Datum to XY in Spherical Mercator EPSG:900913"
 		double lat = latitudeLongitude.getLatitude();
@@ -241,7 +277,7 @@ public class MercatorCoordinatesConverter {
 		return new SphericalMercatorPosition(mx, my);
 	}
 
-	public LatitudeLongitudePosition sphericalMercatorToLatitudeLongitude(
+	private LatitudeLongitudePosition sphericalMercatorToLatitudeLongitude(
 			SphericalMercatorPosition sphericalMercatorPosition) {
 		// "Converts XY point from Spherical Mercator EPSG:900913 to lat/lon in WGS84 Datum"
 		double mx = sphericalMercatorPosition.getX();
@@ -253,10 +289,11 @@ public class MercatorCoordinatesConverter {
 		lat = 180
 				/ Math.PI
 				* (2 * Math.atan(Math.exp(lat * Math.PI / 180.0)) - Math.PI / 2.0);
-		return new LatitudeLongitudePosition(lat, lon);
+		return new LatitudeLongitudePosition(lat, lon,
+				sphericalMercatorPosition);
 	}
 
-	public SphericalMercatorPosition pixelToSphericalMercator(
+	private SphericalMercatorPosition pixelToSphericalMercator(
 			PixelPosition pixelPosition) {
 		// "Converts pixel coordinates in given zoom level of pyramid to EPSG:900913"
 		int px = pixelPosition.getX();
@@ -269,7 +306,7 @@ public class MercatorCoordinatesConverter {
 		return new SphericalMercatorPosition(mx, my);
 	}
 
-	public PixelPosition sphericalMercatorToPixel(
+	private PixelPosition sphericalMercatorToPixel(
 			SphericalMercatorPosition sphericalMercatorPosition, int zoom) {
 		// "Converts EPSG:900913 to pyramid pixel coordinates in given zoom level"
 		double mx = sphericalMercatorPosition.getX();
@@ -281,7 +318,7 @@ public class MercatorCoordinatesConverter {
 		return new PixelPosition(px, py, zoom);
 	}
 
-	public TmsTilePosition pixelToTile(PixelPosition pixelPosition) {
+	private TmsTilePosition pixelToTile(PixelPosition pixelPosition) {
 		// "Returns a tmsTilePosition covering region in given pixel coordinates"
 		int px = pixelPosition.getX();
 		int py = pixelPosition.getY();
@@ -292,7 +329,7 @@ public class MercatorCoordinatesConverter {
 		return new TmsTilePosition(tx, ty, zoom);
 	}
 
-	public PixelPosition pixelsToRaster(PixelPosition pixelPosition) {
+	private PixelPosition pixelsToRaster(PixelPosition pixelPosition) {
 		// "Move the origin of pixel coordinates to top-left corner"
 		int px = pixelPosition.getX();
 		int py = pixelPosition.getY();
@@ -302,7 +339,7 @@ public class MercatorCoordinatesConverter {
 		return new PixelPosition(px, mapSize - py, zoom);
 	}
 
-	public TmsTilePosition SphericalMercatorToTile(
+	private TmsTilePosition SphericalMercatorToTile(
 			SphericalMercatorPosition sphericalMercatorPosition, int zoom) {
 		// "Returns tmsTilePosition for given mercator coordinates"
 
@@ -311,7 +348,7 @@ public class MercatorCoordinatesConverter {
 		return this.pixelToTile(pixelPosition);
 	}
 
-	public SphericalMercatorBounds tileShpericalMercatorBounds(
+	private SphericalMercatorBounds tileShpericalMercatorBounds(
 			TmsTilePosition tilePosition) {
 		// "Returns bounds of the given tmsTilePosition in EPSG:900913 coordinates"
 		int tx = tilePosition.getX();
@@ -324,11 +361,12 @@ public class MercatorCoordinatesConverter {
 		SphericalMercatorPosition max = this
 				.pixelToSphericalMercator(new PixelPosition((tx + 1)
 						* this.tileSize, (ty + 1) * this.tileSize, zoom));
-		return new SphericalMercatorBounds(min.getX(), min.getY(), max.getX(),
-				max.getY());
+		return new SphericalMercatorBounds(new SphericalMercatorPosition(min
+				.getX(), min.getY()), new SphericalMercatorPosition(max.getX(),
+				max.getY()));
 	}
 
-	public LatitudeLongitudeBounds tileLatitudeLongitudeBounds(
+	private LatitudeLongitudeBounds tileLatitudeLongitudeBounds(
 			TmsTilePosition tilePosition) {
 		// "Returns bounds of the given tmsTilePosition in latutude/longitude using WGS84 datum"
 
@@ -342,14 +380,14 @@ public class MercatorCoordinatesConverter {
 		return new LatitudeLongitudeBounds(min, max);
 	}
 
-	public double resolution(int zoom) {
+	private double resolution(int zoom) {
 		// "Resolution (meters/pixel) for given zoom level (measured at Equator)"
 
 		// s return (2 * math.pi * 6378137) / (self.tileSize * 2**zoom)
 		return this.initialResolution / (Math.pow(2, zoom));
 	}
 
-	public int zoomForPixelSize(int pixelSize) {
+	private int zoomForPixelSize(int pixelSize) {
 		// "Maximal scaledown zoom of the pyramid closest to the pixelSize."
 
 		for (int i = 0; i < 30; i++) {
@@ -360,17 +398,18 @@ public class MercatorCoordinatesConverter {
 		return 0;
 	}
 
-	public GoogleTilePosition tileToGoogleTile(TmsTilePosition tilePosition) {
+	private GoogleTilePosition tileToGoogleTile(TmsTilePosition tilePosition) {
 		// "Converts TMS tmsTilePosition coordinates to Google Tile coordinates"
 		int tx = tilePosition.getX();
 		int ty = tilePosition.getY();
 		int zoom = tilePosition.getZoom();
 		// # coordinate origin is moved from bottom-left to top-left corner of
 		// the extent
-		return new GoogleTilePosition(tx, ((int)Math.pow(2, zoom) - 1) - ty, zoom);
+		return new GoogleTilePosition(tx, ((int) Math.pow(2, zoom) - 1) - ty,
+				zoom, tilePosition);
 	}
 
-	public TmsTilePosition googleTileToTile(GoogleTilePosition tilePosition) {
+	private TmsTilePosition googleTileToTile(GoogleTilePosition tilePosition) {
 		// "Converts Google tmsTilePosition coordinates to  TMS Tile coordinates"
 		int tx = tilePosition.getX();
 		int ty = tilePosition.getY();
@@ -378,7 +417,7 @@ public class MercatorCoordinatesConverter {
 
 		// # coordinate origin is moved from bottom-left to top-left corner of
 		// the extent
-		return new TmsTilePosition(tx, ((int)Math.pow(2, zoom) - 1) - ty, zoom);
+		return new TmsTilePosition(tx, ((int) Math.pow(2, zoom) - 1) - ty, zoom);
 	}
 
 }
