@@ -72,29 +72,36 @@ public class DataLoadServiceImpl implements DataLoadService {
 					depth = entry.getDepth();
 
 				}
-				if (entry.getMagnitude1Type() != MagnitudeType.BLANK) {
-					magnitudes.add(getMagnituede(entry.getMagnitude1(), entry
-							.getMagnitude1ReportingAgency(), entry
-							.getMagnitude1Type()));
+				if (entry.getMagnitude1Type() != MagnitudeType.BLANK
+						&& entry.getMagnitude1() != null) {
+					magnitudes.add(getMagnituede(entry.getMagnitude1()
+							.floatValue(),
+							entry.getMagnitude1ReportingAgency(), entry
+									.getMagnitude1Type()));
 				}
-				if (entry.getMagnitude2Type() != MagnitudeType.BLANK) {
-					magnitudes.add(getMagnituede(entry.getMagnitude2(), entry
-							.getMagnitude2ReportingAgency(), entry
-							.getMagnitude2Type()));
+				if (entry.getMagnitude2Type() != MagnitudeType.BLANK
+						&& entry.getMagnitude2() != null) {
+					magnitudes.add(getMagnituede(entry.getMagnitude2()
+							.floatValue(),
+							entry.getMagnitude2ReportingAgency(), entry
+									.getMagnitude2Type()));
 				}
-				if (entry.getMagnitude3Type() != MagnitudeType.BLANK) {
-					magnitudes.add(getMagnituede(entry.getMagnitude3(), entry
-							.getMagnitude3ReportingAgency(), entry
-							.getMagnitude3Type()));
+				if (entry.getMagnitude3Type() != MagnitudeType.BLANK
+						&& entry.getMagnitude3() != null) {
+					magnitudes.add(getMagnituede(entry.getMagnitude3()
+							.floatValue(),
+							entry.getMagnitude3ReportingAgency(), entry
+									.getMagnitude3Type()));
 				}
 			}
-			if (latitude == null || longitude == null || depth == null) { 
+			if (latitude == null || longitude == null || depth == null) {
 				System.out.println("Warning: incomplete event " + date);
 				return;
 			}
 			Point location = geometryFactory.createPoint(new Coordinate(
-					latitude.floatValue(), longitude.floatValue()));
-			Event event = new Event(location, depth.floatValue(), date, magnitudes);
+					longitude.floatValue(), latitude.floatValue()));
+			Event event = new Event(location, depth.floatValue(), date,
+					magnitudes);
 			eventRepository.put(event);
 		}
 

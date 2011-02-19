@@ -31,7 +31,7 @@ SYMBOL
   TYPE ellipse
   FILLED true
   POINTS
-    2 2
+    4 4
   END
 END
 
