@@ -14,9 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.seismap.service.impl.MercatorCoordinatesConverter;
-import com.seismap.service.impl.MercatorCoordinatesConverter.GoogleTilePosition;
-import com.seismap.service.impl.MercatorCoordinatesConverter.LatitudeLongitudeBounds;
+import com.seismap.service.impl.CoordinatesConverter;
+import com.seismap.service.impl.CoordinatesConverter.GoogleTilePosition;
+import com.seismap.service.impl.CoordinatesConverter.SphericalMercatorBounds;
 
 import edu.umn.gis.mapscript.imageObj;
 import edu.umn.gis.mapscript.mapObj;
@@ -25,6 +25,12 @@ import edu.umn.gis.mapscript.mapscript;
 @Controller
 @RequestMapping("mapimage")
 public class MapImageController {
+
+	private CoordinatesConverter coordinatesConverter;
+
+	public MapImageController(CoordinatesConverter coordinatesConverter) {
+		this.coordinatesConverter = coordinatesConverter;
+	}
 
 	@RequestMapping("view/{zoom}/{x}/{y}")
 	public ResponseEntity<byte[]> view(@PathVariable int zoom,
@@ -35,37 +41,36 @@ public class MapImageController {
 		}
 		String mapServerDir = baseDir + "/src/main/mapserver";
 		String mapServerOutDir = baseDir + "/target/mapserver";
-		MercatorCoordinatesConverter converter = new MercatorCoordinatesConverter(
-				256);
 
-		GoogleTilePosition googleTile = converter.createGoogleTilePosition(x,
+		GoogleTilePosition googleTile = coordinatesConverter.createGoogleTilePosition(x,
 				y, zoom);
-		LatitudeLongitudeBounds bounds = googleTile
-				.getLatitudeLongitudeBounds();
-		String mapDef = IOUtils.toString(new FileInputStream(mapServerDir + "/map/tile.map"));
+		SphericalMercatorBounds bounds = googleTile
+				.getSphericalMercatorBounds();
+		String mapDef = IOUtils.toString(new FileInputStream(mapServerDir
+				+ "/map/tile.map"));
 		mapDef = mapDef.replace("${minLatitude}", Double.toString(bounds
-				.getMinLatitude()));
+				.getMinY()));
 		mapDef = mapDef.replace("${minLongitude}", Double.toString(bounds
-				.getMinLongitude()));
+				.getMinX()));
 		mapDef = mapDef.replace("${maxLatitude}", Double.toString(bounds
-				.getMaxLatitude()));
+				.getMaxY()));
 		mapDef = mapDef.replace("${maxLongitude}", Double.toString(bounds
-				.getMaxLongitude()));
+				.getMaxX()));
 		mapDef = mapDef.replace("${mapServerDir}", mapServerDir);
 		mapDef = mapDef.replace("${mapServerOutDir}", mapServerOutDir);
 		String tilesDir = mapServerOutDir + "/map";
 		new File(tilesDir).mkdirs();
 		new File(mapServerOutDir).mkdirs();
-		new File(mapServerOutDir  + "/log").mkdirs();
-		new File(mapServerOutDir  + "/img").mkdirs();
+		new File(mapServerOutDir + "/log").mkdirs();
+		new File(mapServerOutDir + "/img").mkdirs();
 		String defFile = tilesDir + "/" + zoom + '-' + x + '-' + y + ".map";
 		IOUtils.write(mapDef, new FileOutputStream(defFile));
 
 		mapObj map = new mapObj(defFile);
-		Object xc=map.getExtent();
-		map.setTransparent(1);	
+		map.setTransparent(1);
 		imageObj image = map.draw();
-		File file = new File(mapServerOutDir  + "/img/" + zoom + '-' + x + '-' + y + ".png");
+		File file = new File(mapServerOutDir + "/img/" + zoom + '-' + x + '-'
+				+ y + ".png");
 		mapscript.msSaveImage(map, image, file.getAbsolutePath());
 		byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
 		HttpHeaders responseHeaders = new HttpHeaders();

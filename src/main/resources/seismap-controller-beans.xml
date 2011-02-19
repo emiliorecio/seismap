@@ -26,7 +26,9 @@
 		<constructor-arg ref="service_dataLoadService" />
 	</bean>
 
-	<bean id="controller_mapImageController" class="com.seismap.controller.MapImageController" />
+	<bean id="controller_mapImageController" class="com.seismap.controller.MapImageController">
+	   <constructor-arg ref="service_coordinatesConverter"/>
+	</bean>
 
 	<bean id="controller_viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
