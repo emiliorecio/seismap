@@ -25,7 +25,7 @@ ALTER TABLE event OWNER TO postgres;
 
 CREATE INDEX event_oid ON event (oid);
 
-SELECT AddGeometryColumn('event', 'location', 4326, 'POINT', 2);
+SELECT AddGeometryColumn('event', 'location', 900913, 'POINT', 2);
 
 CREATE TABLE magnitude
 (

@@ -34,6 +34,7 @@
 		<constructor-arg ref="model_eventRepositoty" />
 		<constructor-arg ref="model_agencyRepositoty" />
 		<constructor-arg ref="service_geometryFactory" />
+	   <constructor-arg ref="service_coordinatesConverter"/>
 	</bean>
 
 </beans>
