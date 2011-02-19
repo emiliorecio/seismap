@@ -15,10 +15,7 @@ CONFIG "CPL_DEBUG" "ON"
 CONFIG "PROJ_DEBUG" "ON"
 
 DEBUG 5
- 
-#PROJECTION
-#  "init=epsg:4326"
-#END
+
 LEGEND
   TRANSPARENT TRUE
 END
@@ -62,9 +59,6 @@ LAYER
             END
         END
     END
-#    PROJECTION
-#        "init=epsg:4326"
-#    END
 END
 
 
