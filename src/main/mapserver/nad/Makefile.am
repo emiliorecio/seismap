@@ -8,6 +8,7 @@ TEST27 = ./test27
 TEST83 = ./test83
 TESTNTV2 = ./testntv2
 TESTVARIOUS = ./testvarious
+TESTDATUMFILE = ./testdatumfile
 TESTIGN = ./testIGNF
 
 pkgdata_DATA = GL27 nad.lst nad27 nad83 proj_def.dat world epsg esri \
@@ -15,13 +16,22 @@ pkgdata_DATA = GL27 nad.lst nad27 nad83 proj_def.dat world epsg esri \
 		IGNF
 
 EXTRA_DIST = GL27 nad.lst nad27 nad83 pj_out27.dist pj_out83.dist td_out.dist \
-		proj_def.dat test27 test83 world epsg esri \
-		testvarious testntv2 ntv2_out.dist \
+		proj_def.dat test27 test83 world epsg esri tv_out.dist \
+		testvarious testdatumfile testntv2 ntv2_out.dist \
 		esri.extra other.extra \
 		IGNF testIGNF proj_outIGNF.dist \
 		makefile.vc
 
-install-data-local:
+process-nad2bin:
+	@if [ -f conus.lla -a ! -f conus ] ; then \
+	  for x in *.lla ; do \
+	    DEST=`basename $$x .lla`; \
+	    echo "../src/nad2bin$(EXEEXT) $$DEST < $$x"; \
+	    ../src/nad2bin$(EXEEXT) $$DEST < $$x ; \
+	  done; \
+	fi 
+	
+install-data-local: process-nad2bin
 	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
 	@if [ -f conus.lla ] ; then \
 	  for x in *.lla ; do \
@@ -43,13 +53,22 @@ install-data-local:
           fi; \
 	done
 
-check-local:
+check-local: process-nad2bin
 	$(TEST27) $(PROJEXE)
 	$(TEST83) $(PROJEXE)
 	$(TESTVARIOUS) $(CS2CSEXE)
-
-#	$(TESTNTV2) $(CS2CSEXE)
-#	$(TESTIGNF) $(CS2CSEXE)
+	@if [ -f conus ] ; then \
+	  export PROJ_LIB=. ; \
+	  $(TESTDATUMFILE) $(CS2CSEXE) ; \
+	fi
+	@if [ -f ntf_r93.gsb ] ; then \
+	  export PROJ_LIB=. ; \
+	  $(TESTIGN) $(CS2CSEXE) ; \
+	fi
+	@if [ -f ntv2_0.gsb ] ; then \
+	  export PROJ_LIB=. ; \
+	  $(TESTNTV2) $(CS2CSEXE) ; \
+	fi
 
 clean-local:
 	$(RM) $(TEST_DB)
