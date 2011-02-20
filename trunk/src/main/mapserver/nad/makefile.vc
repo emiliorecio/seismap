@@ -1,5 +1,5 @@
 #
-# $Id: makefile.vc 1467 2008-08-07 17:08:51Z fwarmerdam $
+# $Id: makefile.vc 1635 2009-09-24 02:47:36Z warmerdam $
 #
 # makefile.vc - builds PROJ.4 library with Visual C++
 #
@@ -9,7 +9,7 @@
 OLD_GRIDS = conus MD TN WI WO alaska hawaii prvi stgeorge stlrnc stpaul null
 
 OTHER_FILES =  GL27 nad.lst nad27 nad83 proj_def.dat world epsg esri \
-	esri.extra other.extra IGNF ntf_r93.gsb
+	esri.extra other.extra IGNF
 
 
 
