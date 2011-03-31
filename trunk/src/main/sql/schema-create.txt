@@ -33,9 +33,9 @@ CREATE TABLE magnitude
   "type" CHARACTER VARYING(8) NOT NULL,
   "value" REAL NOT NULL,
   reportingagency_id BIGINT NOT NULL,
-  magnitudes_id BIGINT NOT NULL,
+  event_id BIGINT NOT NULL,
   CONSTRAINT magnitude_pkey PRIMARY KEY (id),
-  CONSTRAINT fk_magnitudes_id FOREIGN KEY (magnitudes_id)
+  CONSTRAINT fk_event_id FOREIGN KEY (event_id)
       REFERENCES event (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT fk_reportingagency_id FOREIGN KEY (reportingagency_id)
@@ -46,3 +46,113 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE magnitude OWNER TO postgres;
+
+CREATE VIEW eventandml (id, date, depth, location, magnitudeValue) AS (
+    SELECT
+        event.id AS id,
+        event.date as date,
+        event.depth as depth,
+        event.location as location,
+        AVG(magnitude.value) as magnitudeValue
+    FROM
+        event
+        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id)
+    WHERE
+        magnitude.type = 'ML'
+    GROUP BY
+        event.id,
+        event.date,
+        event.depth,
+        event.location);
+        
+
+CREATE VIEW eventandmb (id, date, depth, location, magnitudeValue) AS (
+    SELECT
+        event.id AS id,
+        event.date as date,
+        event.depth as depth,
+        event.location as location,
+        AVG(magnitude.value) as magnitudeValue
+    FROM
+        event
+        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id)
+    WHERE
+        magnitude.type = 'MB'
+    GROUP BY
+        event.id,
+        event.date,
+        event.depth,
+        event.location);
+        
+CREATE VIEW eventandms (id, date, depth, location, magnitudeValue) AS (
+    SELECT
+        event.id AS id,
+        event.date as date,
+        event.depth as depth,
+        event.location as location,
+        AVG(magnitude.value) as magnitudeValue
+    FROM
+        event
+        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id)
+    WHERE
+        magnitude.type = 'MS'
+    GROUP BY
+        event.id,
+        event.date,
+        event.depth,
+        event.location);
+        
+CREATE VIEW eventandmw (id, date, depth, location, magnitudeValue) AS (
+    SELECT
+        event.id AS id,
+        event.date as date,
+        event.depth as depth,
+        event.location as location,
+        AVG(magnitude.value) as magnitudeValue
+    FROM
+        event
+        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id)
+    WHERE
+        magnitude.type = 'MW'
+    GROUP BY
+        event.id,
+        event.date,
+        event.depth,
+        event.location);
+        
+CREATE VIEW eventandmblg (id, date, depth, location, magnitudeValue) AS (
+    SELECT
+        event.id AS id,
+        event.date as date,
+        event.depth as depth,
+        event.location as location,
+        AVG(magnitude.value) as magnitudeValue
+    FROM
+        event
+        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id)
+    WHERE
+        magnitude.type = 'MBLG'
+    GROUP BY
+        event.id,
+        event.date,
+        event.depth,
+        event.location);
+        
+CREATE VIEW eventandmc (id, date, depth, location, magnitudeValue) AS (
+    SELECT
+        event.id AS id,
+        event.date as date,
+        event.depth as depth,
+        event.location as location,
+        AVG(magnitude.value) as magnitudeValue
+    FROM
+        event
+        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id)
+    WHERE
+        magnitude.type = 'MC'
+    GROUP BY
+        event.id,
+        event.date,
+        event.depth,
+        event.location);
+        

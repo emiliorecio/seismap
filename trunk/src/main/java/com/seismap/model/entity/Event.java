@@ -34,7 +34,7 @@ public class Event {
 	private Date date;
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(nullable = false)
+	@JoinColumn(name = "event_id", nullable = false)
 	private List<Magnitude> magnitudes;
 
 	protected Event() {
