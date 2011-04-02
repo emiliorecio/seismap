@@ -56,9 +56,7 @@ CREATE VIEW eventandml (id, date, depth, location, magnitudeValue) AS (
         AVG(magnitude.value) as magnitudeValue
     FROM
         event
-        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id)
-    WHERE
-        magnitude.type = 'ML'
+        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id AND magnitude.type = 'ML')
     GROUP BY
         event.id,
         event.date,
@@ -75,9 +73,7 @@ CREATE VIEW eventandmb (id, date, depth, location, magnitudeValue) AS (
         AVG(magnitude.value) as magnitudeValue
     FROM
         event
-        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id)
-    WHERE
-        magnitude.type = 'MB'
+        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id AND magnitude.type = 'MB')
     GROUP BY
         event.id,
         event.date,
@@ -93,9 +89,7 @@ CREATE VIEW eventandms (id, date, depth, location, magnitudeValue) AS (
         AVG(magnitude.value) as magnitudeValue
     FROM
         event
-        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id)
-    WHERE
-        magnitude.type = 'MS'
+        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id AND magnitude.type = 'MS')
     GROUP BY
         event.id,
         event.date,
@@ -111,9 +105,7 @@ CREATE VIEW eventandmw (id, date, depth, location, magnitudeValue) AS (
         AVG(magnitude.value) as magnitudeValue
     FROM
         event
-        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id)
-    WHERE
-        magnitude.type = 'MW'
+        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id AND magnitude.type = 'MW')
     GROUP BY
         event.id,
         event.date,
@@ -129,9 +121,7 @@ CREATE VIEW eventandmblg (id, date, depth, location, magnitudeValue) AS (
         AVG(magnitude.value) as magnitudeValue
     FROM
         event
-        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id)
-    WHERE
-        magnitude.type = 'MBLG'
+        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id AND  magnitude.type = 'MBLG')
     GROUP BY
         event.id,
         event.date,
@@ -147,9 +137,7 @@ CREATE VIEW eventandmc (id, date, depth, location, magnitudeValue) AS (
         AVG(magnitude.value) as magnitudeValue
     FROM
         event
-        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id)
-    WHERE
-        magnitude.type = 'MC'
+        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id AND magnitude.type = 'MC')
     GROUP BY
         event.id,
         event.date,
