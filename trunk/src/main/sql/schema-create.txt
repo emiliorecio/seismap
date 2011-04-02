@@ -15,7 +15,7 @@ CREATE TABLE event
 (
   id BIGINT NOT NULL,
   date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-  depth REAL NOT NULL,
+  depth NUMERIC(4,1) NOT NULL,
   CONSTRAINT event_pkey PRIMARY KEY (id)
 )
 WITH (
@@ -31,7 +31,7 @@ CREATE TABLE magnitude
 (
   id BIGINT NOT NULL,
   "type" CHARACTER VARYING(8) NOT NULL,
-  "value" REAL NOT NULL,
+  "value" NUMERIC(3,1) NOT NULL,
   reportingagency_id BIGINT NOT NULL,
   event_id BIGINT NOT NULL,
   CONSTRAINT magnitude_pkey PRIMARY KEY (id),
