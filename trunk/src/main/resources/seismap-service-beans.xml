@@ -1,40 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-	<bean id="service_propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
-		<property name="location">
-			<value>classpath:/seismap-service-beans.properties</value>
-		</property>
-	</bean>
+  <bean id="service_propertyConfigurer"
+    class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
+    <property name="location">
+      <value>classpath:/seismap-service-beans.properties</value>
+    </property>
+  </bean>
 
-	<bean id="service_geometryFactory" class="com.vividsolutions.jts.geom.GeometryFactory">
-		<constructor-arg>
-			<bean class="com.vividsolutions.jts.geom.PrecisionModel" />
-		</constructor-arg>
-		<constructor-arg value="900913" />
-	</bean>
+  <bean id="service_geometryFactory" class="com.vividsolutions.jts.geom.GeometryFactory">
+    <constructor-arg>
+      <bean class="com.vividsolutions.jts.geom.PrecisionModel" />
+    </constructor-arg>
+    <constructor-arg value="4326" />
+  </bean>
 
-	<bean id="service_coordinatesConverter" class="com.seismap.service.impl.CoordinatesConverter">
-		<constructor-arg value="256" />
-	</bean>
+  <bean id="service_coordinatesConverter" class="com.seismap.service.impl.CoordinatesConverter">
+    <constructor-arg value="256" />
+  </bean>
 
 
-	<bean id="service_eventService" class="com.seismap.service.impl.EventServiceImpl">
-		<constructor-arg ref="model_eventRepositoty" />
-	</bean>
+  <bean id="service_categoryService" class="com.seismap.service.impl.CategoryServiceImpl">
+    <constructor-arg ref="model_applicationRepository" />
+    <constructor-arg ref="model_categoryRepository" />
+  </bean>
 
-	<bean id="service_dataLoadService" class="com.seismap.service.impl.DataLoadServiceImpl">
-		<constructor-arg ref="model_eventRepositoty" />
-		<constructor-arg ref="model_agencyRepositoty" />
-		<constructor-arg ref="service_geometryFactory" />
-	   <constructor-arg ref="service_coordinatesConverter"/>
-	</bean>
+  <bean id="service_eventService" class="com.seismap.service.impl.EventServiceImpl">
+    <constructor-arg ref="model_eventRepository" />
+    <constructor-arg ref="model_eventAndAverageMagnitudeRepository" />
+  </bean>
+
+  <bean id="service_dataLoadService" class="com.seismap.service.impl.DataLoadServiceImpl">
+    <constructor-arg ref="model_eventRepository" />
+    <constructor-arg ref="model_agencyRepository" />
+    <constructor-arg ref="service_geometryFactory" />
+    <constructor-arg ref="service_coordinatesConverter" />
+  </bean>
+
+  <bean id="service_mapService" class="com.seismap.service.impl.MapServiceImpl">
+    <constructor-arg ref="model_mapRepository" />
+    <constructor-arg ref="model_userRepository" />
+    <constructor-arg ref="service_geometryFactory" />
+  </bean>
+
+  <bean id="service_userService" class="com.seismap.service.impl.UserServiceImpl">
+    <constructor-arg ref="model_userRepository" />
+  </bean>
 
 </beans>

@@ -356,12 +356,10 @@ public class RowReader {
 						+ field.getName());
 			}
 			if (map.put(value, mapsToConstant) != null) {
-				if (mapsToConstant == null) {
-					throw new EntryDefinitionException("Mapping value ("
-							+ value + ") defined twice: "
-							+ field.getDeclaringClass().getName() + "."
-							+ field.getName());
-				}
+				throw new EntryDefinitionException("Mapping value (" + value
+						+ ") defined twice: "
+						+ field.getDeclaringClass().getName() + "."
+						+ field.getName());
 			}
 		}
 		fieldReaders[index] = new FieldReader(field, annotation.position(),
@@ -398,9 +396,8 @@ public class RowReader {
 					}
 				}
 				if (indexOfDot == -1) {
-					processedValue = processedValue.substring(0, processedValue
-							.length()
-							- annotation.decimals())
+					processedValue = processedValue.substring(0,
+							processedValue.length() - annotation.decimals())
 							+ '.'
 							+ processedValue.substring(processedValue.length()
 									- annotation.decimals());

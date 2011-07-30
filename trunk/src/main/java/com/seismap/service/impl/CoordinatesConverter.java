@@ -306,47 +306,47 @@ public class CoordinatesConverter {
 		return new SphericalMercatorPosition(mx, my);
 	}
 
-	private PixelPosition sphericalMercatorToPixel(
-			SphericalMercatorPosition sphericalMercatorPosition, int zoom) {
-		// "Converts EPSG:900913 to pyramid pixel coordinates in given zoom level"
-		double mx = sphericalMercatorPosition.getX();
-		double my = sphericalMercatorPosition.getY();
+//	private PixelPosition sphericalMercatorToPixel(
+//			SphericalMercatorPosition sphericalMercatorPosition, int zoom) {
+//		// "Converts EPSG:900913 to pyramid pixel coordinates in given zoom level"
+//		double mx = sphericalMercatorPosition.getX();
+//		double my = sphericalMercatorPosition.getY();
+//
+//		double res = this.resolution(zoom);
+//		int px = (int) ((mx + this.originShift) / res);
+//		int py = (int) ((my + this.originShift) / res);
+//		return new PixelPosition(px, py, zoom);
+//	}
+//
+//	private TmsTilePosition pixelToTile(PixelPosition pixelPosition) {
+//		// "Returns a tmsTilePosition covering region in given pixel coordinates"
+//		int px = pixelPosition.getX();
+//		int py = pixelPosition.getY();
+//		int zoom = pixelPosition.getZoom();
+//
+//		int tx = (int) (Math.ceil(px / (float) this.tileSize) - 1);
+//		int ty = (int) (Math.ceil(py / (float) this.tileSize) - 1);
+//		return new TmsTilePosition(tx, ty, zoom);
+//	}
 
-		double res = this.resolution(zoom);
-		int px = (int) ((mx + this.originShift) / res);
-		int py = (int) ((my + this.originShift) / res);
-		return new PixelPosition(px, py, zoom);
-	}
-
-	private TmsTilePosition pixelToTile(PixelPosition pixelPosition) {
-		// "Returns a tmsTilePosition covering region in given pixel coordinates"
-		int px = pixelPosition.getX();
-		int py = pixelPosition.getY();
-		int zoom = pixelPosition.getZoom();
-
-		int tx = (int) (Math.ceil(px / (float) this.tileSize) - 1);
-		int ty = (int) (Math.ceil(py / (float) this.tileSize) - 1);
-		return new TmsTilePosition(tx, ty, zoom);
-	}
-
-	private PixelPosition pixelsToRaster(PixelPosition pixelPosition) {
-		// "Move the origin of pixel coordinates to top-left corner"
-		int px = pixelPosition.getX();
-		int py = pixelPosition.getY();
-		int zoom = pixelPosition.getZoom();
-
-		int mapSize = this.tileSize << zoom;
-		return new PixelPosition(px, mapSize - py, zoom);
-	}
-
-	private TmsTilePosition SphericalMercatorToTile(
-			SphericalMercatorPosition sphericalMercatorPosition, int zoom) {
-		// "Returns tmsTilePosition for given mercator coordinates"
-
-		PixelPosition pixelPosition = this.sphericalMercatorToPixel(
-				sphericalMercatorPosition, zoom);
-		return this.pixelToTile(pixelPosition);
-	}
+	// private PixelPosition pixelsToRaster(PixelPosition pixelPosition) {
+	// // "Move the origin of pixel coordinates to top-left corner"
+	// int px = pixelPosition.getX();
+	// int py = pixelPosition.getY();
+	// int zoom = pixelPosition.getZoom();
+	//	
+	// int mapSize = this.tileSize << zoom;
+	// return new PixelPosition(px, mapSize - py, zoom);
+	// }
+	//	
+	// private TmsTilePosition SphericalMercatorToTile(
+	// SphericalMercatorPosition sphericalMercatorPosition, int zoom) {
+	// // "Returns tmsTilePosition for given mercator coordinates"
+	//	
+	// PixelPosition pixelPosition = this.sphericalMercatorToPixel(
+	// sphericalMercatorPosition, zoom);
+	// return this.pixelToTile(pixelPosition);
+	// }
 
 	private SphericalMercatorBounds tileShpericalMercatorBounds(
 			TmsTilePosition tilePosition) {
@@ -387,27 +387,28 @@ public class CoordinatesConverter {
 		return this.initialResolution / (Math.pow(2, zoom));
 	}
 
-	private int zoomForPixelSize(int pixelSize) {
-		// "Maximal scaledown zoom of the pyramid closest to the pixelSize."
-
-		for (int i = 0; i < 30; i++) {
-			if (pixelSize > this.resolution(i)) {
-				return i != 0 ? i - 1 : 0; // We don't want to scale up
-			}
-		}
-		return 0;
-	}
-
-	private GoogleTilePosition tileToGoogleTile(TmsTilePosition tilePosition) {
-		// "Converts TMS tmsTilePosition coordinates to Google Tile coordinates"
-		int tx = tilePosition.getX();
-		int ty = tilePosition.getY();
-		int zoom = tilePosition.getZoom();
-		// # coordinate origin is moved from bottom-left to top-left corner of
-		// the extent
-		return new GoogleTilePosition(tx, ((int) Math.pow(2, zoom) - 1) - ty,
-				zoom, tilePosition);
-	}
+	// private int zoomForPixelSize(int pixelSize) {
+	// // "Maximal scaledown zoom of the pyramid closest to the pixelSize."
+	//
+	// for (int i = 0; i < 30; i++) {
+	// if (pixelSize > this.resolution(i)) {
+	// return i != 0 ? i - 1 : 0; // We don't want to scale up
+	// }
+	// }
+	// return 0;
+	// }
+	//
+	// private GoogleTilePosition tileToGoogleTile(TmsTilePosition tilePosition)
+	// {
+	// // "Converts TMS tmsTilePosition coordinates to Google Tile coordinates"
+	// int tx = tilePosition.getX();
+	// int ty = tilePosition.getY();
+	// int zoom = tilePosition.getZoom();
+	// // # coordinate origin is moved from bottom-left to top-left corner of
+	// // the extent
+	// return new GoogleTilePosition(tx, ((int) Math.pow(2, zoom) - 1) - ty,
+	// zoom, tilePosition);
+	// }
 
 	private TmsTilePosition googleTileToTile(GoogleTilePosition tilePosition) {
 		// "Converts Google tmsTilePosition coordinates to  TMS Tile coordinates"

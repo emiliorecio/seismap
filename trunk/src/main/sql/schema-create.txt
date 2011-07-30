@@ -47,100 +47,13 @@ WITH (
 );
 ALTER TABLE magnitude OWNER TO postgres;
 
-CREATE VIEW eventandml (id, date, depth, location, magnitudeValue) AS (
-    SELECT
-        event.id AS id,
-        event.date as date,
-        event.depth as depth,
-        event.location as location,
-        AVG(magnitude.value) as magnitudeValue
-    FROM
-        event
-        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id AND magnitude.type = 'ML')
-    GROUP BY
-        event.id,
-        event.date,
-        event.depth,
-        event.location);
-        
+CREATE OR REPLACE VIEW eventandaveragemagnitude AS 
+ SELECT eventandtype.id AS eventid, eventandtype.date AS eventdate, eventandtype.depth AS eventdepth, eventandtype.location AS eventlocation, eventandtype.type AS magnitudetype, avg(magnitude.value) AS magnitudeaveragevalue
+   FROM ( SELECT magnitudetype.type, event.id, event.date, event.depth, event.location
+           FROM ( VALUES ('ML'::text), ('MB'::text), ('MS'::text), ('MW'::text), ('MBLG'::text), ('MC'::text)) magnitudetype(type), event) eventandtype
+   LEFT JOIN magnitude ON eventandtype.id = magnitude.event_id AND eventandtype.type = magnitude.type::text
+  GROUP BY eventandtype.id, eventandtype.date, eventandtype.depth, eventandtype.location, eventandtype.type
+  ORDER BY eventandtype.id;
 
-CREATE VIEW eventandmb (id, date, depth, location, magnitudeValue) AS (
-    SELECT
-        event.id AS id,
-        event.date as date,
-        event.depth as depth,
-        event.location as location,
-        AVG(magnitude.value) as magnitudeValue
-    FROM
-        event
-        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id AND magnitude.type = 'MB')
-    GROUP BY
-        event.id,
-        event.date,
-        event.depth,
-        event.location);
-        
-CREATE VIEW eventandms (id, date, depth, location, magnitudeValue) AS (
-    SELECT
-        event.id AS id,
-        event.date as date,
-        event.depth as depth,
-        event.location as location,
-        AVG(magnitude.value) as magnitudeValue
-    FROM
-        event
-        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id AND magnitude.type = 'MS')
-    GROUP BY
-        event.id,
-        event.date,
-        event.depth,
-        event.location);
-        
-CREATE VIEW eventandmw (id, date, depth, location, magnitudeValue) AS (
-    SELECT
-        event.id AS id,
-        event.date as date,
-        event.depth as depth,
-        event.location as location,
-        AVG(magnitude.value) as magnitudeValue
-    FROM
-        event
-        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id AND magnitude.type = 'MW')
-    GROUP BY
-        event.id,
-        event.date,
-        event.depth,
-        event.location);
-        
-CREATE VIEW eventandmblg (id, date, depth, location, magnitudeValue) AS (
-    SELECT
-        event.id AS id,
-        event.date as date,
-        event.depth as depth,
-        event.location as location,
-        AVG(magnitude.value) as magnitudeValue
-    FROM
-        event
-        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id AND  magnitude.type = 'MBLG')
-    GROUP BY
-        event.id,
-        event.date,
-        event.depth,
-        event.location);
-        
-CREATE VIEW eventandmc (id, date, depth, location, magnitudeValue) AS (
-    SELECT
-        event.id AS id,
-        event.date as date,
-        event.depth as depth,
-        event.location as location,
-        AVG(magnitude.value) as magnitudeValue
-    FROM
-        event
-        LEFT OUTER JOIN magnitude ON (event.id = magnitude.event_id AND magnitude.type = 'MC')
-    GROUP BY
-        event.id,
-        event.date,
-        event.depth,
-        event.location);
-        
+ALTER TABLE eventandaveragemagnitude OWNER TO postgres;
+

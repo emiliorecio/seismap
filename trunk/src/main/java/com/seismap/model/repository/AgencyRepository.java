@@ -2,9 +2,7 @@ package com.seismap.model.repository;
 
 import com.seismap.model.entity.Agency;
 
-public interface AgencyRepository {
+public interface AgencyRepository extends Repository<Agency, Long> {
 
-	void put(Agency agency);
-	
 	Agency getByCode(String code);
 }

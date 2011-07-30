@@ -9,7 +9,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity()
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "code"))
-public class Agency {
+public class Agency implements Identifiable<Long> {
 
 	@Id
 	@GeneratedValue

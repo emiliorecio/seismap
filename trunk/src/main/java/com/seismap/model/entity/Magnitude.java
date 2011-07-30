@@ -9,8 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.seismap.service.event.MagnitudeType;
+
 @Entity
-public class Magnitude {
+public class Magnitude implements Identifiable<Long> {
 
 	@Id
 	@GeneratedValue

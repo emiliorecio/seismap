@@ -44,9 +44,14 @@
 		<property name="dataSource" ref="model_dataSource" />
 		<property name="annotatedClasses">
 			<util:list>
-				<value>com.seismap.model.entity.Agency</value>
+        <value>com.seismap.model.entity.Application</value>
+        <value>com.seismap.model.entity.Agency</value>
+        <value>com.seismap.model.entity.Category</value>
 				<value>com.seismap.model.entity.Event</value>
-				<value>com.seismap.model.entity.Magnitude</value>
+        <value>com.seismap.model.entity.EventAndAverageMagnitude</value>
+        <value>com.seismap.model.entity.Magnitude</value>
+        <value>com.seismap.model.entity.Map</value>
+        <value>com.seismap.model.entity.User</value>
 			</util:list>
 		</property>
 	</bean>
@@ -61,11 +66,31 @@
         <property name="allowCreate" value="false" />
     </bean>
 
-    <bean id="model_eventRepositoty" class="com.seismap.model.repository.impl.EventRepositoryImpl">
+    <bean id="model_agencyRepository" class="com.seismap.model.repository.impl.AgencyRepositoryImpl">
         <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
     </bean>
 
-    <bean id="model_agencyRepositoty" class="com.seismap.model.repository.impl.AgencyRepositoryImpl">
+    <bean id="model_applicationRepository" class="com.seismap.model.repository.impl.ApplicationRepositoryImpl">
+        <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
+    </bean>
+
+    <bean id="model_categoryRepository" class="com.seismap.model.repository.impl.CategoryRepositoryImpl">
+        <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
+    </bean>
+
+    <bean id="model_eventRepository" class="com.seismap.model.repository.impl.EventRepositoryImpl">
+        <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
+    </bean>
+    
+    <bean id="model_eventAndAverageMagnitudeRepository" class="com.seismap.model.repository.impl.EventAndAverageMagnitudeRepositoryImpl">
+        <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
+    </bean>
+
+    <bean id="model_mapRepository" class="com.seismap.model.repository.impl.MapRepositoryImpl">
+        <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
+    </bean>
+
+    <bean id="model_userRepository" class="com.seismap.model.repository.impl.UserRepositoryImpl">
         <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
     </bean>
 </beans>

@@ -1,59 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util-3.0.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-	<bean id="controller_propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
-		<property name="location">
-			<value>classpath:/seismap-controller-beans.properties</value>
-		</property>
-	</bean>
+  <bean id="controller_propertyConfigurer"
+    class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
+    <property name="location">
+      <value>classpath:/seismap-controller-beans.properties</value>
+    </property>
+  </bean>
 
-	<bean id="controller_homeController" class="com.seismap.controller.HomeController" />
+  <bean id="controller_pageController" class="com.seismap.controller.PageController">
+    <constructor-arg ref="controller_categoryController" />
+    <constructor-arg ref="controller_mapController" />
+  </bean>
 
-	<bean id="controller_eventRestController" class="com.seismap.controller.EventRestController">
-		<constructor-arg ref="service_eventService" />
-	</bean>
+  <bean id="controller_categoryController" class="com.seismap.controller.CategoryController">
+    <constructor-arg ref="service_categoryService" />
+  </bean>
+  
+  <bean id="controller_mapController" class="com.seismap.controller.MapController">
+    <constructor-arg ref="service_mapService" />
+  </bean>
+  
+  <bean id="controller_userController" class="com.seismap.controller.UserController">
+    <constructor-arg ref="service_userService" />
+  </bean>
 
-	<bean id="controller_adminConsoleController" class="com.seismap.controller.AdminConsoleController">
-		<constructor-arg ref="service_dataLoadService" />
-	</bean>
+  <bean id="controller_adminConsoleController" class="com.seismap.controller.AdminConsoleController">
+    <constructor-arg ref="service_dataLoadService" />
+  </bean>
 
-	<bean id="controller_mapImageController" class="com.seismap.controller.MapImageController">
-	   <constructor-arg ref="service_coordinatesConverter"/>
-	</bean>
+  <bean id="controller_viewResolver"
+    class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+    <property name="prefix" value="/jsp/" />
+    <property name="suffix" value=".jsp" />
+  </bean>
 
-	<bean id="controller_viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="viewClass"
-			value="org.springframework.web.servlet.view.JstlView" />
-		<property name="prefix" value="/jsp/" />
-		<property name="suffix" value=".jsp" />
-	</bean>
-
-	<bean id="controller_annotationMethodHandlerAdapter"
-		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-		<property name="messageConverters">
-			<util:list id="beanList">
-                <bean
-                    class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
-                <bean
-                    class="org.springframework.http.converter.ResourceHttpMessageConverter" />
-				<bean
-					class="org.springframework.http.converter.StringHttpMessageConverter" />
-				<bean class="org.springframework.http.converter.FormHttpMessageConverter" />
-				<bean
-					class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
-				<bean
-					class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
-			</util:list>
-		</property>
-	</bean>
+  <bean id="controller_annotationMethodHandlerAdapter"
+    class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+    <property name="messageConverters">
+      <util:list id="beanList">
+        <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+        <bean class="org.springframework.http.converter.ResourceHttpMessageConverter" />
+        <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+        <bean class="org.springframework.http.converter.FormHttpMessageConverter" />
+        <bean
+          class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+        <bean
+          class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+      </util:list>
+    </property>
+  </bean>
+  <mvc:annotation-driven />
+  <mvc:resources mapping="/resources/**" location="/resources/" />
 </beans>
