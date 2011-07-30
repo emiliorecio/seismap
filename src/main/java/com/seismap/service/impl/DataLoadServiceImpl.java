@@ -20,7 +20,7 @@ import com.seismap.model.entity.Event;
 import com.seismap.model.entity.Magnitude;
 import com.seismap.model.repository.AgencyRepository;
 import com.seismap.model.repository.EventRepository;
-import com.seismap.service.DataLoadService;
+import com.seismap.service.dataload.DataLoadService;
 import com.seismap.service.impl.CoordinatesConverter.LatitudeLongitudePosition;
 import com.seismap.service.impl.CoordinatesConverter.SphericalMercatorPosition;
 import com.seismap.service.parser.DataProviderException;
@@ -118,21 +118,21 @@ public class DataLoadServiceImpl implements DataLoadService {
 
 	}
 
-	private com.seismap.model.entity.MagnitudeType getMagnitudeType(
+	private com.seismap.service.event.MagnitudeType getMagnitudeType(
 			MagnitudeType magnitudeType) {
 		switch (magnitudeType) {
 		case ML:
-			return com.seismap.model.entity.MagnitudeType.ML;
+			return com.seismap.service.event.MagnitudeType.ML;
 		case MB:
-			return com.seismap.model.entity.MagnitudeType.MB;
+			return com.seismap.service.event.MagnitudeType.MB;
 		case MS:
-			return com.seismap.model.entity.MagnitudeType.MS;
+			return com.seismap.service.event.MagnitudeType.MS;
 		case MW:
-			return com.seismap.model.entity.MagnitudeType.MW;
+			return com.seismap.service.event.MagnitudeType.MW;
 		case MBLG:
-			return com.seismap.model.entity.MagnitudeType.MBLG;
+			return com.seismap.service.event.MagnitudeType.MBLG;
 		case MC:
-			return com.seismap.model.entity.MagnitudeType.MC;
+			return com.seismap.service.event.MagnitudeType.MC;
 		default:
 			throw new IllegalArgumentException("Invalid magnitude type: "
 					+ magnitudeType);

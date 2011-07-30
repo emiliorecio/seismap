@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.seismap.service.DataLoadService;
+import com.seismap.service.dataload.DataLoadService;
 import com.seismap.service.parser.DataProviderException;
 import com.seismap.service.parser.InvalidDataException;
 
 @Controller
 @RequestMapping("admin")
-public class AdminConsoleController implements InitializingBean {
+public class AdminConsoleController extends SeismapController implements InitializingBean {
 
 	private DataLoadService dataLoadService;
 

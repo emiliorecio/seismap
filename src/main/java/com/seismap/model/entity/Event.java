@@ -1,6 +1,7 @@
 package com.seismap.model.entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -17,10 +18,11 @@ import org.hibernate.annotations.Type;
 import com.vividsolutions.jts.geom.Point;
 
 @Entity
-public class Event {
+public class Event implements Identifiable<Long> {
 
 	@Id
 	@GeneratedValue
+	@Column(nullable = false)
 	private Long id;
 
 	@Column(nullable = false)
@@ -53,12 +55,16 @@ public class Event {
 		return id;
 	}
 
+	public Point getLocation() {
+		return location;
+	}
+
 	public double getLatitude() {
-		return location.getX();
+		return location.getY();
 	}
 
 	public double getLongitude() {
-		return location.getY();
+		return location.getX();
 	}
 
 	public float getDepth() {
@@ -69,8 +75,8 @@ public class Event {
 		return date;
 	}
 
-	public Magnitude[] getMagnitudes() {
-		return magnitudes.toArray(new Magnitude[magnitudes.size()]);
+	public List<Magnitude> getMagnitudes() {
+		return Collections.unmodifiableList(magnitudes);
 	}
 
 }

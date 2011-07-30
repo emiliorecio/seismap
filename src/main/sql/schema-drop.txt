@@ -1,9 +1,4 @@
-DROP VIEW eventandmc;
-DROP VIEW eventandmblg;
-DROP VIEW eventandmw;
-DROP VIEW eventandms;
-DROP VIEW eventandmb;
-DROP VIEW eventandml;
+DROP VIEW eventandaveragemagnitude;
 
 DROP TABLE magnitude;
 DROP TABLE agency;

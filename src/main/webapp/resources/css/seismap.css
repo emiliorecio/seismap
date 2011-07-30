@@ -1,0 +1,38 @@
+/* debug
+DIV {
+  border-color: red;
+  border-style: solid;
+  border-width: 1px;
+  padding: -1;
+}*/
+HTML {
+  height: 100%;
+}
+
+BODY {
+  background-color: #D7DBE0;
+  margin: 0px;
+  background-image: url("images/back.png");
+  background-repeat: repeat-x;
+  height: 100%;
+  font-size: 12px;
+  font-family: "lucida grande", tahoma, verdana, arial, sans-serif;
+}
+
+#globalContainer {
+  width: 100%;
+  height: 100%;
+}
+
+#container {
+  width: 980px;
+  position: relative;
+  left: 50%;
+  margin-left: -490px;
+}
+
+#map {
+  margin: 5px auto;
+  width: 500px;
+  height: 400px;
+}

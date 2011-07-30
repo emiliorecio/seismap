@@ -6,7 +6,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 public abstract class WebApplicationBaseIT {
 
 	private static final String PORT_STRING = System.getenv("SEISMAP_PORT");
-	private static final Integer PORT = (PORT_STRING == null ? 7000 : Integer
+	private static final int PORT = (PORT_STRING == null ? 7000 : Integer
 			.parseInt(PORT_STRING));
 	private static final String CONTEXT = null;
 
