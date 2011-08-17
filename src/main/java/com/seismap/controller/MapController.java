@@ -11,6 +11,8 @@ import com.seismap.service.map.CreateMapRequestDto;
 import com.seismap.service.map.CreateMapResponseDto;
 import com.seismap.service.map.GetMapRequestDto;
 import com.seismap.service.map.GetMapResponseDto;
+import com.seismap.service.map.GetLayerServerUriRequestDto;
+import com.seismap.service.map.GetLayerServerUriResponseDto;
 import com.seismap.service.map.ListUserMapsRequestDto;
 import com.seismap.service.map.ListUserMapsResponseDto;
 import com.seismap.service.map.MapService;
@@ -44,5 +46,12 @@ public class MapController extends SeismapController {
 	public ListUserMapsResponseDto listByUser(
 			@RequestBody ListUserMapsRequestDto request, Model model) {
 		return mapService.listByUser(getActorCredentials(), request);
+	}
+
+	@RequestMapping(value = "getTileServerUri", method = RequestMethod.POST)
+	@ResponseBody
+	public GetLayerServerUriResponseDto getLayerServerUri(
+			@RequestBody GetLayerServerUriRequestDto request, Model model) {
+		return mapService.getLayerServerUri(getActorCredentials(), request);
 	}
 }

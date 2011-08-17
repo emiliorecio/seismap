@@ -9,11 +9,12 @@
 </c:import>
 <script type="text/javascript"
   src="http://maps.google.com/maps/api/js?sensor=true"></script>
-<script type="text/javascript">
+<!-- script type="text/javascript">
     document.write('<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markermanager/1.0/src/markermanager' + (document.location.search.indexOf('packed') > -1 ? '_packed' : '') + '.js"><' + '/script>');
-</script>
+</script-->
 <script type="text/javascript">
-    mapPage.setMapData(${mapJson});
+    mapPage.setMapData(${map_json});
+    mapPage.setLayerServerUri('${layerServerUri}');
 </script>
 
 </head>
@@ -21,5 +22,6 @@
   <c:import url="begin.jsp" />
   <div id="map"></div>
   <c:import url="end.jsp" />
+<textarea id="mapUris" style="width: 90%; height: 100px"></textarea>
 </body>
 </html>
