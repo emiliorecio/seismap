@@ -1,6 +1,7 @@
 package com.seismap.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,8 @@ import com.seismap.service.map.CreateMapResponseDto;
 import com.seismap.service.map.DateUnits;
 import com.seismap.service.map.GetMapRequestDto;
 import com.seismap.service.map.GetMapResponseDto;
+import com.seismap.service.map.GetLayerServerUriRequestDto;
+import com.seismap.service.map.GetLayerServerUriResponseDto;
 import com.seismap.service.map.ListUserMapsRequestDto;
 import com.seismap.service.map.ListUserMapsResponseDto;
 import com.seismap.service.map.MapDto;
@@ -31,6 +34,8 @@ public class MapServiceImpl implements MapService {
 	private MapRepository mapRepository;
 	private UserRepository userRepository;
 	private GeometryFactory geometryFactory;
+
+	private String layerServerUri;
 
 	private String defaultMapDescription = "";
 	private double defaultMapCenterLongitude = -68.525278d;
@@ -61,6 +66,14 @@ public class MapServiceImpl implements MapService {
 		this.mapRepository = mapRepository;
 		this.geometryFactory = geometryFactory;
 		this.userRepository = userRepository;
+	}
+
+	public String getLayerServerUri() {
+		return layerServerUri;
+	}
+
+	public void setLayerServerUri(String layerServerUriValue) {
+		this.layerServerUri = layerServerUriValue;
 	}
 
 	public String getDefaultMapDescription() {
@@ -320,8 +333,17 @@ public class MapServiceImpl implements MapService {
 					userId);
 			return exceptionResponse;
 		}
-		return new ListUserMapsResponseDto(DtoMarshaler.unmarshallMaps(user
-				.getMaps()));
+		List<MapDto> mapDtos = DtoMarshaler.unmarshallMaps(user.getMaps());
+		ListUserMapsResponseDto response = new ListUserMapsResponseDto(mapDtos);
+		return response;
 	}
 
+	public GetLayerServerUriResponseDto getLayerServerUri(
+			ActorCredentialsDto actorCredentials,
+			GetLayerServerUriRequestDto request) {
+		String layerServerUri = this.layerServerUri;
+		GetLayerServerUriResponseDto response = new GetLayerServerUriResponseDto(
+				layerServerUri);
+		return response;
+	}
 }

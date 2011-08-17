@@ -37,7 +37,7 @@ public class MapDto implements Serializable {
 	private Integer zoom;
 
 	@Column(nullable = true)
-	private Integer minDateRelativeAmount;
+	private Float minDateRelativeAmount;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -47,7 +47,7 @@ public class MapDto implements Serializable {
 	private Date minDate;
 
 	@Column(nullable = true)
-	private Integer maxDateRelativeAmount;
+	private Float maxDateRelativeAmount;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -93,8 +93,8 @@ public class MapDto implements Serializable {
 
 	public MapDto(Long id, String name, String description,
 			Double centerLatitude, Double centerLongitude, Integer zoom,
-			Integer minDateRelativeAmount, DateUnits minDateRelativeUnits,
-			Date minDate, Integer maxDateRelativeAmount,
+			Float minDateRelativeAmount, DateUnits minDateRelativeUnits,
+			Date minDate, Float maxDateRelativeAmount,
 			DateUnits maxDateRelativeUnits, Date maxDate, Float minDepth,
 			Float maxDepth, MagnitudeType magnitudeType, Float minMagnitude,
 			Float maxMagnitude, Boolean listUnmeasured,
@@ -181,11 +181,11 @@ public class MapDto implements Serializable {
 		this.zoom = zoom;
 	}
 
-	public Integer getMinDateRelativeAmount() {
+	public Float getMinDateRelativeAmount() {
 		return minDateRelativeAmount;
 	}
 
-	public void setMinDateRelativeAmount(Integer minDateRelativeAmount) {
+	public void setMinDateRelativeAmount(Float minDateRelativeAmount) {
 		this.minDateRelativeAmount = minDateRelativeAmount;
 	}
 
@@ -205,11 +205,11 @@ public class MapDto implements Serializable {
 		this.minDate = minDate;
 	}
 
-	public Integer getMaxDateRelativeAmount() {
+	public Float getMaxDateRelativeAmount() {
 		return maxDateRelativeAmount;
 	}
 
-	public void setMaxDateRelativeAmount(Integer maxDateRelativeAmount) {
+	public void setMaxDateRelativeAmount(Float maxDateRelativeAmount) {
 		this.maxDateRelativeAmount = maxDateRelativeAmount;
 	}
 

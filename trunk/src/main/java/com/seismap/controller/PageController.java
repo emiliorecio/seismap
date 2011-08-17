@@ -14,6 +14,8 @@ import com.seismap.service.category.ListCategoriesRequestDto;
 import com.seismap.service.category.ListCategoriesResponseDto;
 import com.seismap.service.map.GetMapRequestDto;
 import com.seismap.service.map.GetMapResponseDto;
+import com.seismap.service.map.GetLayerServerUriRequestDto;
+import com.seismap.service.map.GetLayerServerUriResponseDto;
 import com.seismap.service.map.ListUserMapsRequestDto;
 import com.seismap.service.map.ListUserMapsResponseDto;
 
@@ -60,7 +62,6 @@ public class PageController extends SeismapController {
 			throw new IllegalStateException(mapsResponse.toString());
 		}
 		model.addAttribute("maps", mapsResponse.getValue());
-
 	}
 
 	@RequestMapping("")
@@ -78,7 +79,14 @@ public class PageController extends SeismapController {
 			throw new IllegalStateException(mapResponse.toString());
 		}
 		model.addAttribute("map", mapResponse.getValue());
-		model.addAttribute("mapJson", toJson(mapResponse.getValue()));
+		model.addAttribute("map_json", toJson(mapResponse.getValue()));
+
+		GetLayerServerUriResponseDto layerServerUriResponse = mapController
+				.getLayerServerUri(new GetLayerServerUriRequestDto(), model);
+		if (layerServerUriResponse.isException()) {
+			throw new IllegalStateException(layerServerUriResponse.toString());
+		}
+		model.addAttribute("layerServerUri", layerServerUriResponse.getValue());
 		return "map";
 	}
 }

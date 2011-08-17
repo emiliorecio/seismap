@@ -41,7 +41,7 @@ public class Map implements Identifiable<Long> {
 	private int zoom;
 
 	@Column(nullable = true)
-	private Integer minDateRelativeAmount;
+	private Float minDateRelativeAmount;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -51,7 +51,7 @@ public class Map implements Identifiable<Long> {
 	private Date minDate;
 
 	@Column(nullable = true)
-	private Integer maxDateRelativeAmount;
+	private Float maxDateRelativeAmount;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -96,8 +96,8 @@ public class Map implements Identifiable<Long> {
 	}
 
 	public Map(String name, String description, Point center, int zoom,
-			Integer minDateRelativeAmount, DateUnits minDateRelativeUnits,
-			Date minDate, Integer maxDateRelativeAmount,
+			Float minDateRelativeAmount, DateUnits minDateRelativeUnits,
+			Date minDate, Float maxDateRelativeAmount,
 			DateUnits maxDateRelativeUnits, Date maxDate, Float minDepth,
 			Float maxDepth, MagnitudeType magnitudeType, Float minMagnitude,
 			Float maxMagnitude, boolean listUnmeasured,
@@ -178,11 +178,11 @@ public class Map implements Identifiable<Long> {
 		this.zoom = zoom;
 	}
 
-	public Integer getMinDateRelativeAmount() {
+	public Float getMinDateRelativeAmount() {
 		return minDateRelativeAmount;
 	}
 
-	public void setMinDateRelativeAmount(Integer minDateRelativeAmount) {
+	public void setMinDateRelativeAmount(Float minDateRelativeAmount) {
 		this.minDateRelativeAmount = minDateRelativeAmount;
 	}
 
@@ -202,11 +202,11 @@ public class Map implements Identifiable<Long> {
 		this.minDate = minDate;
 	}
 
-	public Integer getMaxDateRelativeAmount() {
+	public Float getMaxDateRelativeAmount() {
 		return maxDateRelativeAmount;
 	}
 
-	public void setMaxDateRelativeAmount(Integer maxDateRelativeAmount) {
+	public void setMaxDateRelativeAmount(Float maxDateRelativeAmount) {
 		this.maxDateRelativeAmount = maxDateRelativeAmount;
 	}
 
