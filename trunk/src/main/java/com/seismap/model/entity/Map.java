@@ -11,10 +11,13 @@ import javax.persistence.Id;
 
 import com.seismap.service.event.MagnitudeType;
 import com.seismap.service.map.AnimationType;
+import com.seismap.service.map.DateLimitType;
 import com.seismap.service.map.DateUnits;
+import com.seismap.service.map.DepthLimitType;
+import com.seismap.service.map.MagnitudeLimitType;
 import com.vividsolutions.jts.geom.Point;
 
-@Entity()
+@Entity
 public class Map implements Identifiable<Long> {
 
 	@Id
@@ -40,40 +43,64 @@ public class Map implements Identifiable<Long> {
 	@Column(nullable = false)
 	private int zoom;
 
-	@Column(nullable = true)
-	private Float minDateRelativeAmount;
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private DateLimitType minDateType;
+
+	@Column(nullable = false)
+	private float minDateRelativeAmount;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private DateUnits minDateRelativeUnits;
 
-	@Column(nullable = true)
+	@Column(nullable = false)
 	private Date minDate;
 
-	@Column(nullable = true)
-	private Float maxDateRelativeAmount;
+	@Column(nullable = false)
+	private float maxDateRelativeAmount;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private DateUnits maxDateRelativeUnits;
 
-	@Column(nullable = true)
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private DateLimitType maxDateType;
+
+	@Column(nullable = false)
 	private Date maxDate;
 
-	@Column(nullable = true)
-	private Float minDepth;
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private DepthLimitType minDepthType;
 
 	@Column(nullable = true)
-	private Float maxDepth;
+	private float minDepth;
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private DepthLimitType maxDepthType;
+
+	@Column(nullable = true)
+	private float maxDepth;
 
 	@Column(nullable = false)
 	private MagnitudeType magnitudeType = MagnitudeType.ML;
 
-	@Column(nullable = true)
-	private Float minMagnitude;
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private MagnitudeLimitType minMagnitudeType;
 
 	@Column(nullable = true)
-	private Float maxMagnitude;
+	private float minMagnitude;
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private MagnitudeLimitType maxMagnitudeType;
+
+	@Column(nullable = true)
+	private float maxMagnitude;
 
 	@Column(nullable = false)
 	private boolean listUnmeasured;
@@ -90,39 +117,54 @@ public class Map implements Identifiable<Long> {
 	private int animationSteps;
 
 	@Column(nullable = false)
+	private float animationStepDuration;
+
+	@Column(nullable = false)
 	private boolean reverseAnimation;
 
 	protected Map() {
 	}
 
 	public Map(String name, String description, Point center, int zoom,
-			Float minDateRelativeAmount, DateUnits minDateRelativeUnits,
-			Date minDate, Float maxDateRelativeAmount,
-			DateUnits maxDateRelativeUnits, Date maxDate, Float minDepth,
-			Float maxDepth, MagnitudeType magnitudeType, Float minMagnitude,
-			Float maxMagnitude, boolean listUnmeasured,
+			DateLimitType minDateType, float minDateRelativeAmount,
+			DateUnits minDateRelativeUnits, Date minDate,
+			DateLimitType maxDateType, float maxDateRelativeAmount,
+			DateUnits maxDateRelativeUnits, Date maxDate,
+			DepthLimitType minDepthType, float minDepth,
+			DepthLimitType maxDepthType, float maxDepth,
+			MagnitudeType magnitudeType, MagnitudeLimitType minMagnitudeType,
+			float minMagnitude, MagnitudeLimitType maxMagnitudeType,
+			float maxMagnitude, boolean listUnmeasured,
 			AnimationType animationType, float animationStepKeep,
-			int animationSteps, boolean reverseAnimation) {
+			int animationSteps, float animationStepDuration,
+			boolean reverseAnimation) {
 		super();
 		this.name = name;
 		this.description = description;
 		this.center = center;
 		this.zoom = zoom;
+		this.minDateType = minDateType;
 		this.minDateRelativeAmount = minDateRelativeAmount;
 		this.minDateRelativeUnits = minDateRelativeUnits;
+		this.maxDateType = maxDateType;
 		this.minDate = minDate;
 		this.maxDateRelativeAmount = maxDateRelativeAmount;
 		this.maxDateRelativeUnits = maxDateRelativeUnits;
 		this.maxDate = maxDate;
+		this.minDepthType = minDepthType;
 		this.minDepth = minDepth;
+		this.maxDepthType = maxDepthType;
 		this.maxDepth = maxDepth;
 		this.magnitudeType = magnitudeType;
+		this.minMagnitudeType = minMagnitudeType;
 		this.minMagnitude = minMagnitude;
+		this.maxMagnitudeType = maxMagnitudeType;
 		this.maxMagnitude = maxMagnitude;
 		this.listUnmeasured = listUnmeasured;
 		this.animationType = animationType;
 		this.animationStepKeep = animationStepKeep;
 		this.animationSteps = animationSteps;
+		this.animationStepDuration = animationStepDuration;
 		this.reverseAnimation = reverseAnimation;
 	}
 
@@ -178,11 +220,19 @@ public class Map implements Identifiable<Long> {
 		this.zoom = zoom;
 	}
 
-	public Float getMinDateRelativeAmount() {
+	public DateLimitType getMinDateType() {
+		return minDateType;
+	}
+
+	public void setMinDateType(DateLimitType minDateType) {
+		this.minDateType = minDateType;
+	}
+
+	public float getMinDateRelativeAmount() {
 		return minDateRelativeAmount;
 	}
 
-	public void setMinDateRelativeAmount(Float minDateRelativeAmount) {
+	public void setMinDateRelativeAmount(float minDateRelativeAmount) {
 		this.minDateRelativeAmount = minDateRelativeAmount;
 	}
 
@@ -198,15 +248,23 @@ public class Map implements Identifiable<Long> {
 		return minDate;
 	}
 
+	public DateLimitType getMaxDateType() {
+		return maxDateType;
+	}
+
+	public void setMaxDateType(DateLimitType maxDateType) {
+		this.maxDateType = maxDateType;
+	}
+
 	public void setMinDate(Date minDate) {
 		this.minDate = minDate;
 	}
 
-	public Float getMaxDateRelativeAmount() {
+	public float getMaxDateRelativeAmount() {
 		return maxDateRelativeAmount;
 	}
 
-	public void setMaxDateRelativeAmount(Float maxDateRelativeAmount) {
+	public void setMaxDateRelativeAmount(float maxDateRelativeAmount) {
 		this.maxDateRelativeAmount = maxDateRelativeAmount;
 	}
 
@@ -226,19 +284,35 @@ public class Map implements Identifiable<Long> {
 		this.maxDate = maxDate;
 	}
 
-	public Float getMinDepth() {
+	public DepthLimitType getMinDepthType() {
+		return minDepthType;
+	}
+
+	public void setMinDepthType(DepthLimitType minDepthType) {
+		this.minDepthType = minDepthType;
+	}
+
+	public float getMinDepth() {
 		return minDepth;
 	}
 
-	public void setMinDepth(Float minDepth) {
+	public void setMinDepth(float minDepth) {
 		this.minDepth = minDepth;
 	}
 
-	public Float getMaxDepth() {
+	public DepthLimitType getMaxDepthType() {
+		return maxDepthType;
+	}
+
+	public void setMaxDepthType(DepthLimitType maxDepthType) {
+		this.maxDepthType = maxDepthType;
+	}
+
+	public float getMaxDepth() {
 		return maxDepth;
 	}
 
-	public void setMaxDepth(Float maxDepth) {
+	public void setMaxDepth(float maxDepth) {
 		this.maxDepth = maxDepth;
 	}
 
@@ -250,19 +324,35 @@ public class Map implements Identifiable<Long> {
 		this.magnitudeType = magnitudeType;
 	}
 
-	public Float getMinMagnitude() {
+	public MagnitudeLimitType getMinMagnitudeType() {
+		return minMagnitudeType;
+	}
+
+	public void setMinMagnitudeType(MagnitudeLimitType minMagnitudeType) {
+		this.minMagnitudeType = minMagnitudeType;
+	}
+
+	public float getMinMagnitude() {
 		return minMagnitude;
 	}
 
-	public void setMinMagnitude(Float minMagnitude) {
+	public void setMinMagnitude(float minMagnitude) {
 		this.minMagnitude = minMagnitude;
 	}
 
-	public Float getMaxMagnitude() {
+	public MagnitudeLimitType getMaxMagnitudeType() {
+		return maxMagnitudeType;
+	}
+
+	public void setMaxMagnitudeType(MagnitudeLimitType maxMagnitudeType) {
+		this.maxMagnitudeType = maxMagnitudeType;
+	}
+
+	public float getMaxMagnitude() {
 		return maxMagnitude;
 	}
 
-	public void setMaxMagnitude(Float maxMagnitude) {
+	public void setMaxMagnitude(float maxMagnitude) {
 		this.maxMagnitude = maxMagnitude;
 	}
 
@@ -313,4 +403,13 @@ public class Map implements Identifiable<Long> {
 	void setInUserIndex(Integer inUserIndex) {
 		this.inUserIndex = inUserIndex;
 	}
+
+	public void setAnimationStepDuration(float animationStepDuration) {
+		this.animationStepDuration = animationStepDuration;
+	}
+
+	public float getAnimationStepDuration() {
+		return animationStepDuration;
+	}
+
 }

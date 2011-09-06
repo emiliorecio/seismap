@@ -3,15 +3,14 @@ package com.seismap.model.repository;
 import java.util.Date;
 import java.util.List;
 
-import com.seismap.model.entity.EventAndAverageMagnitude;
-import com.seismap.model.entity.EventIdAndMagnitudeTypePk;
+import com.seismap.model.entity.EventAndAverageMagnitudes;
 import com.seismap.service.common.RangeDto;
 import com.seismap.service.event.MagnitudeType;
 
-public interface EventAndAverageMagnitudeRepository extends
-		Repository<EventAndAverageMagnitude, EventIdAndMagnitudeTypePk> {
+public interface EventAndAverageMagnitudeSRepository extends
+		ReadOnlyRepository<EventAndAverageMagnitudes, Long> {
 
-	List<EventAndAverageMagnitude> find(RangeDto<Date> dateRangeDto,
+	List<EventAndAverageMagnitudes> find(RangeDto<Date> dateRangeDto,
 			RangeDto<Float> latitudeRangeDto,
 			RangeDto<Float> longitudeRangeDto, RangeDto<Float> depthRangeDto,
 			MagnitudeType magnitudeType, RangeDto<Float> magnitudeRangeDto,

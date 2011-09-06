@@ -1,9 +1,17 @@
 package com.seismap.service.event;
 
+import com.seismap.service.common.ActorCredentialsDto;
+
 public interface EventService {
 
-	EventGetResponseDto get(EventGetRequestDto request);
+	GetEventResponseDto get(
+			ActorCredentialsDto actorCredentials,GetEventRequestDto request);
 
-	EventsAndAverageMagnitudesFindResponseDto find(
-			EventsAndAverageMagnitudesFindRequestDto request);
+	FindEventsAndAverageMagnitudesResponseDto find(
+			ActorCredentialsDto actorCredentials,
+			FindEventsAndAverageMagnitudesRequestDto request);
+	
+	GetDataBoundsResponseDto getDataBounds(
+			ActorCredentialsDto actorCredentials,
+			GetDataBoundsRequestDto request);
 }

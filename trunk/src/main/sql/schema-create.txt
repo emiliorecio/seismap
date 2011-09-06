@@ -47,13 +47,51 @@ WITH (
 );
 ALTER TABLE magnitude OWNER TO postgres;
 
-CREATE OR REPLACE VIEW eventandaveragemagnitude AS 
- SELECT eventandtype.id AS eventid, eventandtype.date AS eventdate, eventandtype.depth AS eventdepth, eventandtype.location AS eventlocation, eventandtype.type AS magnitudetype, avg(magnitude.value) AS magnitudeaveragevalue
-   FROM ( SELECT magnitudetype.type, event.id, event.date, event.depth, event.location
-           FROM ( VALUES ('ML'::text), ('MB'::text), ('MS'::text), ('MW'::text), ('MBLG'::text), ('MC'::text)) magnitudetype(type), event) eventandtype
-   LEFT JOIN magnitude ON eventandtype.id = magnitude.event_id AND eventandtype.type = magnitude.type::text
-  GROUP BY eventandtype.id, eventandtype.date, eventandtype.depth, eventandtype.location, eventandtype.type
-  ORDER BY eventandtype.id;
+CREATE VIEW eventandaveragemagnitudes AS 
+ SELECT event.id, event.date, event.depth, event.location,
+    avg(mlmagnitude.value) AS averagemlmagnitude,
+    avg(mbmagnitude.value) AS averagembmagnitude,
+    avg(msmagnitude.value) AS averagemsmagnitude,
+    avg(mwmagnitude.value) AS averagemwmagnitude,
+    avg(mblgmagnitude.value) AS averagemblgmagnitude,
+    avg(mcmagnitude.value) AS averagemcmagnitude
+   FROM event
+   LEFT JOIN magnitude mlmagnitude ON event.id = mlmagnitude.event_id AND mlmagnitude.type::text = 'ML'::text
+   LEFT JOIN magnitude mbmagnitude ON event.id = mbmagnitude.event_id AND mbmagnitude.type::text = 'MB'::text
+   LEFT JOIN magnitude msmagnitude ON event.id = msmagnitude.event_id AND msmagnitude.type::text = 'MS'::text
+   LEFT JOIN magnitude mwmagnitude ON event.id = mwmagnitude.event_id AND mwmagnitude.type::text = 'MW'::text
+   LEFT JOIN magnitude mblgmagnitude ON event.id = mblgmagnitude.event_id AND mblgmagnitude.type::text = 'MBLG'::text
+   LEFT JOIN magnitude mcmagnitude ON event.id = mcmagnitude.event_id AND mcmagnitude.type::text = 'MC'::text
+  GROUP BY event.id, event.date, event.depth, event.location;
 
-ALTER TABLE eventandaveragemagnitude OWNER TO postgres;
+ALTER TABLE eventandaveragemagnitudes OWNER TO postgres;
+
+CREATE VIEW databounds AS 
+ SELECT 1 AS id, min(event.depth) AS mindepth, max(event.depth) AS maxdepth, min(event.date) AS mindate, max(event.date) AS maxdate
+   FROM event;
+
+ALTER TABLE databounds OWNER TO postgres;
+
+
+CREATE VIEW magnitudedatabounds AS 
+  SELECT 1 as databound_id, 'ML' as magnitudetype, min(magnitude.value) AS min, max(magnitude.value) AS max FROM magnitude
+    WHERE magnitude.type::text = 'ML'::text
+  UNION
+  SELECT 1 as databound_id, 'MB' as magnitudetype, min(magnitude.value) AS min, max(magnitude.value) AS max FROM magnitude
+    WHERE magnitude.type::text = 'MB'::text
+  UNION
+  SELECT 1 as databound_id, 'MS' as magnitudetype, min(magnitude.value) AS min, max(magnitude.value) AS max FROM magnitude
+    WHERE magnitude.type::text = 'MS'::text
+  UNION
+  SELECT 1 as databound_id, 'MW' as magnitudetype, min(magnitude.value) AS min, max(magnitude.value) AS max FROM magnitude
+    WHERE magnitude.type::text = 'MW'::text
+  UNION
+  SELECT 1 as databound_id, 'MBLG' as magnitudetype, min(magnitude.value) AS min, max(magnitude.value) AS max FROM magnitude
+    WHERE magnitude.type::text = 'MBLG'::text
+  UNION
+  SELECT 1 as databound_id, 'MC' as magnitudetype, min(magnitude.value) AS min, max(magnitude.value) AS max FROM magnitude
+    WHERE magnitude.type::text = 'MC'::text;
+    
+ALTER TABLE magnitudedatabounds OWNER TO postgres;
+
 

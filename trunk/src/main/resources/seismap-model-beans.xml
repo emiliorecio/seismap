@@ -47,9 +47,11 @@
         <value>com.seismap.model.entity.Application</value>
         <value>com.seismap.model.entity.Agency</value>
         <value>com.seismap.model.entity.Category</value>
+        <value>com.seismap.model.entity.DataBounds</value>
 				<value>com.seismap.model.entity.Event</value>
-        <value>com.seismap.model.entity.EventAndAverageMagnitude</value>
+        <value>com.seismap.model.entity.EventAndAverageMagnitudes</value>
         <value>com.seismap.model.entity.Magnitude</value>
+        <value>com.seismap.model.entity.MagnitudeDataBounds</value>
         <value>com.seismap.model.entity.Map</value>
         <value>com.seismap.model.entity.User</value>
 			</util:list>
@@ -78,11 +80,15 @@
         <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
     </bean>
 
+    <bean id="model_dataBoundsRepository" class="com.seismap.model.repository.impl.DataBoundsRepositoryImpl">
+        <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
+    </bean>
+
     <bean id="model_eventRepository" class="com.seismap.model.repository.impl.EventRepositoryImpl">
         <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
     </bean>
     
-    <bean id="model_eventAndAverageMagnitudeRepository" class="com.seismap.model.repository.impl.EventAndAverageMagnitudeRepositoryImpl">
+    <bean id="model_eventAndAverageMagnitudesRepository" class="com.seismap.model.repository.impl.EventAndAverageMagnitudesRepositoryImpl">
         <property name="hibernateTemplate" ref="model_hibernateTemplate"/>
     </bean>
 

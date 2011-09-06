@@ -1,21 +1,21 @@
 package com.seismap.service.event;
 
-import java.io.Serializable;
-
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class EventGetRequestDto implements Serializable {
+import com.seismap.service.common.RequestDto;
+
+public class GetEventRequestDto extends RequestDto {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@JsonProperty
 	private Long eventId;
 
-	protected EventGetRequestDto() {
+	protected GetEventRequestDto() {
 
 	}
 
-	public EventGetRequestDto(Long eventId) {
+	public GetEventRequestDto(Long eventId) {
 		super();
 		this.eventId = eventId;
 	}

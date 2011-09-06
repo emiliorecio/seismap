@@ -33,7 +33,8 @@
 
   <bean id="service_eventService" class="com.seismap.service.impl.EventServiceImpl">
     <constructor-arg ref="model_eventRepository" />
-    <constructor-arg ref="model_eventAndAverageMagnitudeRepository" />
+    <constructor-arg ref="model_eventAndAverageMagnitudesRepository" />
+    <constructor-arg ref="model_dataBoundsRepository" />
   </bean>
 
   <bean id="service_dataLoadService" class="com.seismap.service.impl.DataLoadServiceImpl">

@@ -14,7 +14,7 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.IndexColumn;
 
-@Entity()
+@Entity
 public class Application implements Identifiable<Long> {
 
 	@Id

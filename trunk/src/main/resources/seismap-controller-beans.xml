@@ -21,10 +21,15 @@
   <bean id="controller_pageController" class="com.seismap.controller.PageController">
     <constructor-arg ref="controller_categoryController" />
     <constructor-arg ref="controller_mapController" />
+    <constructor-arg ref="controller_eventController" />
   </bean>
 
   <bean id="controller_categoryController" class="com.seismap.controller.CategoryController">
     <constructor-arg ref="service_categoryService" />
+  </bean>
+  
+  <bean id="controller_eventController" class="com.seismap.controller.EventController">
+    <constructor-arg ref="service_eventService" />
   </bean>
   
   <bean id="controller_mapController" class="com.seismap.controller.MapController">

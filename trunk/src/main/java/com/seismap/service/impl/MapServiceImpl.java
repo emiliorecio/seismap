@@ -1,5 +1,6 @@
 package com.seismap.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -16,13 +17,16 @@ import com.seismap.service.event.MagnitudeType;
 import com.seismap.service.map.AnimationType;
 import com.seismap.service.map.CreateMapRequestDto;
 import com.seismap.service.map.CreateMapResponseDto;
+import com.seismap.service.map.DateLimitType;
 import com.seismap.service.map.DateUnits;
-import com.seismap.service.map.GetMapRequestDto;
-import com.seismap.service.map.GetMapResponseDto;
+import com.seismap.service.map.DepthLimitType;
 import com.seismap.service.map.GetLayerServerUriRequestDto;
 import com.seismap.service.map.GetLayerServerUriResponseDto;
+import com.seismap.service.map.GetMapRequestDto;
+import com.seismap.service.map.GetMapResponseDto;
 import com.seismap.service.map.ListUserMapsRequestDto;
 import com.seismap.service.map.ListUserMapsResponseDto;
+import com.seismap.service.map.MagnitudeLimitType;
 import com.seismap.service.map.MapDto;
 import com.seismap.service.map.MapService;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -41,21 +45,28 @@ public class MapServiceImpl implements MapService {
 	private double defaultMapCenterLongitude = -68.525278d;
 	private double defaultMapCenterLatitude = -31.537222d;
 	private int defaultMapZoom = 5;
-	private Integer defaultMapMinDateRelativeAmount = null;
+	private DateLimitType defaultMapMinDateType = DateLimitType.NONE;
+	private float defaultMapMinDateRelativeAmount = 1f;
 	private DateUnits defaultMapMinDateRelativeUnits = DateUnits.DAY;
 	private Date defaultMapMinDate = null;
-	private Integer defaultMapMaxDateRelativeAmount = null;
+	private DateLimitType defaultMapMaxDateType = DateLimitType.NONE;
+	private float defaultMapMaxDateRelativeAmount = 0f;
 	private DateUnits defaultMapMaxDateRelativeUnits = DateUnits.DAY;
 	private Date defaultMapMaxDate = null;
-	private Float defaultMapMinDepth = null;
-	private Float defaultMapMaxDepth = null;
+	private DepthLimitType defaultMapMinDepthType = DepthLimitType.NONE;
+	private float defaultMapMinDepth = 0f;
+	private DepthLimitType defaultMapMaxDepthType = DepthLimitType.NONE;
+	private float defaultMapMaxDepth = 1000f;
 	private MagnitudeType defaultMapMagnitudeType = MagnitudeType.MB;
-	private Float defaultMapMonMagnitude = null;
-	private Float defaultMapMaxMagnitude = null;
+	private MagnitudeLimitType defaultMapMinMagnitudeType = MagnitudeLimitType.NONE;
+	private float defaultMapMinMagnitude = 0f;
+	private MagnitudeLimitType defaultMapMaxMagnitudeType = MagnitudeLimitType.NONE;
+	private float defaultMapMaxMagnitude = 100f;
 	private boolean defaultMapListUnmeasured = true;
 	private AnimationType defaultMapAnimationType = AnimationType.NONE;
 	private float defaultMapAnimationStepKeep = 0;
 	private int defaultMapAnimationSteps = 10;
+	private float defaultMapAnimationStepDuration = 5;
 	private boolean defaultMapReverseAnimation = false;
 
 	protected MapServiceImpl() {
@@ -88,12 +99,16 @@ public class MapServiceImpl implements MapService {
 		return defaultMapCenterLongitude;
 	}
 
-	public void setDefaultMapCenterX(double defaultMapCenterLongitude) {
+	public void setDefaultMapCenterLongitude(double defaultMapCenterLongitude) {
 		this.defaultMapCenterLongitude = defaultMapCenterLongitude;
 	}
 
 	public double getDefaultMapCenterLatitude() {
 		return defaultMapCenterLatitude;
+	}
+
+	public void setDefaultMapCenterLatitude(double defaultMapCenterLatitude) {
+		this.defaultMapCenterLatitude = defaultMapCenterLatitude;
 	}
 
 	public void setDefaultMapCenterY(double defaultMapCenterLatitude) {
@@ -108,12 +123,20 @@ public class MapServiceImpl implements MapService {
 		this.defaultMapZoom = defaultMapZoom;
 	}
 
-	public Integer getDefaultMapMinDateRelativeAmount() {
+	public DateLimitType getDefaultMapMinDateType() {
+		return defaultMapMinDateType;
+	}
+
+	public void setDefaultMapMinDateType(DateLimitType defaultMapMinDateType) {
+		this.defaultMapMinDateType = defaultMapMinDateType;
+	}
+
+	public float getDefaultMapMinDateRelativeAmount() {
 		return defaultMapMinDateRelativeAmount;
 	}
 
 	public void setDefaultMapMinDateRelativeAmount(
-			Integer defaultMapMinDateRelativeAmount) {
+			float defaultMapMinDateRelativeAmount) {
 		this.defaultMapMinDateRelativeAmount = defaultMapMinDateRelativeAmount;
 	}
 
@@ -134,12 +157,20 @@ public class MapServiceImpl implements MapService {
 		this.defaultMapMinDate = defaultMapMinDate;
 	}
 
-	public Integer getDefaultMapMaxDateRelativeAmount() {
+	public DateLimitType getDefaultMapMaxDateType() {
+		return defaultMapMaxDateType;
+	}
+
+	public void setDefaultMapMaxDateType(DateLimitType defaultMapMaxDateType) {
+		this.defaultMapMaxDateType = defaultMapMaxDateType;
+	}
+
+	public float getDefaultMapMaxDateRelativeAmount() {
 		return defaultMapMaxDateRelativeAmount;
 	}
 
 	public void setDefaultMapMaxDateRelativeAmount(
-			Integer defaultMapMaxDateRelativeAmount) {
+			float defaultMapMaxDateRelativeAmount) {
 		this.defaultMapMaxDateRelativeAmount = defaultMapMaxDateRelativeAmount;
 	}
 
@@ -160,19 +191,35 @@ public class MapServiceImpl implements MapService {
 		this.defaultMapMaxDate = defaultMapMaxDate;
 	}
 
-	public Float getDefaultMapMinDepth() {
+	public DepthLimitType getDefaultMapMinDepthType() {
+		return defaultMapMinDepthType;
+	}
+
+	public void setDefaultMapMinDepthType(DepthLimitType defaultMapMinDepthType) {
+		this.defaultMapMinDepthType = defaultMapMinDepthType;
+	}
+
+	public float getDefaultMapMinDepth() {
 		return defaultMapMinDepth;
 	}
 
-	public void setDefaultMapMinDepth(Float defaultMapMinDepth) {
+	public void setDefaultMapMinDepth(float defaultMapMinDepth) {
 		this.defaultMapMinDepth = defaultMapMinDepth;
 	}
 
-	public Float getDefaultMapMaxDepth() {
+	public DepthLimitType getDefaultMapMaxDepthType() {
+		return defaultMapMaxDepthType;
+	}
+
+	public void setDefaultMapMaxDepthType(DepthLimitType defaultMapMaxDepthType) {
+		this.defaultMapMaxDepthType = defaultMapMaxDepthType;
+	}
+
+	public float getDefaultMapMaxDepth() {
 		return defaultMapMaxDepth;
 	}
 
-	public void setDefaultMapMaxDepth(Float defaultMapMaxDepth) {
+	public void setDefaultMapMaxDepth(float defaultMapMaxDepth) {
 		this.defaultMapMaxDepth = defaultMapMaxDepth;
 	}
 
@@ -184,19 +231,37 @@ public class MapServiceImpl implements MapService {
 		this.defaultMapMagnitudeType = defaultMapMagnitudeType;
 	}
 
-	public Float getDefaultMapMonMagnitude() {
-		return defaultMapMonMagnitude;
+	public MagnitudeLimitType getDefaultMapMinMagnitudeType() {
+		return defaultMapMinMagnitudeType;
 	}
 
-	public void setDefaultMapMonMagnitude(Float defaultMapMonMagnitude) {
-		this.defaultMapMonMagnitude = defaultMapMonMagnitude;
+	public void setDefaultMapMinMagnitudeType(
+			MagnitudeLimitType defaultMapMinMagnitudeType) {
+		this.defaultMapMinMagnitudeType = defaultMapMinMagnitudeType;
 	}
 
-	public Float getDefaultMapMaxMagnitude() {
+	public float getDefaultMapMinMagnitude() {
+		return defaultMapMinMagnitude;
+	}
+
+	public void setDefaultMapMinMagnitude(float defaultMapMinMagnitude) {
+		this.defaultMapMinMagnitude = defaultMapMinMagnitude;
+	}
+
+	public MagnitudeLimitType getDefaultMapMaxMagnitudeType() {
+		return defaultMapMaxMagnitudeType;
+	}
+
+	public void setDefaultMapMaxMagnitudeType(
+			MagnitudeLimitType defaultMapMaxMagnitudeType) {
+		this.defaultMapMaxMagnitudeType = defaultMapMaxMagnitudeType;
+	}
+
+	public float getDefaultMapMaxMagnitude() {
 		return defaultMapMaxMagnitude;
 	}
 
-	public void setDefaultMapMaxMagnitude(Float defaultMapMaxMagnitude) {
+	public void setDefaultMapMaxMagnitude(float defaultMapMaxMagnitude) {
 		this.defaultMapMaxMagnitude = defaultMapMaxMagnitude;
 	}
 
@@ -230,6 +295,15 @@ public class MapServiceImpl implements MapService {
 
 	public void setDefaultMapAnimationSteps(int defaultMapAnimationSteps) {
 		this.defaultMapAnimationSteps = defaultMapAnimationSteps;
+	}
+
+	public float getDefaultMapAnimationStepDuration() {
+		return defaultMapAnimationStepDuration;
+	}
+
+	public void setDefaultMapAnimationStepDuration(
+			float defaultMapAnimationStepDuration) {
+		this.defaultMapAnimationStepDuration = defaultMapAnimationStepDuration;
 	}
 
 	public boolean isDefaultMapReverseAnimation() {
@@ -273,28 +347,56 @@ public class MapServiceImpl implements MapService {
 		Point center = geometryFactory.createPoint(new Coordinate(
 				defaultMapCenterLongitude, defaultMapCenterLatitude));
 		int zoom = defaultMapZoom;
-		Integer minDateRelativeAmount = defaultMapMinDateRelativeAmount;
+		DateLimitType minDateType = defaultMapMinDateType;
+		float minDateRelativeAmount = defaultMapMinDateRelativeAmount;
 		DateUnits minDateRelativeUnits = defaultMapMinDateRelativeUnits;
 		Date minDate = defaultMapMinDate;
-		Integer maxDateRelativeAmount = defaultMapMaxDateRelativeAmount;
+		DateLimitType maxDateType = defaultMapMaxDateType;
+		float maxDateRelativeAmount = defaultMapMaxDateRelativeAmount;
 		DateUnits maxDateRelativeUnits = defaultMapMaxDateRelativeUnits;
 		Date maxDate = defaultMapMaxDate;
-		Float minDepth = defaultMapMinDepth;
-		Float maxDepth = defaultMapMaxDepth;
+		DepthLimitType minDepthType = defaultMapMinDepthType;
+		float minDepth = defaultMapMinDepth;
+		DepthLimitType maxDepthType = defaultMapMaxDepthType;
+		float maxDepth = defaultMapMaxDepth;
 		MagnitudeType magnitudeType = defaultMapMagnitudeType;
-		Float minMagnitude = defaultMapMonMagnitude;
-		Float maxMagnitude = defaultMapMaxMagnitude;
+		MagnitudeLimitType minMagnitudeType = defaultMapMinMagnitudeType;
+		float minMagnitude = defaultMapMinMagnitude;
+		MagnitudeLimitType maxMagnitudeType = defaultMapMaxMagnitudeType;
+		float maxMagnitude = defaultMapMaxMagnitude;
 		boolean listUnmeasured = defaultMapListUnmeasured;
 		AnimationType animationType = defaultMapAnimationType;
 		float animationStepKeep = defaultMapAnimationStepKeep;
 		int animationSteps = defaultMapAnimationSteps;
+		float animationStepDuration = defaultMapAnimationStepDuration;
 		boolean reverseAnimation = defaultMapReverseAnimation;
-		Map map = new Map(name, description, center, zoom,
+
+		if (minDate == null && maxDate == null) {
+			Date currentDate = new Date();
+			maxDate = currentDate;
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(currentDate);
+			calendar.add(Calendar.DAY_OF_MONTH, -1);
+			minDate = calendar.getTime();
+		} else if (minDate == null && maxDate != null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(maxDate);
+			calendar.add(Calendar.DAY_OF_MONTH, -1);
+			minDate = calendar.getTime();
+		} else if (minDate != null && maxDate == null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(minDate);
+			calendar.add(Calendar.DAY_OF_MONTH, +1);
+			maxDate = calendar.getTime();
+		}
+		Map map = new Map(name, description, center, zoom, minDateType,
 				minDateRelativeAmount, minDateRelativeUnits, minDate,
-				maxDateRelativeAmount, maxDateRelativeUnits, maxDate, minDepth,
-				maxDepth, magnitudeType, minMagnitude, maxMagnitude,
-				listUnmeasured, animationType, animationStepKeep,
-				animationSteps, reverseAnimation);
+				maxDateType, maxDateRelativeAmount, maxDateRelativeUnits,
+				maxDate, minDepthType, minDepth, maxDepthType, maxDepth,
+				magnitudeType, minMagnitudeType, minMagnitude,
+				maxMagnitudeType, maxMagnitude, listUnmeasured, animationType,
+				animationStepKeep, animationSteps, animationStepDuration,
+				reverseAnimation);
 		user.add(map);
 		mapRepository.put(map);
 		MapDto mapDto = DtoMarshaler.unmarshallMap(map);

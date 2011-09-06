@@ -3,10 +3,6 @@ package com.seismap.service.map;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.seismap.service.event.MagnitudeType;
@@ -18,13 +14,13 @@ public class MapDto implements Serializable {
 	@JsonProperty
 	private Long id;
 
-	@Column(nullable = false, insertable = false, updatable = false)
+	@JsonProperty
 	private Integer mapIndex;
 
-	@Column(nullable = false)
+	@JsonProperty
 	private String name;
 
-	@Column(nullable = false)
+	@JsonProperty
 	private String description;
 
 	@JsonProperty
@@ -33,59 +29,76 @@ public class MapDto implements Serializable {
 	@JsonProperty
 	private Double centerLongitude;
 
-	@Column(nullable = false)
+	@JsonProperty
 	private Integer zoom;
 
-	@Column(nullable = true)
+	@JsonProperty
+	private DateLimitType minDateType;
+
+	@JsonProperty
 	private Float minDateRelativeAmount;
 
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
+	@JsonProperty
 	private DateUnits minDateRelativeUnits;
 
-	@Column(nullable = true)
+	@JsonProperty
 	private Date minDate;
 
-	@Column(nullable = true)
+	@JsonProperty
+	private DateLimitType maxDateType;
+
+	@JsonProperty
 	private Float maxDateRelativeAmount;
 
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
+	@JsonProperty
 	private DateUnits maxDateRelativeUnits;
 
-	@Column(nullable = true)
+	@JsonProperty
 	private Date maxDate;
 
-	@Column(nullable = true)
+	@JsonProperty
+	private DepthLimitType minDepthType;
+
+	@JsonProperty
 	private Float minDepth;
 
-	@Column(nullable = true)
+	@JsonProperty
+	private DepthLimitType maxDepthType;
+
+	@JsonProperty
 	private Float maxDepth;
 
-	@Column(nullable = false)
+	@JsonProperty
 	private MagnitudeType magnitudeType;
 
-	@Column(nullable = true)
+	@JsonProperty
+	private MagnitudeLimitType minMagnitudeType;
+
+	@JsonProperty
 	private Float minMagnitude;
 
-	@Column(nullable = true)
+	@JsonProperty
+	private MagnitudeLimitType maxMagnitudeType;
+
+	@JsonProperty
 	private Float maxMagnitude;
 
-	@Column(nullable = false)
+	@JsonProperty
 	private Boolean listUnmeasured;
 
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
+	@JsonProperty
 	private AnimationType animationType;
 
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
+	@JsonProperty
 	private float animationStepKeep;
 
-	@Column(nullable = false)
+	@JsonProperty
 	private Integer animationSteps;
 
-	@Column(nullable = false)
+	@JsonProperty
+	private Float animationStepDuration;
+
+	@JsonProperty
 	private Boolean reverseAnimation;
 
 	protected MapDto() {
@@ -93,13 +106,17 @@ public class MapDto implements Serializable {
 
 	public MapDto(Long id, String name, String description,
 			Double centerLatitude, Double centerLongitude, Integer zoom,
-			Float minDateRelativeAmount, DateUnits minDateRelativeUnits,
-			Date minDate, Float maxDateRelativeAmount,
-			DateUnits maxDateRelativeUnits, Date maxDate, Float minDepth,
-			Float maxDepth, MagnitudeType magnitudeType, Float minMagnitude,
+			DateLimitType minDateType, Float minDateRelativeAmount,
+			DateUnits minDateRelativeUnits, Date minDate,
+			DateLimitType maxDateType, Float maxDateRelativeAmount,
+			DateUnits maxDateRelativeUnits, Date maxDate,
+			DepthLimitType minDepthType, Float minDepth,
+			DepthLimitType maxDepthType, Float maxDepth,
+			MagnitudeType magnitudeType, MagnitudeLimitType minMagnitudeType,
+			Float minMagnitude, MagnitudeLimitType maxMagnitudeType,
 			Float maxMagnitude, Boolean listUnmeasured,
-			AnimationType animationType, float animationStepKeep,
-			Integer animationSteps, Boolean reverseAnimation) {
+			AnimationType animationType, Float animationStepKeep,
+			Integer animationSteps, Float animationStepDuration, Boolean reverseAnimation) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -107,21 +124,28 @@ public class MapDto implements Serializable {
 		this.centerLatitude = centerLatitude;
 		this.centerLongitude = centerLongitude;
 		this.zoom = zoom;
+		this.minDateType = minDateType;
 		this.minDateRelativeAmount = minDateRelativeAmount;
 		this.minDateRelativeUnits = minDateRelativeUnits;
 		this.minDate = minDate;
+		this.maxDateType = maxDateType;
 		this.maxDateRelativeAmount = maxDateRelativeAmount;
 		this.maxDateRelativeUnits = maxDateRelativeUnits;
 		this.maxDate = maxDate;
+		this.minDepthType = minDepthType;
 		this.minDepth = minDepth;
+		this.maxDepthType = maxDepthType;
 		this.maxDepth = maxDepth;
 		this.magnitudeType = magnitudeType;
+		this.minMagnitudeType = minMagnitudeType;
 		this.minMagnitude = minMagnitude;
+		this.maxMagnitudeType = maxMagnitudeType;
 		this.maxMagnitude = maxMagnitude;
 		this.listUnmeasured = listUnmeasured;
 		this.animationType = animationType;
 		this.animationStepKeep = animationStepKeep;
 		this.animationSteps = animationSteps;
+		this.animationStepDuration = animationStepDuration;
 		this.reverseAnimation = reverseAnimation;
 	}
 
@@ -181,6 +205,14 @@ public class MapDto implements Serializable {
 		this.zoom = zoom;
 	}
 
+	public DateLimitType getMinDateType() {
+		return minDateType;
+	}
+
+	public void setMinDateType(DateLimitType minDateType) {
+		this.minDateType = minDateType;
+	}
+
 	public Float getMinDateRelativeAmount() {
 		return minDateRelativeAmount;
 	}
@@ -203,6 +235,14 @@ public class MapDto implements Serializable {
 
 	public void setMinDate(Date minDate) {
 		this.minDate = minDate;
+	}
+
+	public DateLimitType getMaxDateType() {
+		return maxDateType;
+	}
+
+	public void setMaxDateType(DateLimitType maxDateType) {
+		this.maxDateType = maxDateType;
 	}
 
 	public Float getMaxDateRelativeAmount() {
@@ -229,12 +269,28 @@ public class MapDto implements Serializable {
 		this.maxDate = maxDate;
 	}
 
+	public DepthLimitType getMinDepthType() {
+		return minDepthType;
+	}
+
+	public void setMinDepthType(DepthLimitType minDepthType) {
+		this.minDepthType = minDepthType;
+	}
+
 	public Float getMinDepth() {
 		return minDepth;
 	}
 
 	public void setMinDepth(Float minDepth) {
 		this.minDepth = minDepth;
+	}
+
+	public DepthLimitType getMaxDepthType() {
+		return maxDepthType;
+	}
+
+	public void setMaxDepthType(DepthLimitType maxDepthType) {
+		this.maxDepthType = maxDepthType;
 	}
 
 	public Float getMaxDepth() {
@@ -253,12 +309,28 @@ public class MapDto implements Serializable {
 		this.magnitudeType = magnitudeType;
 	}
 
+	public MagnitudeLimitType getMinMagnitudeType() {
+		return minMagnitudeType;
+	}
+
+	public void setMinMagnitudeType(MagnitudeLimitType minMagnitudeType) {
+		this.minMagnitudeType = minMagnitudeType;
+	}
+
 	public Float getMinMagnitude() {
 		return minMagnitude;
 	}
 
 	public void setMinMagnitude(Float minMagnitude) {
 		this.minMagnitude = minMagnitude;
+	}
+
+	public MagnitudeLimitType getMaxMagnitudeType() {
+		return maxMagnitudeType;
+	}
+
+	public void setMaxMagnitudeType(MagnitudeLimitType maxMagnitudeType) {
+		this.maxMagnitudeType = maxMagnitudeType;
 	}
 
 	public Float getMaxMagnitude() {
@@ -269,12 +341,12 @@ public class MapDto implements Serializable {
 		this.maxMagnitude = maxMagnitude;
 	}
 
-	public Boolean isListUnmeasured() {
-		return listUnmeasured;
-	}
-
 	public void setListUnmeasured(Boolean listUnmeasured) {
 		this.listUnmeasured = listUnmeasured;
+	}
+	
+	public Boolean getListUnmeasured() {
+		return listUnmeasured;
 	}
 
 	public AnimationType getAnimationType() {
@@ -301,12 +373,20 @@ public class MapDto implements Serializable {
 		this.animationSteps = animationSteps;
 	}
 
-	public Boolean isReverseAnimation() {
-		return reverseAnimation;
+	public Float getAnimationStepDuration() {
+		return animationStepDuration;
+	}
+
+	public void setAnimationStepDuration(Float animationStepDuration) {
+		this.animationStepDuration = animationStepDuration;
 	}
 
 	public void setReverseAnimation(Boolean reverseAnimation) {
 		this.reverseAnimation = reverseAnimation;
+	}
+	
+	public Boolean getReverseAnimation() {
+		return reverseAnimation;
 	}
 
 }
