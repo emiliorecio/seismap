@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.seismap.service.category.ListCategoriesRequestDto;
 import com.seismap.service.category.ListCategoriesResponseDto;
-import com.seismap.service.map.GetMapRequestDto;
-import com.seismap.service.map.GetMapResponseDto;
+import com.seismap.service.event.GetDataBoundsRequestDto;
+import com.seismap.service.event.GetDataBoundsResponseDto;
 import com.seismap.service.map.GetLayerServerUriRequestDto;
 import com.seismap.service.map.GetLayerServerUriResponseDto;
+import com.seismap.service.map.GetMapRequestDto;
+import com.seismap.service.map.GetMapResponseDto;
 import com.seismap.service.map.ListUserMapsRequestDto;
 import com.seismap.service.map.ListUserMapsResponseDto;
 
@@ -27,10 +29,13 @@ public class PageController extends SeismapController {
 
 	private MapController mapController;
 
+	private EventController eventController;
+
 	public PageController(CategoryController categoryController,
-			MapController mapController) {
+			MapController mapController, EventController eventController) {
 		this.categoryController = categoryController;
 		this.mapController = mapController;
+		this.eventController = eventController;
 	}
 
 	private String toJson(Object object) {
@@ -80,6 +85,15 @@ public class PageController extends SeismapController {
 		}
 		model.addAttribute("map", mapResponse.getValue());
 		model.addAttribute("map_json", toJson(mapResponse.getValue()));
+
+		GetDataBoundsResponseDto dataBoundsResponse = eventController
+				.getDataBounds(new GetDataBoundsRequestDto(), model);
+		if (dataBoundsResponse.isException()) {
+			throw new IllegalStateException(dataBoundsResponse.toString());
+		}
+		model.addAttribute("dataBounds", dataBoundsResponse.getValue());
+		model.addAttribute("dataBounds_json",
+				toJson(dataBoundsResponse.getValue()));
 
 		GetLayerServerUriResponseDto layerServerUriResponse = mapController
 				.getLayerServerUri(new GetLayerServerUriRequestDto(), model);

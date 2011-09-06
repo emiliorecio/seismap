@@ -6,21 +6,20 @@ import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-import com.seismap.model.entity.EventAndAverageMagnitude;
-import com.seismap.model.entity.EventIdAndMagnitudeTypePk;
-import com.seismap.model.repository.EventAndAverageMagnitudeRepository;
+import com.seismap.model.entity.EventAndAverageMagnitudes;
+import com.seismap.model.repository.EventAndAverageMagnitudeSRepository;
 import com.seismap.service.common.RangeDto;
 import com.seismap.service.event.MagnitudeType;
 
-public class EventAndAverageMagnitudeRepositoryImpl extends
-		RepositoryImpl<EventAndAverageMagnitude, EventIdAndMagnitudeTypePk> implements
-		EventAndAverageMagnitudeRepository {
+public class EventAndAverageMagnitudesRepositoryImpl extends
+		RepositoryImpl<EventAndAverageMagnitudes, Long> implements
+		EventAndAverageMagnitudeSRepository {
 
-	public EventAndAverageMagnitudeRepositoryImpl() {
-		super(EventAndAverageMagnitude.class);
+	public EventAndAverageMagnitudesRepositoryImpl() {
+		super(EventAndAverageMagnitudes.class);
 	}
 
-	public List<EventAndAverageMagnitude> find(RangeDto<Date> dateRangeDto,
+	public List<EventAndAverageMagnitudes> find(RangeDto<Date> dateRangeDto,
 			RangeDto<Float> latitudeRangeDto,
 			RangeDto<Float> longitudeRangeDto, RangeDto<Float> depthRangeDto,
 			MagnitudeType magnitudeType, RangeDto<Float> magnitudeRangeDto,

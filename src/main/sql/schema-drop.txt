@@ -1,4 +1,8 @@
-DROP VIEW eventandaveragemagnitude;
+DROP VIEW magnitudedatabounds;
+
+DROP VIEW databounds;
+
+DROP VIEW eventandaveragemagnitudes;
 
 DROP TABLE magnitude;
 DROP TABLE agency;

@@ -1,13 +1,13 @@
 package com.seismap.service.event;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.seismap.service.common.RangeDto;
+import com.seismap.service.common.RequestDto;
 
-public class EventsAndAverageMagnitudesFindRequestDto implements Serializable {
+public class FindEventsAndAverageMagnitudesRequestDto extends RequestDto {
 
 	private static final long serialVersionUID = 1L;
 
@@ -32,11 +32,11 @@ public class EventsAndAverageMagnitudesFindRequestDto implements Serializable {
 	@JsonProperty
 	private Boolean listUnmeasured;
 
-	protected EventsAndAverageMagnitudesFindRequestDto() {
+	protected FindEventsAndAverageMagnitudesRequestDto() {
 
 	}
 
-	public EventsAndAverageMagnitudesFindRequestDto(RangeDto<Date> dateRange,
+	public FindEventsAndAverageMagnitudesRequestDto(RangeDto<Date> dateRange,
 			RangeDto<Float> latitudeRange, RangeDto<Float> longitudeRange,
 			RangeDto<Float> depthRange, MagnitudeType magnitudeType,
 			RangeDto<Float> magnitudeRange, Boolean listUnmeasured) {

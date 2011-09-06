@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.IndexColumn;
 
-@Entity()
+@Entity
 @Table(name = "SeismapUser")
 public class User implements Identifiable<Long> {
 

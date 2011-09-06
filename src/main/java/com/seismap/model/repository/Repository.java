@@ -2,11 +2,8 @@ package com.seismap.model.repository;
 
 import java.io.Serializable;
 
-public interface Repository<T, K extends Serializable> {
-
-	T get(K id);
-
-	T fetch(K id);
+public interface Repository<T, K extends Serializable> extends
+		ReadOnlyRepository<T, K> {
 
 	void put(T object);
 
