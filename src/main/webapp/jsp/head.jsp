@@ -13,9 +13,9 @@
 <link href="${baseUrl}/resources/css/lib/moodialog/MooDialog.css"
   rel="stylesheet" type="text/css" media="screen" />
 <script type="text/javascript"
-  src="${baseUrl}/resources/js/lib/mootools-core-1.3.2-full-compat.js"></script>
+  src="${baseUrl}/resources/js/lib/mootools/mootools-core-1.3.2-full-compat.js"></script>
 <script type="text/javascript"
-  src="${baseUrl}/resources/js/lib/mootools-more-1.3.2.1.js"></script>
+  src="${baseUrl}/resources/js/lib/mootools/mootools-more-1.3.2.1.js"></script>
 <script src="${baseUrl}/resources/js/lib/moodialog/MooDialog.js"
   type="text/javascript"></script>
 <script src="${baseUrl}/resources/js/lib/moodialog/MooDialog.Alert.js"

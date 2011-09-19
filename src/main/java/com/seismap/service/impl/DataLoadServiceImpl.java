@@ -27,9 +27,9 @@ import com.seismap.service.parser.DataProviderException;
 import com.seismap.service.parser.InvalidDataException;
 import com.seismap.service.parser.LogEvent;
 import com.seismap.service.parser.Parser;
-import com.seismap.service.parser.Type1Entry;
 import com.seismap.service.parser.Parser.LogEventConsumer;
 import com.seismap.service.parser.Parser.LogLineProvider;
+import com.seismap.service.parser.Type1Entry;
 import com.seismap.service.parser.enumeration.MagnitudeType;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -68,9 +68,9 @@ public class DataLoadServiceImpl implements DataLoadService {
 			for (Type1Entry entry : type1Entries) {
 				if (date == null) {
 					Calendar calendar = new GregorianCalendar(entry.getYear(),
-							entry.getMonth(), entry.getDayOfMonth(), entry
-									.getHour(), entry.getMinutes(), (int) entry
-									.getSeconds());
+							entry.getMonth(), entry.getDayOfMonth(),
+							entry.getHour(), entry.getMinutes(),
+							(int) entry.getSeconds());
 					date = calendar.getTime();
 					longitude = entry.getLongitude();
 					latitude = entry.getLatitude();
@@ -112,7 +112,7 @@ public class DataLoadServiceImpl implements DataLoadService {
 					sphericalMercatorPosition.getX(), sphericalMercatorPosition
 							.getY()));
 			Event event = new Event(location, depth.floatValue(), date,
-					magnitudes);
+					magnitudes, null, null, null);
 			eventRepository.put(event);
 		}
 

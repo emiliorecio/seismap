@@ -31,14 +31,17 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Transactional
-	public ListCategoriesResponseDto list(ActorCredentialsDto actorCredentials, ListCategoriesRequestDto request) {
+	public ListCategoriesResponseDto list(ActorCredentialsDto actorCredentials,
+			ListCategoriesRequestDto request) {
 		return new ListCategoriesResponseDto(
-				DtoMarshaler.unmarshallCategories(applicationRepository.get()
+				DtoMarshaler.unmarshallCategories(applicationRepository.fetch()
 						.getCategories()));
 	}
 
 	@Transactional
-	public CreateCategoryResponseDto create(ActorCredentialsDto actorCredentials, CreateCategoryRequestDto request) {
+	public CreateCategoryResponseDto create(
+			ActorCredentialsDto actorCredentials,
+			CreateCategoryRequestDto request) {
 		String name = request.getCategoryName();
 		Category existingCategory = categoryRepository.getByName(name);
 		if (existingCategory != null) {
@@ -50,24 +53,11 @@ public class CategoryServiceImpl implements CategoryService {
 			return exceptionResponse;
 		}
 		Category category = new Category(name);
-		applicationRepository.get().add(category);
+		applicationRepository.fetch().getCategories().add(category);
 		categoryRepository.put(category);
 		CategoryDto categoryDto = DtoMarshaler.unmarshallCategory(category);
-		CreateCategoryResponseDto response = new CreateCategoryResponseDto(categoryDto);
+		CreateCategoryResponseDto response = new CreateCategoryResponseDto(
+				categoryDto);
 		return response;
 	}
-
-	// @Transactional
-	// public EventsAndAverageMagnitudesFindResponseDto
-	// get(EventsAndAverageMagnitudesFindRequestDto request) {
-	// return new
-	// EventsAndAverageMagnitudesFindResponseDto(DtoMarshaler.unmarshall(mapRepository
-	// .get(DtoMarshaler.marshall(request.getDateRange()),
-	// DtoMarshaler.marshall(request.getLatitudeRange()),
-	// DtoMarshaler.marshall(request.getLongitudeRange()),
-	// DtoMarshaler.marshall(request.getDepthRange()),
-	// DtoMarshaler.marshallMagnitudeRange(request
-	// .getMagnitudeRanges()))));
-	// }
-
 }

@@ -16,6 +16,9 @@ public class EventAndAverageMagnitudes extends EventInfo {
 	private Long id;
 
 	@Column(nullable = true)
+	private Float averageRANKMagnitude;
+
+	@Column(nullable = true)
 	private Float averageMBMagnitude;
 
 	@Column(nullable = true)
@@ -38,10 +41,12 @@ public class EventAndAverageMagnitudes extends EventInfo {
 	}
 
 	protected EventAndAverageMagnitudes(Long id, Point location, float depth,
-			Date date, Float averageMLMagnitude, Float averageMBMagnitude,
-			Float averageMSMagnitude, Float averageMWMagnitude,
-			Float averageMBLGMagnitude, Float averageMCMagnitude) {
-		super(location, depth, date);
+			Date date, Float averageRANKMagnitude, Float averageMLMagnitude,
+			Float averageMBMagnitude, Float averageMSMagnitude,
+			Float averageMWMagnitude, Float averageMBLGMagnitude,
+			Float averageMCMagnitude, String name, String notes, String reference) {
+		super(location, depth, date, name, notes, reference);
+		this.averageRANKMagnitude = averageRANKMagnitude;
 		this.averageMLMagnitude = averageMLMagnitude;
 		this.averageMBMagnitude = averageMBMagnitude;
 		this.averageMSMagnitude = averageMSMagnitude;
@@ -52,6 +57,10 @@ public class EventAndAverageMagnitudes extends EventInfo {
 
 	public Long getId() {
 		return id;
+	}
+
+	public Float getAverageRANKMagnitude() {
+		return averageRANKMagnitude;
 	}
 
 	public Float getAverageMBMagnitude() {

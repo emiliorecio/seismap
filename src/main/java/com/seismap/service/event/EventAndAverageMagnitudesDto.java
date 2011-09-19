@@ -31,11 +31,12 @@ public class EventAndAverageMagnitudesDto extends EventInfoDto {
 	}
 
 	public EventAndAverageMagnitudesDto(Long id, Double latitude,
-			Double longitude, float depth, Date date, Float averageMLMagnitude,
+			Double longitude, Float depth, Date date, String name,
+			String notes, String reference, Float averageMLMagnitude,
 			Float averageMBMagnitude, Float averageMSMagnitude,
 			Float averageMWMagnitude, Float averageMBLGMagnitude,
 			Float averageMCMagnitude) {
-		super(id, latitude, longitude, depth, date);
+		super(id, latitude, longitude, depth, date, name, notes, reference);
 		this.averageMLMagnitude = averageMLMagnitude;
 		this.averageMBMagnitude = averageMBMagnitude;
 		this.averageMSMagnitude = averageMSMagnitude;

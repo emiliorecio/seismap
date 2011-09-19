@@ -27,21 +27,21 @@ public class DataBoundsDto implements Serializable {
 	private Float maxDepth;
 
 	@JsonProperty
-	private Map<MagnitudeType, MagnitudeDataBoundsDto> magnitudeBounds;
+	private Map<ExtendedMagnitudeType, MagnitudeDataBoundsDto> magnitudeBounds;
 
 	protected DataBoundsDto() {
 	}
 
 	public DataBoundsDto(Long id, Date minDate, Date maxDate, Float minDepth,
 			Float maxDepth,
-			Map<MagnitudeType, MagnitudeDataBoundsDto> magnitudeBounds) {
+			Map<ExtendedMagnitudeType, MagnitudeDataBoundsDto> magnitudeBounds) {
 		super();
 		this.id = id;
 		this.minDate = minDate;
 		this.maxDate = maxDate;
 		this.minDepth = minDepth;
 		this.maxDepth = maxDepth;
-		this.magnitudeBounds = new HashMap<MagnitudeType, MagnitudeDataBoundsDto>(
+		this.magnitudeBounds = new HashMap<ExtendedMagnitudeType, MagnitudeDataBoundsDto>(
 				magnitudeBounds);
 	}
 
@@ -65,7 +65,7 @@ public class DataBoundsDto implements Serializable {
 		return maxDepth;
 	}
 
-	public Map<MagnitudeType, MagnitudeDataBoundsDto> getMagnitudeBounds() {
+	public Map<ExtendedMagnitudeType, MagnitudeDataBoundsDto> getMagnitudeBounds() {
 		return magnitudeBounds;
 	}
 }

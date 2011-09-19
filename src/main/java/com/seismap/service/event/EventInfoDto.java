@@ -24,17 +24,29 @@ public class EventInfoDto implements Serializable {
 	@JsonProperty
 	private Date date;
 
+	@JsonProperty
+	private String name;
+
+	@JsonProperty
+	private String notes;
+
+	@JsonProperty
+	private String reference;
+
 	protected EventInfoDto() {
 
 	}
 
 	public EventInfoDto(Long id, Double latitude, Double longitude,
-			Float depth, Date date) {
+			Float depth, Date date, String name, String notes, String reference) {
 		this.id = id;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.depth = depth;
 		this.date = date;
+		this.name = name;
+		this.notes = notes;
+		this.reference = reference;
 	}
 
 	public Long getId() {
@@ -55,6 +67,18 @@ public class EventInfoDto implements Serializable {
 
 	public Date getDate() {
 		return date;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getNotes() {
+		return notes;
+	}
+
+	public String getReference() {
+		return reference;
 	}
 
 }

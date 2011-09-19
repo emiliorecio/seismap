@@ -10,12 +10,7 @@ public class ApplicationRepositoryImpl extends
 		super(Application.class);
 	}
 
-	public Application get() {
-		Application application = getByCriteria(getCriteria(), true);
-		if (application == null) {
-			application = new Application();
-			put(application);
-		}
-		return application;
+	public Application fetch() {
+		return fetchSingleton();
 	}
 }

@@ -1,10 +1,26 @@
 package com.seismap.controller;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map.Entry;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,12 +30,16 @@ import com.seismap.service.category.ListCategoriesRequestDto;
 import com.seismap.service.category.ListCategoriesResponseDto;
 import com.seismap.service.event.GetDataBoundsRequestDto;
 import com.seismap.service.event.GetDataBoundsResponseDto;
+import com.seismap.service.event.GetMagnitudeLimitsRequestDto;
+import com.seismap.service.event.GetMagnitudeLimitsResponseDto;
 import com.seismap.service.map.GetLayerServerUriRequestDto;
 import com.seismap.service.map.GetLayerServerUriResponseDto;
 import com.seismap.service.map.GetMapRequestDto;
 import com.seismap.service.map.GetMapResponseDto;
 import com.seismap.service.map.ListUserMapsRequestDto;
 import com.seismap.service.map.ListUserMapsResponseDto;
+import com.seismap.service.style.ListStylesRequestDto;
+import com.seismap.service.style.ListStylesResponseDto;
 
 @Controller
 @RequestMapping("")
@@ -31,11 +51,19 @@ public class PageController extends SeismapController {
 
 	private EventController eventController;
 
+	private StyleController styleController;
+
+	private ClientHttpRequestFactory httpRequestFactory;
+
 	public PageController(CategoryController categoryController,
-			MapController mapController, EventController eventController) {
+			MapController mapController, EventController eventController,
+			StyleController styleController,
+			ClientHttpRequestFactory httpRequestFactory) {
 		this.categoryController = categoryController;
 		this.mapController = mapController;
 		this.eventController = eventController;
+		this.styleController = styleController;
+		this.httpRequestFactory = httpRequestFactory;
 	}
 
 	private String toJson(Object object) {
@@ -55,14 +83,14 @@ public class PageController extends SeismapController {
 	}
 
 	private void loadGeneralData(Model model) {
-		ListCategoriesResponseDto categoriesResponse = categoryController.list(
-				new ListCategoriesRequestDto(), model);
+		ListCategoriesResponseDto categoriesResponse = categoryController
+				.list(new ListCategoriesRequestDto());
 		if (categoriesResponse.isException()) {
 			throw new IllegalStateException(categoriesResponse.toString());
 		}
 		model.addAttribute("categories", categoriesResponse.getValue());
-		ListUserMapsResponseDto mapsResponse = mapController.listByUser(
-				new ListUserMapsRequestDto(), model);
+		ListUserMapsResponseDto mapsResponse = mapController
+				.listByUser(new ListUserMapsRequestDto());
 		if (mapsResponse.isException()) {
 			throw new IllegalStateException(mapsResponse.toString());
 		}
@@ -79,15 +107,33 @@ public class PageController extends SeismapController {
 	public String map(@PathVariable("mapId") Long mapId, Model model) {
 		loadGeneralData(model);
 		GetMapResponseDto mapResponse = mapController.get(new GetMapRequestDto(
-				mapId), model);
+				mapId));
 		if (mapResponse.isException()) {
 			throw new IllegalStateException(mapResponse.toString());
 		}
 		model.addAttribute("map", mapResponse.getValue());
 		model.addAttribute("map_json", toJson(mapResponse.getValue()));
 
+		ListStylesResponseDto stylesResponse = styleController
+				.list(new ListStylesRequestDto());
+		if (stylesResponse.isException()) {
+			throw new IllegalStateException(stylesResponse.toString());
+		}
+		model.addAttribute("styles", stylesResponse.getValue());
+		model.addAttribute("styles_json", toJson(stylesResponse.getValue()));
+
+		GetMagnitudeLimitsResponseDto magnitudeLimitsResponse = eventController
+				.getMagnitudeLimits(new GetMagnitudeLimitsRequestDto());
+		if (magnitudeLimitsResponse.isException()) {
+			throw new IllegalStateException(magnitudeLimitsResponse.toString());
+		}
+		model.addAttribute("magnitudeLimits",
+				magnitudeLimitsResponse.getValue());
+		model.addAttribute("magnitudeLimits_json",
+				toJson(magnitudeLimitsResponse.getValue()));
+
 		GetDataBoundsResponseDto dataBoundsResponse = eventController
-				.getDataBounds(new GetDataBoundsRequestDto(), model);
+				.getDataBounds(new GetDataBoundsRequestDto());
 		if (dataBoundsResponse.isException()) {
 			throw new IllegalStateException(dataBoundsResponse.toString());
 		}
@@ -96,11 +142,62 @@ public class PageController extends SeismapController {
 				toJson(dataBoundsResponse.getValue()));
 
 		GetLayerServerUriResponseDto layerServerUriResponse = mapController
-				.getLayerServerUri(new GetLayerServerUriRequestDto(), model);
+				.getLayerServerUri(new GetLayerServerUriRequestDto());
 		if (layerServerUriResponse.isException()) {
 			throw new IllegalStateException(layerServerUriResponse.toString());
 		}
 		model.addAttribute("layerServerUri", layerServerUriResponse.getValue());
 		return "map";
+	}
+
+	@RequestMapping("layerServer/*")
+	public void layerServer(HttpServletRequest request,
+			HttpServletResponse response) throws URISyntaxException,
+			IOException {
+		GetLayerServerUriResponseDto layerServerUriResponse = mapController
+				.getLayerServerUri(new GetLayerServerUriRequestDto());
+		if (layerServerUriResponse.isException()) {
+			throw new IllegalStateException(layerServerUriResponse.toString());
+		}
+		String hostAndPort = layerServerUriResponse.getValue();
+		String path = request.getRequestURI();
+		path = path.substring(path.indexOf("layerServer/")
+				+ "layerServer/".length());
+		String query = request.getQueryString();
+		String uri = hostAndPort + '/' + path;
+		if (query != null) {
+			uri += '?' + query;
+		}
+		URI location = new URI(uri);
+
+		HttpMethod targetRequestMethod = HttpMethod
+				.valueOf(request.getMethod());
+		ClientHttpRequest targetRequest = httpRequestFactory.createRequest(
+				location, targetRequestMethod);
+		HttpHeaders targetRequestHeaders = targetRequest.getHeaders();
+		targetRequestHeaders.clear();
+		for (Enumeration<?> headerNames = request.getHeaderNames(); headerNames
+				.hasMoreElements();) {
+			String headerName = (String) headerNames.nextElement();
+			for (Enumeration<?> headerValues = request.getHeaders(headerName); headerValues
+					.hasMoreElements();) {
+				String headerValue = (String) headerValues.nextElement();
+				targetRequestHeaders.add(headerName, headerValue);
+			}
+		}
+		ClientHttpResponse targetResponse = targetRequest.execute();
+
+		response.setStatus(targetResponse.getStatusCode().value());
+		HttpHeaders targetResponseHeaders = targetResponse.getHeaders();
+		for (Entry<String, List<String>> headers : targetResponseHeaders
+				.entrySet()) {
+			String headerName = headers.getKey();
+			for (String headerValue : headers.getValue()) {
+				response.addHeader(headerName, headerValue);
+			}
+		}
+		InputStream targetResponseBody = targetResponse.getBody();
+		OutputStream responseBody = response.getOutputStream();
+		IOUtils.copy(targetResponseBody, responseBody);
 	}
 }

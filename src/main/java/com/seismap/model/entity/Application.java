@@ -1,16 +1,16 @@
 package com.seismap.model.entity;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.IndexColumn;
 
@@ -18,7 +18,6 @@ import org.hibernate.annotations.IndexColumn;
 public class Application implements Identifiable<Long> {
 
 	@Id
-	@GeneratedValue
 	@Column(nullable = false)
 	private Long id;
 
@@ -27,45 +26,60 @@ public class Application implements Identifiable<Long> {
 	@JoinColumn(name = "application_id", nullable = false)
 	private List<Category> categories = new ArrayList<Category>();
 
-	public Application() {
+	@Transient
+	private ListManager<Category> categoriesManager = null;
+
+	@IndexColumn(name = "inApplicationIndex")
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "application_id", nullable = false)
+	private List<Style> styles = new ArrayList<Style>();
+
+	@Transient
+	private ListManager<Style> stylesManager = null;
+
+	@Embedded
+	private MapServiceSettings mapServiceSettings;
+
+	protected Application() {
+	}
+
+	protected Application(Long id, List<Category> categories,
+			List<Style> styles, MapServiceSettings mapServiceSettings) {
+		super();
+		this.id = id;
+		this.categories = categories;
+		this.styles = styles;
+		this.mapServiceSettings = mapServiceSettings;
 	}
 
 	public Long getId() {
 		return id;
 	}
 
+	public ListManager<Category> getCategoriesManager() {
+		if (categoriesManager == null) {
+			categoriesManager = new ListManager<Category>(categories);
+		}
+		return categoriesManager;
+	}
+
 	public List<Category> getCategories() {
-		return Collections.unmodifiableList(categories);
+		return getCategoriesManager().getList();
 	}
 
-	public boolean moveTo(Category category, int index) {
-		int currentIndex = categories.indexOf(category);
-		if (currentIndex == -1) {
-			return false;
-		} else if (currentIndex == index) {
-			// nothing to do.
-		} else {
-			categories.remove(currentIndex);
-			categories.add(index, category);
+	public ListManager<Style> getStylesManager() {
+		if (stylesManager == null) {
+			stylesManager = new ListManager<Style>(styles);
 		}
-		return true;
+		return stylesManager;
 	}
 
-	public boolean add(Category category) {
-		return add(category, categories.size());
+	public List<Style> getStyles() {
+		return getStylesManager().getList();
 	}
 
-	public boolean add(Category category, int index) {
-		int currentIndex = categories.indexOf(category);
-		if (currentIndex != -1) {
-			return false;
-		}
-		categories.add(index, category);
-		return true;
-	}
-
-	public boolean remove(Category category) {
-		return categories.remove(category);
+	public MapServiceSettings getMapServiceSettings() {
+		return mapServiceSettings;
 	}
 
 }

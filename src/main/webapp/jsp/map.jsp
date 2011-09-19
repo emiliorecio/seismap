@@ -1,6 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<c:set var="baseUrl" value="${pageContext.request.contextPath}"
+  scope="request" />
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -8,14 +10,22 @@
   <c:param name="title" value="" />
   <c:param name="page" value="mapPage" />
 </c:import>
-<script type="text/javascript"
-  src="http://maps.google.com/maps/api/js?sensor=true"></script>
+<!-- script src="http://maps.google.com/maps?file=api&amp;v=2.93&amp;key=ABQIAAAAPaKjvz57Y0S6WBMn1VBY3hRxOXTwvMiggV2cS06R5a_zKRpeehRKur1ZfEiN6cw-_RBbJpD6Wj7a9Q" type="text/javascript"></script -->
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false&key=ABQIAAAAZGb76tUmuhDhmzTOt03vvRQt9cMzzFoKpLa_OvQBEImBmCSethSshEsXz5lvNUCN_Qu7yA8uRituCQ" type="text/javascript"></script>
+<!-- script type="text/javascript"
+  src="http://maps.google.com/maps/api/js?sensor=false&key=ABQIAAAAZGb76tUmuhDhmzTOt03vvRRhsCxakqqB0zgBij64DyszH1gi_xRTukyHJrLy2LbxygBxNBRYVdXV-g"></script -->
 <!-- script type="text/javascript">
     document.write('<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markermanager/1.0/src/markermanager' + (document.location.search.indexOf('packed') > -1 ? '_packed' : '') + '.js"><' + '/script>');
 </script-->
+<!--  link rel="stylesheet" type="text/css" href="${baseUrl}/resources/css/lib/openlayers/default/style.css"/ --> 
+<script type="text/javascript"
+  src="${baseUrl}/resources/js/lib/openlayers/OpenLayers.js"></script>
+
 <script type="text/javascript">
   mapPage.setMapData(${map_json});
   mapPage.setDataBounds(${dataBounds_json});
+  mapPage.setStyles(${styles_json});
+  mapPage.setMagnitudeLimits(${magnitudeLimits_json});
   mapPage.setLayerServerUri('${layerServerUri}');
 </script>
 
@@ -23,7 +33,13 @@
 <body>
   <c:import url="begin.jsp" />
   <table><tr><td>
-  <div id="map"></div>
+        <div id="map"> 
+        </div> 
+        <div id="wrapper"> 
+            <div id="location">location</div> 
+            <div id="scale"> 
+            </div> 
+        </div> 
   </td><td>
   <div id="mapControls">
     <form name="mapConfiguration" autocomplete="off">
@@ -49,7 +65,7 @@
           </td>
         </tr>
         <tr>
-          <td</td>
+          <td></td>
           <td>
             <table>
               <tr>
@@ -73,6 +89,17 @@
                 <td><a id="useCurrentViewLink" href="#">Usar vista actual</a></td>
               </tr>
             </table>
+          </td>
+        </tr>
+        <!-- Style -->
+        <tr>
+          <td>Estilo</td>
+          <td>
+            <select name="style">
+              <c:forEach var="style" items="${styles}" >
+              <option value="${style.id}" ${style.id ==  map.style.id ? 'selected="selected"' : ''}>${style.name}</option>
+              </c:forEach>
+            </select>
           </td>
         </tr>
         <!-- Min Date -->
@@ -219,6 +246,7 @@
           <td>Escala</td>
           <td>
             <select name="magnitudeType">
+              <option value="RANK" ${'RANK' ==  map.magnitudeType ? 'selected="selected"' : ''}>Ranking</option>
               <option value="ML" ${'ML' ==  map.magnitudeType ? 'selected="selected"' : ''}>ML</option>
               <option value="MB" ${'MB' ==  map.magnitudeType ? 'selected="selected"' : ''}>MB</option>
               <option value="MS" ${'MS' ==  map.magnitudeType ? 'selected="selected"' : ''}>MS</option>
@@ -306,6 +334,7 @@
     </form>
   </div>
   </td></tr></table>
+  <button onclick="var v='Visible layers';for (var i=0;i<mapPage.layers.length;i++){if(mapPage.layers[i].getVisibility()) v+=' ' +i; } alert(v);">asd</button>
 <textarea id="mapUris" style="width: 90%; height: 100px"></textarea>
   <c:import url="end.jsp" />
 </body>

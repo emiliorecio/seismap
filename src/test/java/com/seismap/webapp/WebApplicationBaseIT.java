@@ -31,9 +31,9 @@ public abstract class WebApplicationBaseIT {
 	}
 
 	protected String getBaseUrl() {
-		Integer port = getPort();
+		int port = getPort();
 		String context = getContext();
-		return "http://localhost" + (port == null ? "" : ":" + port)
+		return "http://localhost" + (port == 80 ? "" : ":" + port)
 				+ (context == null ? "" : "/" + context) + "/";
 	}
 
