@@ -11,31 +11,32 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-  <bean id="controller_propertyConfigurer"
-    class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
-    <property name="location">
-      <value>classpath:/seismap-controller-beans.properties</value>
-    </property>
-  </bean>
+  <bean id="controller_httpRequestFactory" class="org.springframework.http.client.SimpleClientHttpRequestFactory" />
 
   <bean id="controller_pageController" class="com.seismap.controller.PageController">
     <constructor-arg ref="controller_categoryController" />
     <constructor-arg ref="controller_mapController" />
     <constructor-arg ref="controller_eventController" />
+    <constructor-arg ref="controller_styleController" />
+    <constructor-arg ref="controller_httpRequestFactory" />
   </bean>
 
   <bean id="controller_categoryController" class="com.seismap.controller.CategoryController">
     <constructor-arg ref="service_categoryService" />
   </bean>
-  
+
   <bean id="controller_eventController" class="com.seismap.controller.EventController">
     <constructor-arg ref="service_eventService" />
   </bean>
-  
+
   <bean id="controller_mapController" class="com.seismap.controller.MapController">
     <constructor-arg ref="service_mapService" />
   </bean>
-  
+
+  <bean id="controller_styleController" class="com.seismap.controller.StyleController">
+    <constructor-arg ref="service_styleService" />
+  </bean>
+
   <bean id="controller_userController" class="com.seismap.controller.UserController">
     <constructor-arg ref="service_userService" />
   </bean>

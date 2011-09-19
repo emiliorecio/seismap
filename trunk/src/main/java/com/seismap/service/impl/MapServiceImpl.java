@@ -6,14 +6,20 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.seismap.model.entity.Application;
+import com.seismap.model.entity.DataBounds;
 import com.seismap.model.entity.Map;
+import com.seismap.model.entity.MapServiceSettings;
+import com.seismap.model.entity.Style;
 import com.seismap.model.entity.User;
+import com.seismap.model.repository.ApplicationRepository;
+import com.seismap.model.repository.DataBoundsRepository;
 import com.seismap.model.repository.MapRepository;
 import com.seismap.model.repository.UserRepository;
 import com.seismap.service.common.ActorCredentialsDto;
 import com.seismap.service.common.ExceptionCause;
 import com.seismap.service.common.ExceptionCause.ExceptionParameter;
-import com.seismap.service.event.MagnitudeType;
+import com.seismap.service.event.ExtendedMagnitudeType;
 import com.seismap.service.map.AnimationType;
 import com.seismap.service.map.CreateMapRequestDto;
 import com.seismap.service.map.CreateMapResponseDto;
@@ -35,283 +41,24 @@ import com.vividsolutions.jts.geom.Point;
 
 public class MapServiceImpl implements MapService {
 
+	private ApplicationRepository applicationRepository;
 	private MapRepository mapRepository;
 	private UserRepository userRepository;
+	private DataBoundsRepository dataBoundsRepository;
 	private GeometryFactory geometryFactory;
-
-	private String layerServerUri;
-
-	private String defaultMapDescription = "";
-	private double defaultMapCenterLongitude = -68.525278d;
-	private double defaultMapCenterLatitude = -31.537222d;
-	private int defaultMapZoom = 5;
-	private DateLimitType defaultMapMinDateType = DateLimitType.NONE;
-	private float defaultMapMinDateRelativeAmount = 1f;
-	private DateUnits defaultMapMinDateRelativeUnits = DateUnits.DAY;
-	private Date defaultMapMinDate = null;
-	private DateLimitType defaultMapMaxDateType = DateLimitType.NONE;
-	private float defaultMapMaxDateRelativeAmount = 0f;
-	private DateUnits defaultMapMaxDateRelativeUnits = DateUnits.DAY;
-	private Date defaultMapMaxDate = null;
-	private DepthLimitType defaultMapMinDepthType = DepthLimitType.NONE;
-	private float defaultMapMinDepth = 0f;
-	private DepthLimitType defaultMapMaxDepthType = DepthLimitType.NONE;
-	private float defaultMapMaxDepth = 1000f;
-	private MagnitudeType defaultMapMagnitudeType = MagnitudeType.MB;
-	private MagnitudeLimitType defaultMapMinMagnitudeType = MagnitudeLimitType.NONE;
-	private float defaultMapMinMagnitude = 0f;
-	private MagnitudeLimitType defaultMapMaxMagnitudeType = MagnitudeLimitType.NONE;
-	private float defaultMapMaxMagnitude = 100f;
-	private boolean defaultMapListUnmeasured = true;
-	private AnimationType defaultMapAnimationType = AnimationType.NONE;
-	private float defaultMapAnimationStepKeep = 0;
-	private int defaultMapAnimationSteps = 10;
-	private float defaultMapAnimationStepDuration = 5;
-	private boolean defaultMapReverseAnimation = false;
 
 	protected MapServiceImpl() {
 	}
 
 	public MapServiceImpl(MapRepository mapRepository,
+			DataBoundsRepository dataBoundsRepository,
+			ApplicationRepository applicationRepository,
 			UserRepository userRepository, GeometryFactory geometryFactory) {
 		this.mapRepository = mapRepository;
-		this.geometryFactory = geometryFactory;
 		this.userRepository = userRepository;
-	}
-
-	public String getLayerServerUri() {
-		return layerServerUri;
-	}
-
-	public void setLayerServerUri(String layerServerUriValue) {
-		this.layerServerUri = layerServerUriValue;
-	}
-
-	public String getDefaultMapDescription() {
-		return defaultMapDescription;
-	}
-
-	public void setDefaultMapDescription(String defaultMapDescription) {
-		this.defaultMapDescription = defaultMapDescription;
-	}
-
-	public double getDefaultMapCenterLongitude() {
-		return defaultMapCenterLongitude;
-	}
-
-	public void setDefaultMapCenterLongitude(double defaultMapCenterLongitude) {
-		this.defaultMapCenterLongitude = defaultMapCenterLongitude;
-	}
-
-	public double getDefaultMapCenterLatitude() {
-		return defaultMapCenterLatitude;
-	}
-
-	public void setDefaultMapCenterLatitude(double defaultMapCenterLatitude) {
-		this.defaultMapCenterLatitude = defaultMapCenterLatitude;
-	}
-
-	public void setDefaultMapCenterY(double defaultMapCenterLatitude) {
-		this.defaultMapCenterLatitude = defaultMapCenterLatitude;
-	}
-
-	public int getDefaultMapZoom() {
-		return defaultMapZoom;
-	}
-
-	public void setDefaultMapZoom(int defaultMapZoom) {
-		this.defaultMapZoom = defaultMapZoom;
-	}
-
-	public DateLimitType getDefaultMapMinDateType() {
-		return defaultMapMinDateType;
-	}
-
-	public void setDefaultMapMinDateType(DateLimitType defaultMapMinDateType) {
-		this.defaultMapMinDateType = defaultMapMinDateType;
-	}
-
-	public float getDefaultMapMinDateRelativeAmount() {
-		return defaultMapMinDateRelativeAmount;
-	}
-
-	public void setDefaultMapMinDateRelativeAmount(
-			float defaultMapMinDateRelativeAmount) {
-		this.defaultMapMinDateRelativeAmount = defaultMapMinDateRelativeAmount;
-	}
-
-	public DateUnits getDefaultMapMinDateRelativeUnits() {
-		return defaultMapMinDateRelativeUnits;
-	}
-
-	public void setDefaultMapMinDateRelativeUnits(
-			DateUnits defaultMapMinDateRelativeUnits) {
-		this.defaultMapMinDateRelativeUnits = defaultMapMinDateRelativeUnits;
-	}
-
-	public Date getDefaultMapMinDate() {
-		return defaultMapMinDate;
-	}
-
-	public void setDefaultMapMinDate(Date defaultMapMinDate) {
-		this.defaultMapMinDate = defaultMapMinDate;
-	}
-
-	public DateLimitType getDefaultMapMaxDateType() {
-		return defaultMapMaxDateType;
-	}
-
-	public void setDefaultMapMaxDateType(DateLimitType defaultMapMaxDateType) {
-		this.defaultMapMaxDateType = defaultMapMaxDateType;
-	}
-
-	public float getDefaultMapMaxDateRelativeAmount() {
-		return defaultMapMaxDateRelativeAmount;
-	}
-
-	public void setDefaultMapMaxDateRelativeAmount(
-			float defaultMapMaxDateRelativeAmount) {
-		this.defaultMapMaxDateRelativeAmount = defaultMapMaxDateRelativeAmount;
-	}
-
-	public DateUnits getDefaultMapMaxDateRelativeUnits() {
-		return defaultMapMaxDateRelativeUnits;
-	}
-
-	public void setDefaultMapMaxDateRelativeUnits(
-			DateUnits defaultMapMaxDateRelativeUnits) {
-		this.defaultMapMaxDateRelativeUnits = defaultMapMaxDateRelativeUnits;
-	}
-
-	public Date getDefaultMapMaxDate() {
-		return defaultMapMaxDate;
-	}
-
-	public void setDefaultMapMaxDate(Date defaultMapMaxDate) {
-		this.defaultMapMaxDate = defaultMapMaxDate;
-	}
-
-	public DepthLimitType getDefaultMapMinDepthType() {
-		return defaultMapMinDepthType;
-	}
-
-	public void setDefaultMapMinDepthType(DepthLimitType defaultMapMinDepthType) {
-		this.defaultMapMinDepthType = defaultMapMinDepthType;
-	}
-
-	public float getDefaultMapMinDepth() {
-		return defaultMapMinDepth;
-	}
-
-	public void setDefaultMapMinDepth(float defaultMapMinDepth) {
-		this.defaultMapMinDepth = defaultMapMinDepth;
-	}
-
-	public DepthLimitType getDefaultMapMaxDepthType() {
-		return defaultMapMaxDepthType;
-	}
-
-	public void setDefaultMapMaxDepthType(DepthLimitType defaultMapMaxDepthType) {
-		this.defaultMapMaxDepthType = defaultMapMaxDepthType;
-	}
-
-	public float getDefaultMapMaxDepth() {
-		return defaultMapMaxDepth;
-	}
-
-	public void setDefaultMapMaxDepth(float defaultMapMaxDepth) {
-		this.defaultMapMaxDepth = defaultMapMaxDepth;
-	}
-
-	public MagnitudeType getDefaultMapMagnitudeType() {
-		return defaultMapMagnitudeType;
-	}
-
-	public void setDefaultMapMagnitudeType(MagnitudeType defaultMapMagnitudeType) {
-		this.defaultMapMagnitudeType = defaultMapMagnitudeType;
-	}
-
-	public MagnitudeLimitType getDefaultMapMinMagnitudeType() {
-		return defaultMapMinMagnitudeType;
-	}
-
-	public void setDefaultMapMinMagnitudeType(
-			MagnitudeLimitType defaultMapMinMagnitudeType) {
-		this.defaultMapMinMagnitudeType = defaultMapMinMagnitudeType;
-	}
-
-	public float getDefaultMapMinMagnitude() {
-		return defaultMapMinMagnitude;
-	}
-
-	public void setDefaultMapMinMagnitude(float defaultMapMinMagnitude) {
-		this.defaultMapMinMagnitude = defaultMapMinMagnitude;
-	}
-
-	public MagnitudeLimitType getDefaultMapMaxMagnitudeType() {
-		return defaultMapMaxMagnitudeType;
-	}
-
-	public void setDefaultMapMaxMagnitudeType(
-			MagnitudeLimitType defaultMapMaxMagnitudeType) {
-		this.defaultMapMaxMagnitudeType = defaultMapMaxMagnitudeType;
-	}
-
-	public float getDefaultMapMaxMagnitude() {
-		return defaultMapMaxMagnitude;
-	}
-
-	public void setDefaultMapMaxMagnitude(float defaultMapMaxMagnitude) {
-		this.defaultMapMaxMagnitude = defaultMapMaxMagnitude;
-	}
-
-	public boolean isDefaultMapListUnmeasured() {
-		return defaultMapListUnmeasured;
-	}
-
-	public void setDefaultMapListUnmeasured(boolean defaultMapListUnmeasured) {
-		this.defaultMapListUnmeasured = defaultMapListUnmeasured;
-	}
-
-	public AnimationType getDefaultMapAnimationType() {
-		return defaultMapAnimationType;
-	}
-
-	public void setDefaultMapAnimationType(AnimationType defaultMapAnimationType) {
-		this.defaultMapAnimationType = defaultMapAnimationType;
-	}
-
-	public float getDefaultMapAnimationStepKeep() {
-		return defaultMapAnimationStepKeep;
-	}
-
-	public void setDefaultMapAnimationStepKeep(float defaultMapAnimationStepKeep) {
-		this.defaultMapAnimationStepKeep = defaultMapAnimationStepKeep;
-	}
-
-	public int getDefaultMapAnimationSteps() {
-		return defaultMapAnimationSteps;
-	}
-
-	public void setDefaultMapAnimationSteps(int defaultMapAnimationSteps) {
-		this.defaultMapAnimationSteps = defaultMapAnimationSteps;
-	}
-
-	public float getDefaultMapAnimationStepDuration() {
-		return defaultMapAnimationStepDuration;
-	}
-
-	public void setDefaultMapAnimationStepDuration(
-			float defaultMapAnimationStepDuration) {
-		this.defaultMapAnimationStepDuration = defaultMapAnimationStepDuration;
-	}
-
-	public boolean isDefaultMapReverseAnimation() {
-		return defaultMapReverseAnimation;
-	}
-
-	public void setDefaultMapReverseAnimation(boolean defaultMapReverseAnimation) {
-		this.defaultMapReverseAnimation = defaultMapReverseAnimation;
+		this.dataBoundsRepository = dataBoundsRepository;
+		this.applicationRepository = applicationRepository;
+		this.geometryFactory = geometryFactory;
 	}
 
 	@Transactional
@@ -343,34 +90,67 @@ public class MapServiceImpl implements MapService {
 					ExceptionParameter.MAP_NAME, name);
 			return exceptionResponse;
 		}
-		String description = defaultMapDescription;
-		Point center = geometryFactory.createPoint(new Coordinate(
-				defaultMapCenterLongitude, defaultMapCenterLatitude));
-		int zoom = defaultMapZoom;
-		DateLimitType minDateType = defaultMapMinDateType;
-		float minDateRelativeAmount = defaultMapMinDateRelativeAmount;
-		DateUnits minDateRelativeUnits = defaultMapMinDateRelativeUnits;
-		Date minDate = defaultMapMinDate;
-		DateLimitType maxDateType = defaultMapMaxDateType;
-		float maxDateRelativeAmount = defaultMapMaxDateRelativeAmount;
-		DateUnits maxDateRelativeUnits = defaultMapMaxDateRelativeUnits;
-		Date maxDate = defaultMapMaxDate;
-		DepthLimitType minDepthType = defaultMapMinDepthType;
-		float minDepth = defaultMapMinDepth;
-		DepthLimitType maxDepthType = defaultMapMaxDepthType;
-		float maxDepth = defaultMapMaxDepth;
-		MagnitudeType magnitudeType = defaultMapMagnitudeType;
-		MagnitudeLimitType minMagnitudeType = defaultMapMinMagnitudeType;
-		float minMagnitude = defaultMapMinMagnitude;
-		MagnitudeLimitType maxMagnitudeType = defaultMapMaxMagnitudeType;
-		float maxMagnitude = defaultMapMaxMagnitude;
-		boolean listUnmeasured = defaultMapListUnmeasured;
-		AnimationType animationType = defaultMapAnimationType;
-		float animationStepKeep = defaultMapAnimationStepKeep;
-		int animationSteps = defaultMapAnimationSteps;
-		float animationStepDuration = defaultMapAnimationStepDuration;
-		boolean reverseAnimation = defaultMapReverseAnimation;
+		DataBounds dataBounds = dataBoundsRepository.fetch();
+		Application application = applicationRepository.fetch();
+		MapServiceSettings settings = application.getMapServiceSettings();
+		String description = settings.getDefaultMapDescription();
+		Point center = geometryFactory.createPoint(new Coordinate(settings
+				.getDefaultMapCenterLongitude(), settings
+				.getDefaultMapCenterLatitude()));
+		int zoom = settings.getDefaultMapZoom();
+		DateLimitType minDateType = settings.getDefaultMapMinDateType();
+		float minDateRelativeAmount = settings
+				.getDefaultMapMinDateRelativeAmount();
+		DateUnits minDateRelativeUnits = settings
+				.getDefaultMapMinDateRelativeUnits();
+		Date minDate = settings.getDefaultMapMinDate() == null ? dataBounds
+				.getMinDate() : settings.getDefaultMapMinDate();
+		DateLimitType maxDateType = settings.getDefaultMapMaxDateType();
+		float maxDateRelativeAmount = settings
+				.getDefaultMapMaxDateRelativeAmount();
+		DateUnits maxDateRelativeUnits = settings
+				.getDefaultMapMaxDateRelativeUnits();
+		Date maxDate = settings.getDefaultMapMaxDate() == null ? dataBounds
+				.getMaxDate() : settings.getDefaultMapMaxDate();
+		DepthLimitType minDepthType = settings.getDefaultMapMinDepthType();
+		Float minDepth = settings.getDefaultMapMinDepth() == null ? dataBounds
+				.getMinDepth() : settings.getDefaultMapMinDepth();
+		DepthLimitType maxDepthType = settings.getDefaultMapMaxDepthType();
+		Float maxDepth = settings.getDefaultMapMaxDepth() == null ? dataBounds
+				.getMaxDepth() : settings.getDefaultMapMaxDepth();
+		ExtendedMagnitudeType magnitudeType = settings
+				.getDefaultMapMagnitudeType();
+		MagnitudeLimitType minMagnitudeType = settings
+				.getDefaultMapMinMagnitudeType();
+		Float minMagnitude = settings.getDefaultMapMinMagnitude() == null ? dataBounds
+				.getMagnitudeBounds().get(magnitudeType).getMin()
+				: settings.getDefaultMapMinMagnitude();
+		MagnitudeLimitType maxMagnitudeType = settings
+				.getDefaultMapMaxMagnitudeType();
+		Float maxMagnitude = settings.getDefaultMapMaxMagnitude() == null ? dataBounds
+				.getMagnitudeBounds().get(magnitudeType).getMax()
+				: settings.getDefaultMapMaxMagnitude();
+		boolean listUnmeasured = settings.isDefaultMapListUnmeasured();
+		AnimationType animationType = settings.getDefaultMapAnimationType();
+		float animationStepKeep = settings.getDefaultMapAnimationStepKeep();
+		int animationSteps = settings.getDefaultMapAnimationSteps();
+		float animationStepDuration = settings
+				.getDefaultMapAnimationStepDuration();
+		boolean reverseAnimation = settings.isDefaultMapReverseAnimation();
+		Style style = settings.getDefaultMapStyle();
 
+		if (minDepth == null) {
+			minDepth = Float.valueOf(0f);
+		}
+		if (maxDepth == null) {
+			maxDepth = Float.valueOf(1000f);
+		}
+		if (minMagnitude == null) {
+			minMagnitude = Float.valueOf(0f);
+		}
+		if (maxMagnitude == null) {
+			maxMagnitude = Float.valueOf(100f);
+		}
 		if (minDate == null && maxDate == null) {
 			Date currentDate = new Date();
 			maxDate = currentDate;
@@ -389,14 +169,16 @@ public class MapServiceImpl implements MapService {
 			calendar.add(Calendar.DAY_OF_MONTH, +1);
 			maxDate = calendar.getTime();
 		}
+
 		Map map = new Map(name, description, center, zoom, minDateType,
 				minDateRelativeAmount, minDateRelativeUnits, minDate,
 				maxDateType, maxDateRelativeAmount, maxDateRelativeUnits,
-				maxDate, minDepthType, minDepth, maxDepthType, maxDepth,
-				magnitudeType, minMagnitudeType, minMagnitude,
-				maxMagnitudeType, maxMagnitude, listUnmeasured, animationType,
+				maxDate, minDepthType, minDepth.floatValue(), maxDepthType,
+				maxDepth.floatValue(), magnitudeType, minMagnitudeType,
+				minMagnitude.floatValue(), maxMagnitudeType,
+				maxMagnitude.floatValue(), listUnmeasured, animationType,
 				animationStepKeep, animationSteps, animationStepDuration,
-				reverseAnimation);
+				reverseAnimation, style);
 		user.add(map);
 		mapRepository.put(map);
 		MapDto mapDto = DtoMarshaler.unmarshallMap(map);
@@ -440,10 +222,14 @@ public class MapServiceImpl implements MapService {
 		return response;
 	}
 
+	@Transactional
 	public GetLayerServerUriResponseDto getLayerServerUri(
 			ActorCredentialsDto actorCredentials,
 			GetLayerServerUriRequestDto request) {
-		String layerServerUri = this.layerServerUri;
+		Application application = applicationRepository.fetch();
+		MapServiceSettings settings = application.getMapServiceSettings();
+
+		String layerServerUri = settings.getLayerServerUri();
 		GetLayerServerUriResponseDto response = new GetLayerServerUriResponseDto(
 				layerServerUri);
 		return response;

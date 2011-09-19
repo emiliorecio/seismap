@@ -250,4 +250,31 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 		}
 		return ids;
 	}
+
+	public List<T> list() {
+		List<?> list = getHibernateTemplate().loadAll(theClass);
+		return castList(list);
+	}
+
+	protected T getSingleton() {
+		List<T> list = list();
+		if (list.isEmpty()) {
+			return null;
+		} else if (list.size() >= 1) {
+			Object element = list.get(0);
+			return theClass.cast(element);
+		} else {
+			throw new IllegalArgumentException(list.size() + " "
+					+ theClass.getSimpleName() + " as singleton.");
+		}
+	}
+
+	protected T fetchSingleton() {
+		T element = getSingleton();
+		if (element == null) {
+			throw new IllegalArgumentException("No " + theClass.getSimpleName()
+					+ " as singleton");
+		}
+		return element;
+	}
 }

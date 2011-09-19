@@ -1,7 +1,6 @@
 package com.seismap.service.category;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -19,19 +18,14 @@ public class CategoryDto implements Serializable {
 	private String name;
 
 	@JsonProperty
-	private List<MapDto> maps = new LinkedList<MapDto>();
-
-	@JsonProperty
-	private Integer categoryIndex;
+	private List<MapDto> maps;
 
 	protected CategoryDto() {
 	}
 
-	public CategoryDto(Long id, String name, Integer categoryIndex,
-			List<MapDto> maps) {
+	public CategoryDto(Long id, String name, List<MapDto> maps) {
 		this.id = id;
 		this.name = name;
-		this.categoryIndex = categoryIndex;
 		this.maps = maps;
 	}
 
@@ -41,10 +35,6 @@ public class CategoryDto implements Serializable {
 
 	public String getName() {
 		return name;
-	}
-
-	public Integer getCategoryIndex() {
-		return categoryIndex;
 	}
 
 	public List<MapDto> getMaps() {

@@ -6,10 +6,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-import com.seismap.service.event.MagnitudeType;
+import com.seismap.service.event.ExtendedMagnitudeType;
 import com.seismap.service.map.AnimationType;
 import com.seismap.service.map.DateLimitType;
 import com.seismap.service.map.DateUnits;
@@ -25,9 +28,11 @@ public class Map implements Identifiable<Long> {
 	@Column(nullable = false)
 	private Long id;
 
+	@SuppressWarnings("unused")
 	@Column(nullable = true, insertable = false, updatable = false)
 	private Integer inCategoryIndex = null;
 
+	@SuppressWarnings("unused")
 	@Column(nullable = true, insertable = false, updatable = false)
 	private Integer inUserIndex = null;
 
@@ -86,7 +91,7 @@ public class Map implements Identifiable<Long> {
 	private float maxDepth;
 
 	@Column(nullable = false)
-	private MagnitudeType magnitudeType = MagnitudeType.ML;
+	private ExtendedMagnitudeType magnitudeType = ExtendedMagnitudeType.ML;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -122,6 +127,10 @@ public class Map implements Identifiable<Long> {
 	@Column(nullable = false)
 	private boolean reverseAnimation;
 
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@JoinColumn(name = "style_id", nullable = false)
+	private Style style;
+
 	protected Map() {
 	}
 
@@ -132,12 +141,12 @@ public class Map implements Identifiable<Long> {
 			DateUnits maxDateRelativeUnits, Date maxDate,
 			DepthLimitType minDepthType, float minDepth,
 			DepthLimitType maxDepthType, float maxDepth,
-			MagnitudeType magnitudeType, MagnitudeLimitType minMagnitudeType,
-			float minMagnitude, MagnitudeLimitType maxMagnitudeType,
-			float maxMagnitude, boolean listUnmeasured,
-			AnimationType animationType, float animationStepKeep,
-			int animationSteps, float animationStepDuration,
-			boolean reverseAnimation) {
+			ExtendedMagnitudeType magnitudeType,
+			MagnitudeLimitType minMagnitudeType, float minMagnitude,
+			MagnitudeLimitType maxMagnitudeType, float maxMagnitude,
+			boolean listUnmeasured, AnimationType animationType,
+			float animationStepKeep, int animationSteps,
+			float animationStepDuration, boolean reverseAnimation, Style style) {
 		super();
 		this.name = name;
 		this.description = description;
@@ -166,18 +175,11 @@ public class Map implements Identifiable<Long> {
 		this.animationSteps = animationSteps;
 		this.animationStepDuration = animationStepDuration;
 		this.reverseAnimation = reverseAnimation;
+		this.style = style;
 	}
 
 	public Long getId() {
 		return id;
-	}
-
-	public Integer getInCateogryIndex() {
-		return inCategoryIndex;
-	}
-
-	public Integer getInUserIndex() {
-		return inUserIndex;
 	}
 
 	public String getName() {
@@ -316,11 +318,11 @@ public class Map implements Identifiable<Long> {
 		this.maxDepth = maxDepth;
 	}
 
-	public MagnitudeType getMagnitudeType() {
+	public ExtendedMagnitudeType getMagnitudeType() {
 		return magnitudeType;
 	}
 
-	public void setMagnitudeType(MagnitudeType magnitudeType) {
+	public void setMagnitudeType(ExtendedMagnitudeType magnitudeType) {
 		this.magnitudeType = magnitudeType;
 	}
 
@@ -396,20 +398,20 @@ public class Map implements Identifiable<Long> {
 		this.reverseAnimation = reverseAnimation;
 	}
 
-	void setInCategoryIndex(Integer inCategoryIndex) {
-		this.inCategoryIndex = inCategoryIndex;
-	}
-
-	void setInUserIndex(Integer inUserIndex) {
-		this.inUserIndex = inUserIndex;
-	}
-
 	public void setAnimationStepDuration(float animationStepDuration) {
 		this.animationStepDuration = animationStepDuration;
 	}
 
 	public float getAnimationStepDuration() {
 		return animationStepDuration;
+	}
+
+	public void setStyle(Style style) {
+		this.style = style;
+	}
+
+	public Style getStyle() {
+		return style;
 	}
 
 }

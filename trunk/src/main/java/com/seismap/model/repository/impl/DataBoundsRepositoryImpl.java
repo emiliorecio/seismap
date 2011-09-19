@@ -10,8 +10,8 @@ public class DataBoundsRepositoryImpl extends RepositoryImpl<DataBounds, Long>
 		super(DataBounds.class);
 	}
 
-	public DataBounds get() {
-		DataBounds dataBounds = fetchByCriteria(getCriteria(), true);
+	public DataBounds fetch() {
+		DataBounds dataBounds = fetchSingleton();
 		return dataBounds;
 	}
 }

@@ -1,7 +1,6 @@
 package com.seismap.model.entity;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -12,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.IndexColumn;
 
@@ -31,6 +31,10 @@ public class Category implements Identifiable<Long> {
 	@JoinColumn(name = "category_id", nullable = true)
 	private List<Map> maps = new ArrayList<Map>();
 
+	@Transient
+	private ListManager<Map> mapsManager = null;
+
+	@SuppressWarnings("unused")
 	@Column(nullable = false, insertable = false, updatable = false)
 	private Integer inApplicationIndex = null;
 
@@ -46,10 +50,6 @@ public class Category implements Identifiable<Long> {
 		return id;
 	}
 
-	public Integer getInApplicationIndex() {
-		return inApplicationIndex;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -58,41 +58,14 @@ public class Category implements Identifiable<Long> {
 		this.name = name;
 	}
 
+	public ListManager<Map> getMapsManager() {
+		if (mapsManager == null) {
+			mapsManager = new ListManager<Map>(maps);
+		}
+		return mapsManager;
+	}
+
 	public List<Map> getMaps() {
-		return Collections.unmodifiableList(maps);
-	}
-
-	public boolean moveTo(Map map, int index) {
-		int currentIndex = maps.indexOf(map);
-		if (currentIndex == -1) {
-			return false;
-		} else if (currentIndex == index) {
-			// nothing to do.
-		} else {
-			maps.remove(currentIndex);
-			maps.add(index, map);
-		}
-		return true;
-	}
-
-	public boolean add(Map map) {
-		return add(map, maps.size());
-	}
-
-	public boolean add(Map map, int index) {
-		int currentIndex = maps.indexOf(map);
-		if (currentIndex != -1) {
-			return false;
-		}
-		maps.add(index, map);
-		return true;
-	}
-
-	public boolean remove(Map map) {
-		return maps.remove(map);
-	}
-
-	void setInApplicationIndex(Integer inApplicationIndex) {
-		this.inApplicationIndex = inApplicationIndex;
+		return getMapsManager().getList();
 	}
 }

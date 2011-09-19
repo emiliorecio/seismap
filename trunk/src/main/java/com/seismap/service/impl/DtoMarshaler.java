@@ -1,7 +1,7 @@
 package com.seismap.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.seismap.model.entity.Agency;
@@ -11,17 +11,21 @@ import com.seismap.model.entity.Event;
 import com.seismap.model.entity.EventAndAverageMagnitudes;
 import com.seismap.model.entity.Magnitude;
 import com.seismap.model.entity.MagnitudeDataBounds;
+import com.seismap.model.entity.MagnitudeLimits;
 import com.seismap.model.entity.Map;
+import com.seismap.model.entity.Style;
 import com.seismap.model.entity.User;
 import com.seismap.service.category.CategoryDto;
 import com.seismap.service.event.AgencyDto;
 import com.seismap.service.event.DataBoundsDto;
 import com.seismap.service.event.EventAndAverageMagnitudesDto;
 import com.seismap.service.event.EventDto;
+import com.seismap.service.event.ExtendedMagnitudeType;
 import com.seismap.service.event.MagnitudeDataBoundsDto;
 import com.seismap.service.event.MagnitudeDto;
-import com.seismap.service.event.MagnitudeType;
+import com.seismap.service.event.MagnitudeLimitsDto;
 import com.seismap.service.map.MapDto;
+import com.seismap.service.style.StyleDto;
 import com.seismap.service.user.UserDto;
 
 class DtoMarshaler {
@@ -29,7 +33,8 @@ class DtoMarshaler {
 	public static EventDto unmarshallEvent(Event event) {
 		return new EventDto(event.getId(), Double.valueOf(event.getLatitude()),
 				Double.valueOf(event.getLongitude()), Float.valueOf(event
-						.getDepth()), event.getDate(),
+						.getDepth()), event.getDate(), event.getName(),
+				event.getNotes(), event.getReference(),
 				unmarshallMagnitudes(event.getMagnitudes()));
 	}
 
@@ -77,6 +82,9 @@ class DtoMarshaler {
 				Double.valueOf(eventAndAverageMagnitudes.getLongitude()),
 				Float.valueOf(eventAndAverageMagnitudes.getDepth()),
 				eventAndAverageMagnitudes.getDate(),
+				eventAndAverageMagnitudes.getName(),
+				eventAndAverageMagnitudes.getNotes(),
+				eventAndAverageMagnitudes.getReference(),
 				eventAndAverageMagnitudes.getAverageMLMagnitude(),
 				eventAndAverageMagnitudes.getAverageMBLGMagnitude(),
 				eventAndAverageMagnitudes.getAverageMSMagnitude(),
@@ -100,19 +108,23 @@ class DtoMarshaler {
 		return new MapDto(map.getId(), map.getName(), map.getDescription(),
 				Double.valueOf(map.getCenterLatitude()), Double.valueOf(map
 						.getCenterLongitude()), Integer.valueOf(map.getZoom()),
-				map.getMinDateType(), map.getMinDateRelativeAmount(),
+				map.getMinDateType(), Float.valueOf(map
+						.getMinDateRelativeAmount()),
 				map.getMinDateRelativeUnits(), map.getMinDate(),
-				map.getMaxDateType(), map.getMaxDateRelativeAmount(),
+				map.getMaxDateType(), Float.valueOf(map
+						.getMaxDateRelativeAmount()),
 				map.getMaxDateRelativeUnits(), map.getMaxDate(),
-				map.getMinDepthType(), map.getMinDepth(),
-				map.getMaxDepthType(), map.getMaxDepth(),
+				map.getMinDepthType(), Float.valueOf(map.getMinDepth()),
+				map.getMaxDepthType(), Float.valueOf(map.getMaxDepth()),
 				map.getMagnitudeType(), map.getMinMagnitudeType(),
-				map.getMinMagnitude(), map.getMaxMagnitudeType(),
-				map.getMaxMagnitude(), Boolean.valueOf(map.isListUnmeasured()),
-				map.getAnimationType(), map.getAnimationStepKeep(),
-				Integer.valueOf(map.getAnimationSteps()), Float.valueOf(map
+				Float.valueOf(map.getMinMagnitude()),
+				map.getMaxMagnitudeType(),
+				Float.valueOf(map.getMaxMagnitude()), Boolean.valueOf(map
+						.isListUnmeasured()), map.getAnimationType(),
+				Float.valueOf(map.getAnimationStepKeep()), Integer.valueOf(map
+						.getAnimationSteps()), Float.valueOf(map
 						.getAnimationStepDuration()), Boolean.valueOf(map
-						.isReverseAnimation()));
+						.isReverseAnimation()), unmarshallStyle(map.getStyle()));
 	}
 
 	public static List<MapDto> unmarshallMaps(List<Map> maps) {
@@ -125,7 +137,6 @@ class DtoMarshaler {
 
 	public static CategoryDto unmarshallCategory(Category category) {
 		return new CategoryDto(category.getId(), category.getName(),
-				category.getInApplicationIndex(),
 				unmarshallMaps(category.getMaps()));
 	}
 
@@ -137,6 +148,19 @@ class DtoMarshaler {
 			categoryDtos.add(unmarshallCategory(category));
 		}
 		return categoryDtos;
+	}
+
+	public static StyleDto unmarshallStyle(Style style) {
+		return new StyleDto(style.getId(), style.getSld(), style.getName(),
+				style.getVariables());
+	}
+
+	public static List<StyleDto> unmarshallStyles(List<Style> styles) {
+		List<StyleDto> styleDtos = new ArrayList<StyleDto>(styles.size());
+		for (Style style : styles) {
+			styleDtos.add(unmarshallStyle(style));
+		}
+		return styleDtos;
 	}
 
 	public static UserDto unmarshallUser(User user) {
@@ -155,17 +179,17 @@ class DtoMarshaler {
 		return new DataBoundsDto(dataBounds.getId(), dataBounds.getMinDate(),
 				dataBounds.getMaxDate(), dataBounds.getMinDepth(),
 				dataBounds.getMaxDepth(),
-				unmarshallMagnitudeDataBoundsMap(dataBounds
-						.getMagnitudeBounds()));
+				unmarshallMagnitudeDataBounds(dataBounds.getMagnitudeBounds()));
 	}
 
-	public static java.util.Map<MagnitudeType, MagnitudeDataBoundsDto> unmarshallMagnitudeDataBoundsMap(
-			java.util.Map<MagnitudeType, MagnitudeDataBounds> magnitudeDataBoundsMap) {
-		java.util.Map<MagnitudeType, MagnitudeDataBoundsDto> magnitudeDataBoundsDtosMap = new HashMap<MagnitudeType, MagnitudeDataBoundsDto>(
+	public static java.util.Map<ExtendedMagnitudeType, MagnitudeDataBoundsDto> unmarshallMagnitudeDataBounds(
+			java.util.Map<ExtendedMagnitudeType, MagnitudeDataBounds> magnitudeDataBoundsMap) {
+		java.util.Map<ExtendedMagnitudeType, MagnitudeDataBoundsDto> magnitudeDataBoundsDtosMap = new LinkedHashMap<ExtendedMagnitudeType, MagnitudeDataBoundsDto>(
 				magnitudeDataBoundsMap.size());
-		for (java.util.Map.Entry<MagnitudeType, MagnitudeDataBounds> magnitudeDataBoundsEntry : magnitudeDataBoundsMap
+		for (java.util.Map.Entry<ExtendedMagnitudeType, MagnitudeDataBounds> magnitudeDataBoundsEntry : magnitudeDataBoundsMap
 				.entrySet()) {
-			MagnitudeType magnitudeType = magnitudeDataBoundsEntry.getKey();
+			ExtendedMagnitudeType magnitudeType = magnitudeDataBoundsEntry
+					.getKey();
 			MagnitudeDataBounds magnitudeDataBounds = magnitudeDataBoundsEntry
 					.getValue();
 			magnitudeDataBoundsDtosMap.put(magnitudeType,
@@ -179,5 +203,22 @@ class DtoMarshaler {
 		return new MagnitudeDataBoundsDto(
 				magnitudeDataBounds.getMagnitudeType(),
 				magnitudeDataBounds.getMin(), magnitudeDataBounds.getMax());
+	}
+
+	public static List<MagnitudeLimitsDto> unmarshallMagnitudeLimits(
+			List<MagnitudeLimits> magnitudeLimitsList) {
+		List<MagnitudeLimitsDto> magnitudeLimitsDtos = new ArrayList<MagnitudeLimitsDto>(
+				magnitudeLimitsList.size());
+		for (MagnitudeLimits magnitudeLimits : magnitudeLimitsList) {
+			magnitudeLimitsDtos.add(unmarshallMagnitudeLimits(magnitudeLimits));
+		}
+		return magnitudeLimitsDtos;
+	}
+
+	public static MagnitudeLimitsDto unmarshallMagnitudeLimits(
+			MagnitudeLimits magnitudeLimits) {
+		return new MagnitudeLimitsDto(magnitudeLimits.getMagnitudeType(),
+				Float.valueOf(magnitudeLimits.getMin()),
+				Float.valueOf(magnitudeLimits.getMax()));
 	}
 }

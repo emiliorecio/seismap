@@ -5,6 +5,7 @@ DROP VIEW databounds;
 DROP VIEW eventandaveragemagnitudes;
 
 DROP TABLE magnitude;
+
 DROP TABLE agency;
 
 SELECT DropGeometryColumn('event', 'location');

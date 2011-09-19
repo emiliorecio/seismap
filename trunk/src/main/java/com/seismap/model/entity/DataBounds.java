@@ -3,6 +3,7 @@ package com.seismap.model.entity;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,7 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 
-import com.seismap.service.event.MagnitudeType;
+import com.seismap.service.event.ExtendedMagnitudeType;
 
 @Entity
 public class DataBounds implements Identifiable<Long> {
@@ -40,21 +41,25 @@ public class DataBounds implements Identifiable<Long> {
 	@MapKey(name = "magnitudeType")
 	@JoinColumn(name = "dataBound_id")
 	@Enumerated(EnumType.STRING)
-	private java.util.Map<MagnitudeType, MagnitudeDataBounds> magnitudeBounds = new HashMap<MagnitudeType, MagnitudeDataBounds>();
+	private java.util.Map<ExtendedMagnitudeType, MagnitudeDataBounds> magnitudeBounds = new LinkedHashMap<ExtendedMagnitudeType, MagnitudeDataBounds>();
 
 	protected DataBounds() {
 	}
 
-	protected DataBounds(Long id, Date minDate, Date maxDate, Float minDepth,
+	protected DataBounds(
+			Long id,
+			Date minDate,
+			Date maxDate,
+			Float minDepth,
 			Float maxDepth,
-			java.util.Map<MagnitudeType, MagnitudeDataBounds> magnitudeBounds) {
+			java.util.Map<ExtendedMagnitudeType, MagnitudeDataBounds> magnitudeBounds) {
 		super();
 		this.id = id;
 		this.minDate = minDate;
 		this.maxDate = maxDate;
 		this.minDepth = minDepth;
 		this.maxDepth = maxDepth;
-		this.magnitudeBounds = new HashMap<MagnitudeType, MagnitudeDataBounds>(
+		this.magnitudeBounds = new HashMap<ExtendedMagnitudeType, MagnitudeDataBounds>(
 				magnitudeBounds);
 	}
 
@@ -78,7 +83,7 @@ public class DataBounds implements Identifiable<Long> {
 		return maxDepth;
 	}
 
-	public java.util.Map<MagnitudeType, MagnitudeDataBounds> getMagnitudeBounds() {
+	public java.util.Map<ExtendedMagnitudeType, MagnitudeDataBounds> getMagnitudeBounds() {
 		return Collections.unmodifiableMap(magnitudeBounds);
 	}
 

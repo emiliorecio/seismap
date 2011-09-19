@@ -17,9 +17,9 @@ public class EventDto extends EventInfoDto {
 	}
 
 	public EventDto(Long id, Double latitude, Double longitude, Float depth,
-			Date date, List<MagnitudeDto> magnitudes) {
-		super(id, latitude, longitude, depth, date);
-
+			Date date, String name, String notes, String reference,
+			List<MagnitudeDto> magnitudes) {
+		super(id, latitude, longitude, depth, date, name, notes, reference);
 		this.magnitudes = magnitudes;
 	}
 

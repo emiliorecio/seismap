@@ -314,15 +314,54 @@ var mapPage = {
     basePage.init({
       logged : false
     });
-    var mapOptions = {
-      zoom : this.mapData.zoom,
-      center : new google.maps.LatLng(this.mapData.centerLatitude,
-          this.mapData.centerLongitude),
-      mapTypeId : google.maps.MapTypeId.ROADMAP
+    this.minWait = -1;
+
+    OpenLayers.ImgPath = seismap.baseUrl + "/resources/css/lib/openlayers/img/"
+
+    var bounds = new OpenLayers.Bounds(-11233695.257, -7183045.364,
+        19951346.826, -1055981.386);
+    var options = {
+      controls : [],
+      maxExtent : bounds,
+      maxResolution : 121816.57063671875,
+      projection : "EPSG:900913",
+      units : 'm',
+      theme : seismap.baseUrl
+          + "/resources/css/lib/openlayers/theme/default/style.css"
     };
-    this.map = new google.maps.Map(document.id('map'), mapOptions);
+
+    this.map = new OpenLayers.Map('map', options);
+
+    var gphy = new OpenLayers.Layer.Google("Google Physical", {
+      type : google.maps.MapTypeId.TERRAIN
+    });
+    var gmap = new OpenLayers.Layer.Google("Google Streets", // the default
+    {
+      numZoomLevels : 20
+    });
+    var ghyb = new OpenLayers.Layer.Google("Google Hybrid", {
+      type : google.maps.MapTypeId.HYBRID,
+      numZoomLevels : 20
+    });
+    var gsat = new OpenLayers.Layer.Google("Google Satellite", {
+      type : google.maps.MapTypeId.SATELLITE,
+      numZoomLevels : 22
+    });
+
+    this.map.addLayers([ gphy, gmap, ghyb, gsat ]);
+
+    // build up all controls
+    this.map.addControl(new OpenLayers.Control.PanZoomBar({
+      position : new OpenLayers.Pixel(2, 15)
+    }));
+    this.map.addControl(new OpenLayers.Control.Navigation());
+    this.map.addControl(new OpenLayers.Control.Scale(document.id('scale')));
+    this.map.addControl(new OpenLayers.Control.MousePosition({
+      element : document.id('location')
+    }));
+    this.map.zoomToExtent(bounds);
     this.registerControlHandles();
-    this.currentFrame = -1;
+    this.currentFrame = -1
     this.changed(true);
   },
   // var layer = new
@@ -346,6 +385,7 @@ var mapPage = {
     var centerLatitudeControl = document.id(form.centerLatitude);
     var centerLongitudeControl = document.id(form.centerLongitude);
     var zoomControl = document.id(form.zoom);
+    var styleControl = document.id(form.style);
     var minDateTypeNoneControl = form
         .getElement('input[name="minDateType"][value="NONE"]');
     var minDateTypeRelativeControl = form
@@ -474,6 +514,14 @@ var mapPage = {
           mapPage.mapData.centerLatitude, mapPage.mapData.centerLongitude));
       mapPage.map.setZoom(mapPage.mapData.zoom);
       return false;
+    });
+    // Style
+    styleControl.addEvent('change', function() {
+      var value = styleControl.value;
+      if (mapPage.mapData.style.id != value) {
+        mapPage.mapData.style = mapPage.styles[value];
+        mapPage.changed(true);
+      }
     });
     // Min Date - None
     minDateTypeNoneControl.addEvent('click', function() {
@@ -803,26 +851,19 @@ var mapPage = {
     }
     this.stop();
     if (this.currentFrame != -1) {
-      this.layers[this.currentFrame].setMap(null);
-    }
-    var cqlFilters = this.buildCqlFilters(this.mapData, this.dataBounds,
-        new Date());
-    this.uriCqlFilters = [];
-    this.layers = [];
-    for ( var i = 0; i < cqlFilters.length; i++) {
-      var cqlFilter = cqlFilters[i];
-      var uriCqlFilter;
-      if (cqlFilter == null) {
-        uriCqlFilter = '';
-      } else {
-        uriCqlFilter = '&CQL_FILTER=' + escape(cqlFilter);
+      this.removeLayer(this.layers[this.currentFrame]);
+      for ( var i = 0; i < this.layers.length; i++) {
+        var layer = this.layers[i];
+        this.map.removeLayer(layer);
       }
-      var x = this.layerServerUri
-          + '/wms?service=WMS&version=1.1.0&request=GetMap&layers=cite:eventandml&styles=&bbox=-2.003750834E7,-2.003750834E7,2.003750834E7,2.003750834E7&width=512&height=512&srs=EPSG:900913&format=application/vnd.google-earth.kml+xml'
-          + uriCqlFilter;
-      document.id('mapUris').value += cqlFilter + ' ' + x + '\n';
-      this.uriCqlFilters[i] = uriCqlFilter;
-      this.layers[i] = this.getLayer(i);
+    }
+    this.cqlFilters = this.buildCqlFilters(this.mapData, this.dataBounds,
+        new Date());
+    this.layers = [];
+    for ( var i = 0; i < this.cqlFilters.length; i++) {
+      var cqlFilter = this.cqlFilters[i];
+      document.id('mapUris').value += cqlFilter + '\n';
+      this.layers[i] = this.createLayer(cqlFilter);
     }
     this.currentFrame = -1;
     this.start();
@@ -830,7 +871,7 @@ var mapPage = {
   },
   start : function() {
     this.cycle();
-    if (this.uriCqlFilters.length > 1) {
+    if (this.layers.length > 1) {
       this.animationHandle = setInterval(this.cycle.bind(this),
           this.mapData.animationStepDuration * 1000);
     }
@@ -860,35 +901,157 @@ var mapPage = {
   cycle : function(backwards) {
     var current = this.currentFrame;
     if (current != -1) {
-      this.layers[current].setMap(null);
+      this.removeLayer(this.layers[current]);
     }
     if (backwards == true) {
       current--;
       if (current == -1) {
-        current = this.uriCqlFilters.length - 1;
+        current = this.layers.length - 1;
       }
     } else {
       current++;
-      if (current == this.uriCqlFilters.length) {
+      if (current == this.layers.length) {
         current = 0;
       }
 
     }
     this.currentFrame = current;
-    this.layers[current].setMap(this.map);
+    this.addLayer(this.layers[current]);
   },
-  getLayer : function(index) {
-    var layerUri = this.getLayerUri(index);
-    return new google.maps.KmlLayer(layerUri, {
-      preserveViewport : true
+  addLayer : function(layer) {
+    layer.seismapAdded = new Date().getTime();
+    var timeSinceRemoved = layer.seismapAdded - layer.seismapRemoved;
+    var waitTime = this.minWait - timeSinceRemoved;
+    if (waitTime <= 0) {
+      this.doAddLayer(layer);
+    } else {
+      setTimeout(this.doAddLayer.bind(this, layer), waitTime);
+    }
+  },
+  doAddLayer : function(layer) {
+    if (layer.seismapAdded > layer.seismapRemoved) {
+      layer.seismapAdded = new Date().getTime();
+      if (!layer.getVisibility()) {
+        layer.setVisibility(true);
+      }
+    }
+  },
+  removeLayer : function(layer) {
+    layer.seismapRemoved = new Date().getTime();
+    var timeSinceAdded = layer.seismapRemoved - layer.seismapAdded;
+    var waitTime = this.minWait - timeSinceAdded;
+    if (waitTime <= 0) {
+      this.doRemoveLayer(layer);
+    } else {
+      setTimeout(this.doRemoveLayer.bind(this, layer), waitTime);
+    }
+  },
+  doRemoveLayer : function(layer) {
+    if (layer.seismapRemoved > layer.seismapAdded) {
+      layer.seismapRemoved = new Date().getTime();
+      if (layer.getVisibility()) {
+        layer.setVisibility(false);
+      }
+    }
+  },
+  createLayer : function(cqlFilter) {
+    var layerName = 'seismap:eventandaveragemagnitudes';
+    var style = this.mapData.style;
+    var sld = style.sld;
+    var magnitudeLimits = this.magnitudeLimits[this.mapData.magnitudeType];
+
+    var env = '?env=';
+    env += 'map.magnitudeType:' + this.mapData.magnitudeType;
+    for ( var name in style.variables) {
+      var value = style.variables[name];
+      env += ';';
+      env += 'var.' + escape(name) + ':' + escape(value);
+    }
+
+    var rule1 = new OpenLayers.Rule({
+      filter : new OpenLayers.Filter.Comparison({
+        type : OpenLayers.Filter.Comparison.GREATER_THAN_OR_EQUAL_TO,
+        property : "averagemagnitude",
+        value : 3
+      }),
+      symbolizer : {
+        Point : {
+          pointRadius : 15
+        }
+      }
     });
-  },
-  getLayerUri : function(index) {
-    var uriCqlFilter = this.uriCqlFilters[index];
-    var layerUri = this.layerServerUri
-        + '/wms?service=WMS&version=1.1.0&request=GetMap&layers=cite:eventandml&styles=&bbox=-2.003750834E7,-2.003750834E7,2.003750834E7,2.003750834E7&width=512&height=512&srs=EPSG:900913&format=application/vnd.google-earth.kml+xml'
-        + uriCqlFilter;
-    return layerUri;
+    var rule2 = new OpenLayers.Rule({
+      filter : new OpenLayers.Filter.Comparison({
+        type : OpenLayers.Filter.Comparison.LESS_THAN,
+        property : "averagemagnitude",
+        value : 3
+      }),
+      symbolizer : {
+        Point : {
+          pointRadius : 4
+        }
+      }
+    });
+    var rule3 = new OpenLayers.Rule({
+      symbolizer : {
+        Point : {
+          strokeColor : "#00FF00",
+          graphicName : 'circle',
+          fillColor : "#0000FF",
+          fillOpacity : 1
+        }
+      }
+    });
+    var style = new OpenLayers.Style({}, {
+      rules : [ rule3 ]
+    });
+
+    var sldBody = new OpenLayers.Format.SLD().write({
+      namedLayers : [ {
+        name : layerName,
+        userStyles : [ style ]
+      } ]
+    });
+    // if (cqlFilter) {
+    // layerUri += "&CQL_FILTER=" + escape(cqlFilter);
+    // }
+    // layerUri += "&SLD_BODY=" + escape(sldBody);
+    //    
+    // var layer = new OpenLayers.Layer.Vector("KML", {
+    // strategies : [ new OpenLayers.Strategy.Fixed() ],
+    // protocol : new OpenLayers.Protocol.HTTP({
+    // url : layerUri,
+    // format : new OpenLayers.Format.KML({
+    // extractStyles : true,
+    // extractAttributes : true,
+    // maxDepth : 100
+    // })
+    // })
+    // });
+
+    var layer = new OpenLayers.Layer.WMS("SeisMap", this.layerServerUri
+        + '/wms' + env, {
+      width : '1679',
+      srs : 'EPSG:900913',
+      layers : layerName,
+      height : '330',
+      styles : sld,
+      format : 'image/png',
+      cql_filter : cqlFilter,
+      // sld_body : sldBody,
+      tiled : 'false',
+      feature_count : 1,
+      tilesOrigin : this.map.maxExtent.left + ',' + this.map.maxExtent.bottom,
+      transparent : true
+    }, {
+      buffer : 0,
+      displayOutsideMaxExtent : true
+    });
+    layer.setVisibility(false);
+    layer.seismapAdded = -1;
+    layer.seismapRemoved = new Date().getTime() - 1;
+    this.map.addLayer(layer);
+    return layer;
   },
   buildCqlDate : function(date) {
     return '' + date.getFullYear() + '-'
@@ -938,7 +1101,7 @@ var mapPage = {
             * (effectiveLimits.maxMagnitude - effectiveLimits.minMagnitude)
             + effectiveLimits.minMagnitude;
       }
-      var column = 'average' + map.magnitudeType.toLowercase() + 'magnitude';
+      var column = 'magnitude';
       var filter = column + ' ' + operator + ' ' + limit;
       if (map.listUnmeasured) {
         filter = '(' + column + ' IS NULL OR ' + filter + ')';
@@ -1101,6 +1264,20 @@ var mapPage = {
     }
     if (this.dataBounds.maxDate) {
       this.dataBounds.maxDate = new Date(this.dataBounds.maxDate);
+    }
+  },
+  setStyles : function(styles) {
+    this.styles = {};
+    for ( var i = 0; i < styles.length; i++) {
+      var style = styles[i];
+      this.styles[style.id] = style;
+    }
+  },
+  setMagnitudeLimits : function(magnitudeLimits) {
+    this.magnitudeLimits = {};
+    for ( var i = 0; i < magnitudeLimits.length; i++) {
+      var aMagnitudeLimits = magnitudeLimits[i];
+      this.magnitudeLimits[aMagnitudeLimits.magnitudeType] = aMagnitudeLimits;
     }
   },
   setLayerServerUri : function(layerServerUri) {

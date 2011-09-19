@@ -6,7 +6,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 
-import com.seismap.service.event.MagnitudeType;
+import com.seismap.service.event.ExtendedMagnitudeType;
 
 @Entity
 public class MagnitudeDataBounds {
@@ -14,7 +14,7 @@ public class MagnitudeDataBounds {
 	@Id
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private MagnitudeType magnitudeType;
+	private ExtendedMagnitudeType magnitudeType;
 
 	@Column(nullable = true)
 	private Float min;
@@ -26,14 +26,14 @@ public class MagnitudeDataBounds {
 
 	}
 
-	protected MagnitudeDataBounds(MagnitudeType magnitudeType, Float min,
+	protected MagnitudeDataBounds(ExtendedMagnitudeType magnitudeType, Float min,
 			Float max) {
 		this.magnitudeType = magnitudeType;
 		this.min = min;
 		this.max = max;
 	}
 
-	public MagnitudeType getMagnitudeType() {
+	public ExtendedMagnitudeType getMagnitudeType() {
 		return magnitudeType;
 	}
 

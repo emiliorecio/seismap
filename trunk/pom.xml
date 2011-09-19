@@ -163,12 +163,16 @@
   </build>
   <repositories>
     <repository>
-      <id>OSGEO GeoTools repo</id>
-      <url>http://download.osgeo.org/webdav/geotools</url>
+      <id>repo.opengeo.org</id>
+      <url>http://repo.opengeo.org</url>
     </repository>
     <repository>
-      <id>Hibernate Spatial repo</id>
+      <id>www.hibernatespatial.org</id>
       <url>http://www.hibernatespatial.org/repository</url>
+    </repository>
+    <repository>
+      <id>maven.geo-solutions.it</id>
+      <url>http://maven.geo-solutions.it</url>
     </repository>
   </repositories>
   <dependencies>
@@ -314,7 +318,12 @@
       <artifactId>urlrewritefilter</artifactId>
       <version>3.1.0</version>
     </dependency>
-    <!--  Test dependencies -->
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-xml</artifactId>
+      <version>2.7.1</version>
+    </dependency>
+    <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -345,5 +354,6 @@
       <version>3.1</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 </project>

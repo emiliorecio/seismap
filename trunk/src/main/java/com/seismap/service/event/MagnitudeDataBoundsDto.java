@@ -5,7 +5,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class MagnitudeDataBoundsDto {
 
 	@JsonProperty
-	private MagnitudeType magnitudeType;
+	private ExtendedMagnitudeType magnitudeType;
 
 	@JsonProperty
 	private Float min;
@@ -16,14 +16,14 @@ public class MagnitudeDataBoundsDto {
 	protected MagnitudeDataBoundsDto() {
 	}
 
-	public MagnitudeDataBoundsDto(MagnitudeType magnitudeType, Float min,
+	public MagnitudeDataBoundsDto(ExtendedMagnitudeType magnitudeType, Float min,
 			Float max) {
 		this.magnitudeType = magnitudeType;
 		this.min = min;
 		this.max = max;
 	}
 
-	public MagnitudeType getMagnitudeType() {
+	public ExtendedMagnitudeType getMagnitudeType() {
 		return magnitudeType;
 	}
 

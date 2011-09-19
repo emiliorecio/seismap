@@ -36,3 +36,8 @@ BODY {
   width: 500px;
   height: 400px;
 }
+
+/* This rule should be removed when Map Data popup issue is fixed */
+.olLayerGoogleCopyright {
+    visibility: hidden;
+}

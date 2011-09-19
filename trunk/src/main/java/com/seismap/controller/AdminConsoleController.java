@@ -17,7 +17,8 @@ import com.seismap.service.parser.InvalidDataException;
 
 @Controller
 @RequestMapping("admin")
-public class AdminConsoleController extends SeismapController implements InitializingBean {
+public class AdminConsoleController extends SeismapController implements
+		InitializingBean {
 
 	private DataLoadService dataLoadService;
 
@@ -25,7 +26,8 @@ public class AdminConsoleController extends SeismapController implements Initial
 		this.dataLoadService = dataLoadService;
 	}
 
-	private File dataFilesDirectory = null;
+	private File dataFilesDirectory = new File(
+			"C:/workspaces/seismap/trunk/src/test/resources/datafiles");
 
 	public File getDataFilesDirectory() {
 		return dataFilesDirectory;
