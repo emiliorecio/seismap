@@ -8,7 +8,13 @@ public enum ExceptionCause {
 
 	DUPLICATE_STYLE_NAME,
 
-	NO_MAP_WITH_GIVEN_ID;
+	NO_MAP_WITH_GIVEN_ID,
+
+	NO_STYLE_WITH_GIVEN_ID,
+	
+	NO_USER_WITH_GIVEN_ID,
+	
+	UNAUTHORIZED;
 
 	public static enum ExceptionParameter {
 		CATEGORY_ID,

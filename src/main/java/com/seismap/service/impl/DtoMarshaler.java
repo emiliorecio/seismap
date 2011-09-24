@@ -124,7 +124,7 @@ class DtoMarshaler {
 				Float.valueOf(map.getAnimationStepKeep()), Integer.valueOf(map
 						.getAnimationSteps()), Float.valueOf(map
 						.getAnimationStepDuration()), Boolean.valueOf(map
-						.isReverseAnimation()), unmarshallStyle(map.getStyle()));
+						.isReverseAnimation()), map.getStyle().getId());
 	}
 
 	public static List<MapDto> unmarshallMaps(List<Map> maps) {

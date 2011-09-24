@@ -1,106 +1,17 @@
 package com.seismap.service.map;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.seismap.service.event.ExtendedMagnitudeType;
-import com.seismap.service.style.StyleDto;
 
-public class MapDto implements Serializable {
+public class MapDto extends BasicMapDataDto {
 
 	private static final long serialVersionUID = 1L;
 
 	@JsonProperty
 	private Long id;
-
-	@JsonProperty
-	private String name;
-
-	@JsonProperty
-	private String description;
-
-	@JsonProperty
-	private Double centerLatitude;
-
-	@JsonProperty
-	private Double centerLongitude;
-
-	@JsonProperty
-	private Integer zoom;
-
-	@JsonProperty
-	private DateLimitType minDateType;
-
-	@JsonProperty
-	private Float minDateRelativeAmount;
-
-	@JsonProperty
-	private DateUnits minDateRelativeUnits;
-
-	@JsonProperty
-	private Date minDate;
-
-	@JsonProperty
-	private DateLimitType maxDateType;
-
-	@JsonProperty
-	private Float maxDateRelativeAmount;
-
-	@JsonProperty
-	private DateUnits maxDateRelativeUnits;
-
-	@JsonProperty
-	private Date maxDate;
-
-	@JsonProperty
-	private DepthLimitType minDepthType;
-
-	@JsonProperty
-	private Float minDepth;
-
-	@JsonProperty
-	private DepthLimitType maxDepthType;
-
-	@JsonProperty
-	private Float maxDepth;
-
-	@JsonProperty
-	private ExtendedMagnitudeType magnitudeType;
-
-	@JsonProperty
-	private MagnitudeLimitType minMagnitudeType;
-
-	@JsonProperty
-	private Float minMagnitude;
-
-	@JsonProperty
-	private MagnitudeLimitType maxMagnitudeType;
-
-	@JsonProperty
-	private Float maxMagnitude;
-
-	@JsonProperty
-	private Boolean listUnmeasured;
-
-	@JsonProperty
-	private AnimationType animationType;
-
-	@JsonProperty
-	private Float animationStepKeep;
-
-	@JsonProperty
-	private Integer animationSteps;
-
-	@JsonProperty
-	private Float animationStepDuration;
-
-	@JsonProperty
-	private Boolean reverseAnimation;
-
-	@JsonProperty
-	private StyleDto style;
 
 	protected MapDto() {
 	}
@@ -118,158 +29,20 @@ public class MapDto implements Serializable {
 			MagnitudeLimitType maxMagnitudeType, Float maxMagnitude,
 			Boolean listUnmeasured, AnimationType animationType,
 			Float animationStepKeep, Integer animationSteps,
-			Float animationStepDuration, Boolean reverseAnimation,
-			StyleDto style) {
-		super();
+			Float animationStepDuration, Boolean reverseAnimation, Long styleId) {
+		super(name, description, centerLatitude, centerLongitude, zoom,
+				minDateType, minDateRelativeAmount, minDateRelativeUnits,
+				minDate, maxDateType, maxDateRelativeAmount,
+				maxDateRelativeUnits, maxDate, minDepthType, minDepth,
+				maxDepthType, maxDepth, magnitudeType, minMagnitudeType,
+				minMagnitude, maxMagnitudeType, maxMagnitude, listUnmeasured,
+				animationType, animationStepKeep, animationSteps,
+				animationStepDuration, reverseAnimation, styleId);
 		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.centerLatitude = centerLatitude;
-		this.centerLongitude = centerLongitude;
-		this.zoom = zoom;
-		this.minDateType = minDateType;
-		this.minDateRelativeAmount = minDateRelativeAmount;
-		this.minDateRelativeUnits = minDateRelativeUnits;
-		this.minDate = minDate;
-		this.maxDateType = maxDateType;
-		this.maxDateRelativeAmount = maxDateRelativeAmount;
-		this.maxDateRelativeUnits = maxDateRelativeUnits;
-		this.maxDate = maxDate;
-		this.minDepthType = minDepthType;
-		this.minDepth = minDepth;
-		this.maxDepthType = maxDepthType;
-		this.maxDepth = maxDepth;
-		this.magnitudeType = magnitudeType;
-		this.minMagnitudeType = minMagnitudeType;
-		this.minMagnitude = minMagnitude;
-		this.maxMagnitudeType = maxMagnitudeType;
-		this.maxMagnitude = maxMagnitude;
-		this.listUnmeasured = listUnmeasured;
-		this.animationType = animationType;
-		this.animationStepKeep = animationStepKeep;
-		this.animationSteps = animationSteps;
-		this.animationStepDuration = animationStepDuration;
-		this.reverseAnimation = reverseAnimation;
-		this.style = style;
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public Double getCenterLatitude() {
-		return centerLatitude;
-	}
-
-	public Double getCenterLongitude() {
-		return centerLongitude;
-	}
-
-	public Integer getZoom() {
-		return zoom;
-	}
-
-	public DateLimitType getMinDateType() {
-		return minDateType;
-	}
-
-	public Float getMinDateRelativeAmount() {
-		return minDateRelativeAmount;
-	}
-
-	public DateUnits getMinDateRelativeUnits() {
-		return minDateRelativeUnits;
-	}
-
-	public Date getMinDate() {
-		return minDate;
-	}
-
-	public DateLimitType getMaxDateType() {
-		return maxDateType;
-	}
-
-	public Float getMaxDateRelativeAmount() {
-		return maxDateRelativeAmount;
-	}
-
-	public DateUnits getMaxDateRelativeUnits() {
-		return maxDateRelativeUnits;
-	}
-
-	public Date getMaxDate() {
-		return maxDate;
-	}
-
-	public DepthLimitType getMinDepthType() {
-		return minDepthType;
-	}
-
-	public Float getMinDepth() {
-		return minDepth;
-	}
-
-	public DepthLimitType getMaxDepthType() {
-		return maxDepthType;
-	}
-
-	public Float getMaxDepth() {
-		return maxDepth;
-	}
-
-	public ExtendedMagnitudeType getMagnitudeType() {
-		return magnitudeType;
-	}
-
-	public MagnitudeLimitType getMinMagnitudeType() {
-		return minMagnitudeType;
-	}
-
-	public Float getMinMagnitude() {
-		return minMagnitude;
-	}
-
-	public MagnitudeLimitType getMaxMagnitudeType() {
-		return maxMagnitudeType;
-	}
-
-	public Float getMaxMagnitude() {
-		return maxMagnitude;
-	}
-
-	public Boolean getListUnmeasured() {
-		return listUnmeasured;
-	}
-
-	public AnimationType getAnimationType() {
-		return animationType;
-	}
-
-	public Float getAnimationStepKeep() {
-		return animationStepKeep;
-	}
-
-	public Integer getAnimationSteps() {
-		return animationSteps;
-	}
-
-	public Float getAnimationStepDuration() {
-		return animationStepDuration;
-	}
-
-	public Boolean getReverseAnimation() {
-		return reverseAnimation;
-	}
-
-	public StyleDto getStyle() {
-		return style;
-	}
 }

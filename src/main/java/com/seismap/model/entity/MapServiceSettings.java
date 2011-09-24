@@ -23,6 +23,9 @@ public class MapServiceSettings {
 	private String layerServerUri;
 
 	@Column(nullable = false)
+	private String defaultMapName;
+
+	@Column(nullable = false)
 	private String defaultMapDescription;
 
 	@Column(nullable = false)
@@ -121,7 +124,7 @@ public class MapServiceSettings {
 
 	}
 
-	protected MapServiceSettings(String layerServerUri,
+	protected MapServiceSettings(String layerServerUri, String defaultMapName,
 			String defaultMapDescription, double defaultMapCenterLongitude,
 			double defaultMapCenterLatitude, int defaultMapZoom,
 			DateLimitType defaultMapMinDateType,
@@ -143,6 +146,7 @@ public class MapServiceSettings {
 			boolean defaultMapReverseAnimation, Style defaultMapStyle) {
 		super();
 		this.layerServerUri = layerServerUri;
+		this.defaultMapName = defaultMapName;
 		this.defaultMapDescription = defaultMapDescription;
 		this.defaultMapCenterLongitude = defaultMapCenterLongitude;
 		this.defaultMapCenterLatitude = defaultMapCenterLatitude;
@@ -179,6 +183,14 @@ public class MapServiceSettings {
 
 	public void setLayerServerUri(String layerServerUri) {
 		this.layerServerUri = layerServerUri;
+	}
+
+	public String getDefaultMapName() {
+		return defaultMapName;
+	}
+
+	public void setDefaultMapName(String defaultMapName) {
+		this.defaultMapName = defaultMapName;
 	}
 
 	public String getDefaultMapDescription() {

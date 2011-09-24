@@ -79,6 +79,18 @@
             </sld:Graphic>
           </sld:PointSymbolizer>
         </sld:Rule>
+        <sld:Rule>
+          <sld:PointSymbolizer>
+            <sld:Graphic>
+              <sld:Mark>
+                <sld:WellKnownName>circle</sld:WellKnownName>
+                <sld:Stroke>
+                </sld:Stroke>
+              </sld:Mark>
+              <sld:Size>3</sld:Size>
+            </sld:Graphic>
+          </sld:PointSymbolizer>
+        </sld:Rule>
       </sld:FeatureTypeStyle>
     </sld:UserStyle>
   </sld:NamedLayer>

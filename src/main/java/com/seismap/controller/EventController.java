@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.seismap.service.event.EventService;
 import com.seismap.service.event.GetDataBoundsRequestDto;
 import com.seismap.service.event.GetDataBoundsResponseDto;
+import com.seismap.service.event.GetEventRequestDto;
+import com.seismap.service.event.GetEventResponseDto;
 import com.seismap.service.event.GetMagnitudeLimitsRequestDto;
 import com.seismap.service.event.GetMagnitudeLimitsResponseDto;
 
@@ -20,6 +22,13 @@ public class EventController extends SeismapController {
 
 	public EventController(EventService eventService) {
 		this.eventService = eventService;
+	}
+
+	@RequestMapping(value = "get", method = RequestMethod.POST)
+	@ResponseBody
+	public GetEventResponseDto get(
+			@RequestBody GetEventRequestDto request) {
+		return eventService.get(getActorCredentials(), request);
 	}
 
 	@RequestMapping(value = "getDataBounds", method = RequestMethod.POST)

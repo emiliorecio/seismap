@@ -28,6 +28,9 @@ public class Map implements Identifiable<Long> {
 	@Column(nullable = false)
 	private Long id;
 
+	@ManyToOne
+	private User user;
+
 	@SuppressWarnings("unused")
 	@Column(nullable = true, insertable = false, updatable = false)
 	private Integer inCategoryIndex = null;
@@ -91,7 +94,7 @@ public class Map implements Identifiable<Long> {
 	private float maxDepth;
 
 	@Column(nullable = false)
-	private ExtendedMagnitudeType magnitudeType = ExtendedMagnitudeType.ML;
+	private ExtendedMagnitudeType magnitudeType;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -134,8 +137,8 @@ public class Map implements Identifiable<Long> {
 	protected Map() {
 	}
 
-	public Map(String name, String description, Point center, int zoom,
-			DateLimitType minDateType, float minDateRelativeAmount,
+	public Map(User user, String name, String description, Point center,
+			int zoom, DateLimitType minDateType, float minDateRelativeAmount,
 			DateUnits minDateRelativeUnits, Date minDate,
 			DateLimitType maxDateType, float maxDateRelativeAmount,
 			DateUnits maxDateRelativeUnits, Date maxDate,
@@ -148,6 +151,7 @@ public class Map implements Identifiable<Long> {
 			float animationStepKeep, int animationSteps,
 			float animationStepDuration, boolean reverseAnimation, Style style) {
 		super();
+		this.user = user;
 		this.name = name;
 		this.description = description;
 		this.center = center;
@@ -180,6 +184,10 @@ public class Map implements Identifiable<Long> {
 
 	public Long getId() {
 		return id;
+	}
+
+	public User getUser() {
+		return user;
 	}
 
 	public String getName() {
@@ -413,5 +421,7 @@ public class Map implements Identifiable<Long> {
 	public Style getStyle() {
 		return style;
 	}
+	
+	
 
 }

@@ -42,6 +42,7 @@
     <constructor-arg ref="model_userRepository" />
     <constructor-arg ref="model_dataBoundsRepository" />
     <constructor-arg ref="model_applicationRepository" />
+    <constructor-arg ref="model_styleRepository" />
     <constructor-arg ref="service_geometryFactory" />
   </bean>
 

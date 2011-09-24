@@ -50,7 +50,13 @@ ALTER TABLE magnitude OWNER TO postgres;
 CREATE VIEW eventandaveragemagnitudes AS 
   SELECT
       /* Basic event data */
-      event.*,
+      event.id,
+      event.date,
+      event.depth,
+      event.location,
+      event.name,
+      event.notes,
+      event.reference,
       /* Magnitudes by type - aka: (ml, mb, ms, ...)magnitude */
       avg(mlmagnitude.value) AS mlmagnitude,
       avg(mbmagnitude.value) AS mbmagnitude,
@@ -110,7 +116,7 @@ CREATE VIEW eventandaveragemagnitudes AS
       event.depth,
       event.location,
       event.name,
-      event.note,
+      event.notes,
       event.reference,
       minmlmagnitude, maxmlmagnitude,
       minmbmagnitude, maxmbmagnitude,
