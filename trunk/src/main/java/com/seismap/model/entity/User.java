@@ -1,17 +1,18 @@
 package com.seismap.model.entity;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.IndexColumn;
 
@@ -34,9 +35,12 @@ public class User implements Identifiable<Long> {
 	private String passwordHash;
 
 	@IndexColumn(name = "inUserIndex")
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id", nullable = true)
 	private List<Map> maps = new ArrayList<Map>();
+
+	@Transient
+	private ListManager<Map> mapsManager = null;
 
 	protected User() {
 	}
@@ -76,38 +80,15 @@ public class User implements Identifiable<Long> {
 		return id;
 	}
 
+	public ListManager<Map> getMapsManager() {
+		if (mapsManager == null) {
+			mapsManager = new ListManager<Map>(maps);
+		}
+		return mapsManager;
+	}
+
 	public List<Map> getMaps() {
-		return Collections.unmodifiableList(maps);
-	}
-
-	public boolean moveTo(Map map, int index) {
-		int currentIndex = maps.indexOf(map);
-		if (currentIndex == -1) {
-			return false;
-		} else if (currentIndex == index) {
-			// nothing to do.
-		} else {
-			maps.remove(currentIndex);
-			maps.add(index, map);
-		}
-		return true;
-	}
-
-	public boolean add(Map map) {
-		return add(map, maps.size());
-	}
-
-	public boolean add(Map map, int index) {
-		int currentIndex = maps.indexOf(map);
-		if (currentIndex != -1) {
-			return false;
-		}
-		maps.add(index, map);
-		return true;
-	}
-
-	public boolean remove(Map map) {
-		return maps.remove(map);
+		return getMapsManager().getList();
 	}
 
 }

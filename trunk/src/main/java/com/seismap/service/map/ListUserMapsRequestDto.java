@@ -1,14 +1,22 @@
 package com.seismap.service.map;
 
-import java.io.Serializable;
-
 import com.seismap.service.common.RequestDto;
 
-public class ListUserMapsRequestDto extends RequestDto implements Serializable {
+public class ListUserMapsRequestDto extends RequestDto {
 
 	private static final long serialVersionUID = 1L;
 
-	public ListUserMapsRequestDto() {
+	private Long userId;
+
+	protected ListUserMapsRequestDto() {
+	}
+
+	public ListUserMapsRequestDto(Long userId) {
+		this.userId = userId;
+	}
+
+	public Long getUserId() {
+		return userId;
 	}
 
 }

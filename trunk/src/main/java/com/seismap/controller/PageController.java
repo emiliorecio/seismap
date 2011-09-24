@@ -23,7 +23,6 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.seismap.service.category.ListCategoriesRequestDto;
@@ -32,10 +31,10 @@ import com.seismap.service.event.GetDataBoundsRequestDto;
 import com.seismap.service.event.GetDataBoundsResponseDto;
 import com.seismap.service.event.GetMagnitudeLimitsRequestDto;
 import com.seismap.service.event.GetMagnitudeLimitsResponseDto;
+import com.seismap.service.map.GetDefaultMapRequestDto;
+import com.seismap.service.map.GetDefaultMapResponseDto;
 import com.seismap.service.map.GetLayerServerUriRequestDto;
 import com.seismap.service.map.GetLayerServerUriResponseDto;
-import com.seismap.service.map.GetMapRequestDto;
-import com.seismap.service.map.GetMapResponseDto;
 import com.seismap.service.map.ListUserMapsRequestDto;
 import com.seismap.service.map.ListUserMapsResponseDto;
 import com.seismap.service.style.ListStylesRequestDto;
@@ -90,7 +89,8 @@ public class PageController extends SeismapController {
 		}
 		model.addAttribute("categories", categoriesResponse.getValue());
 		ListUserMapsResponseDto mapsResponse = mapController
-				.listByUser(new ListUserMapsRequestDto());
+				.listByUser(new ListUserMapsRequestDto(getActorCredentials()
+						.getUserId()));
 		if (mapsResponse.isException()) {
 			throw new IllegalStateException(mapsResponse.toString());
 		}
@@ -98,16 +98,10 @@ public class PageController extends SeismapController {
 	}
 
 	@RequestMapping("")
-	public String home(Model model) {
+	public String map(Model model) {
 		loadGeneralData(model);
-		return "home";
-	}
-
-	@RequestMapping("map/{mapId}")
-	public String map(@PathVariable("mapId") Long mapId, Model model) {
-		loadGeneralData(model);
-		GetMapResponseDto mapResponse = mapController.get(new GetMapRequestDto(
-				mapId));
+		GetDefaultMapResponseDto mapResponse = mapController
+				.getDefault(new GetDefaultMapRequestDto());
 		if (mapResponse.isException()) {
 			throw new IllegalStateException(mapResponse.toString());
 		}
