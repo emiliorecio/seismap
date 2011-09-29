@@ -7,7 +7,7 @@ import com.seismap.model.entity.EventAndAverageMagnitudes;
 import com.seismap.service.common.RangeDto;
 import com.seismap.service.event.MagnitudeType;
 
-public interface EventAndAverageMagnitudeSRepository extends
+public interface EventAndAverageMagnitudesRepository extends
 		ReadOnlyRepository<EventAndAverageMagnitudes, Long> {
 
 	List<EventAndAverageMagnitudes> find(RangeDto<Date> dateRangeDto,

@@ -7,13 +7,13 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
 import com.seismap.model.entity.EventAndAverageMagnitudes;
-import com.seismap.model.repository.EventAndAverageMagnitudeSRepository;
+import com.seismap.model.repository.EventAndAverageMagnitudesRepository;
 import com.seismap.service.common.RangeDto;
 import com.seismap.service.event.MagnitudeType;
 
 public class EventAndAverageMagnitudesRepositoryImpl extends
 		RepositoryImpl<EventAndAverageMagnitudes, Long> implements
-		EventAndAverageMagnitudeSRepository {
+		EventAndAverageMagnitudesRepository {
 
 	public EventAndAverageMagnitudesRepositoryImpl() {
 		super(EventAndAverageMagnitudes.class);

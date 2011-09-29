@@ -31,7 +31,7 @@
   src="${baseUri}/resources/js/lib/geoext/GeoExt-debug.js"></script>
 <script type="text/javascript" src="${baseUri}/resources/js/constants.js"></script>
 <script type="text/javascript">
-  seismap.constants.user = {id: 1, name: 'UnUsuario'};
+  seismap.constants.user = {id: 1, name: 'UnUsuario', administrator: true};
   seismap.constants.baseUri = '${baseUri}';
   seismap.constants.styles = ${styles_json};
   seismap.constants.dataBounds = ${dataBounds_json};

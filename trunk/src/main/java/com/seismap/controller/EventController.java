@@ -13,6 +13,8 @@ import com.seismap.service.event.GetEventRequestDto;
 import com.seismap.service.event.GetEventResponseDto;
 import com.seismap.service.event.GetMagnitudeLimitsRequestDto;
 import com.seismap.service.event.GetMagnitudeLimitsResponseDto;
+import com.seismap.service.event.ModifyEventRequestDto;
+import com.seismap.service.event.ModifyEventResponseDto;
 
 @Controller
 @RequestMapping("action/event")
@@ -43,5 +45,11 @@ public class EventController extends SeismapController {
 	public GetMagnitudeLimitsResponseDto getMagnitudeLimits(
 			@RequestBody GetMagnitudeLimitsRequestDto request) {
 		return eventService.getMagnitudeLimits(getActorCredentials(), request);
+	}
+	
+	@RequestMapping(value = "modify", method = RequestMethod.POST)
+	@ResponseBody
+	public ModifyEventResponseDto modify(@RequestBody ModifyEventRequestDto request) {
+		return eventService.modify(getActorCredentials(), request);
 	}
 }

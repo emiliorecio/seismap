@@ -20,6 +20,7 @@ import com.seismap.service.event.AgencyDto;
 import com.seismap.service.event.DataBoundsDto;
 import com.seismap.service.event.EventAndAverageMagnitudesDto;
 import com.seismap.service.event.EventDto;
+import com.seismap.service.event.EventInfoAndAverageMagnitudesDto;
 import com.seismap.service.event.ExtendedMagnitudeType;
 import com.seismap.service.event.MagnitudeDataBoundsDto;
 import com.seismap.service.event.MagnitudeDto;
@@ -29,6 +30,23 @@ import com.seismap.service.style.StyleDto;
 import com.seismap.service.user.UserDto;
 
 class DtoMarshaler {
+
+	public static EventAndAverageMagnitudesDto unmarshallEvent(Event event,
+			EventAndAverageMagnitudes eventAndAverageMagnitudes) {
+		return new EventAndAverageMagnitudesDto(event.getId(),
+				Double.valueOf(event.getLatitude()), Double.valueOf(event
+						.getLongitude()), Float.valueOf(event.getDepth()),
+				event.getDate(), event.getName(), event.getNotes(),
+				event.getReference(),
+				eventAndAverageMagnitudes.getRANKMagnitude(),
+				eventAndAverageMagnitudes.getMLMagnitude(),
+				eventAndAverageMagnitudes.getMBMagnitude(),
+				eventAndAverageMagnitudes.getMSMagnitude(),
+				eventAndAverageMagnitudes.getMWMagnitude(),
+				eventAndAverageMagnitudes.getMBLGMagnitude(),
+				eventAndAverageMagnitudes.getMCMagnitude(),
+				unmarshallMagnitudes(event.getMagnitudes()));
+	}
 
 	public static EventDto unmarshallEvent(Event event) {
 		return new EventDto(event.getId(), Double.valueOf(event.getLatitude()),
@@ -74,9 +92,9 @@ class DtoMarshaler {
 		return agencyDtos;
 	}
 
-	public static EventAndAverageMagnitudesDto unmarshallEventAndMagnitudes(
+	public static EventInfoAndAverageMagnitudesDto unmarshallEventAndMagnitudes(
 			EventAndAverageMagnitudes eventAndAverageMagnitudes) {
-		return new EventAndAverageMagnitudesDto(
+		return new EventInfoAndAverageMagnitudesDto(
 				eventAndAverageMagnitudes.getId(),
 				Double.valueOf(eventAndAverageMagnitudes.getLatitude()),
 				Double.valueOf(eventAndAverageMagnitudes.getLongitude()),
@@ -85,17 +103,18 @@ class DtoMarshaler {
 				eventAndAverageMagnitudes.getName(),
 				eventAndAverageMagnitudes.getNotes(),
 				eventAndAverageMagnitudes.getReference(),
-				eventAndAverageMagnitudes.getAverageMLMagnitude(),
-				eventAndAverageMagnitudes.getAverageMBLGMagnitude(),
-				eventAndAverageMagnitudes.getAverageMSMagnitude(),
-				eventAndAverageMagnitudes.getAverageMWMagnitude(),
-				eventAndAverageMagnitudes.getAverageMBLGMagnitude(),
-				eventAndAverageMagnitudes.getAverageMCMagnitude());
+				eventAndAverageMagnitudes.getRANKMagnitude(),
+				eventAndAverageMagnitudes.getMLMagnitude(),
+				eventAndAverageMagnitudes.getMBLGMagnitude(),
+				eventAndAverageMagnitudes.getMSMagnitude(),
+				eventAndAverageMagnitudes.getMWMagnitude(),
+				eventAndAverageMagnitudes.getMBLGMagnitude(),
+				eventAndAverageMagnitudes.getMCMagnitude());
 	}
 
-	public static List<EventAndAverageMagnitudesDto> unmarshallEventsAndAverageMagnitudes(
+	public static List<EventInfoAndAverageMagnitudesDto> unmarshallEventsAndAverageMagnitudes(
 			List<EventAndAverageMagnitudes> eventsAndAverageMagnitudes) {
-		List<EventAndAverageMagnitudesDto> eventAndAverageMagnitudeDtos = new ArrayList<EventAndAverageMagnitudesDto>(
+		List<EventInfoAndAverageMagnitudesDto> eventAndAverageMagnitudeDtos = new ArrayList<EventInfoAndAverageMagnitudesDto>(
 				eventsAndAverageMagnitudes.size());
 		for (EventAndAverageMagnitudes eventAndAverageMagnitude : eventsAndAverageMagnitudes) {
 			eventAndAverageMagnitudeDtos
@@ -164,7 +183,8 @@ class DtoMarshaler {
 	}
 
 	public static UserDto unmarshallUser(User user) {
-		return new UserDto(user.getId(), user.getName(), user.getEmail());
+		return new UserDto(user.getId(), user.getName(), user.getEmail(),
+				Boolean.valueOf(user.isAdministrator()));
 	}
 
 	public static List<UserDto> unmarshallUsers(List<User> users) {

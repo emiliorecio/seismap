@@ -18,4 +18,7 @@ public interface EventService {
 	GetMagnitudeLimitsResponseDto getMagnitudeLimits(
 			ActorCredentialsDto actorCredentials,
 			GetMagnitudeLimitsRequestDto request);
+
+	ModifyEventResponseDto modify(ActorCredentialsDto actorCredentials,
+			ModifyEventRequestDto request);
 }

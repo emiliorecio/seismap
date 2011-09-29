@@ -3,7 +3,8 @@ package com.seismap.service.event;
 import com.seismap.service.common.ExceptionCause;
 import com.seismap.service.common.ResponseDto;
 
-public class GetEventResponseDto extends ResponseDto<EventDto> {
+public class GetEventResponseDto extends
+		ResponseDto<EventAndAverageMagnitudesDto> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -11,7 +12,7 @@ public class GetEventResponseDto extends ResponseDto<EventDto> {
 
 	}
 
-	public GetEventResponseDto(EventDto event) {
+	public GetEventResponseDto(EventAndAverageMagnitudesDto event) {
 		super(event);
 	}
 

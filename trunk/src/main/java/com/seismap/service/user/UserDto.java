@@ -17,13 +17,17 @@ public class UserDto implements Serializable {
 	@JsonProperty
 	private String email;
 
+	@JsonProperty
+	private Boolean administrator;
+
 	protected UserDto() {
 	}
 
-	public UserDto(Long id, String name, String email) {
+	public UserDto(Long id, String name, String email, Boolean administrator) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
+		this.administrator = administrator;
 	}
 
 	public Long getId() {
@@ -38,4 +42,7 @@ public class UserDto implements Serializable {
 		return email;
 	}
 
+	public Boolean getAdministrator() {
+		return administrator;
+	}
 }

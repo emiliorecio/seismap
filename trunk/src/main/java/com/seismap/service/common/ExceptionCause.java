@@ -8,6 +8,8 @@ public enum ExceptionCause {
 
 	DUPLICATE_STYLE_NAME,
 
+	NO_EVENT_WITH_GIVEN_ID,
+	
 	NO_MAP_WITH_GIVEN_ID,
 
 	NO_STYLE_WITH_GIVEN_ID,
@@ -20,6 +22,8 @@ public enum ExceptionCause {
 		CATEGORY_ID,
 
 		CATEGORY_NAME,
+
+		EVENT_ID,
 
 		MAP_ID,
 

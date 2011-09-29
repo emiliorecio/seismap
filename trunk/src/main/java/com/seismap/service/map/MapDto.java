@@ -6,7 +6,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.seismap.service.event.ExtendedMagnitudeType;
 
-public class MapDto extends BasicMapDataDto {
+public class MapDto extends ModifiableMapDataDto {
 
 	private static final long serialVersionUID = 1L;
 

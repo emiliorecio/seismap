@@ -1,72 +1,34 @@
 package com.seismap.service.event;
 
 import java.util.Date;
+import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class EventAndAverageMagnitudesDto extends EventInfoDto {
+public class EventAndAverageMagnitudesDto extends
+		EventInfoAndAverageMagnitudesDto {
 
 	private static final long serialVersionUID = 1L;
 
 	@JsonProperty
-	private Float averageMBMagnitude;
-
-	@JsonProperty
-	private Float averageMBLGMagnitude;
-
-	@JsonProperty
-	private Float averageMCMagnitude;
-
-	@JsonProperty
-	private Float averageMLMagnitude;
-
-	@JsonProperty
-	private Float averageMSMagnitude;
-
-	@JsonProperty
-	private Float averageMWMagnitude;
+	private List<MagnitudeDto> magnitudes;
 
 	protected EventAndAverageMagnitudesDto() {
-
 	}
 
 	public EventAndAverageMagnitudesDto(Long id, Double latitude,
 			Double longitude, Float depth, Date date, String name,
-			String notes, String reference, Float averageMLMagnitude,
-			Float averageMBMagnitude, Float averageMSMagnitude,
-			Float averageMWMagnitude, Float averageMBLGMagnitude,
-			Float averageMCMagnitude) {
-		super(id, latitude, longitude, depth, date, name, notes, reference);
-		this.averageMLMagnitude = averageMLMagnitude;
-		this.averageMBMagnitude = averageMBMagnitude;
-		this.averageMSMagnitude = averageMSMagnitude;
-		this.averageMWMagnitude = averageMWMagnitude;
-		this.averageMBLGMagnitude = averageMBLGMagnitude;
-		this.averageMCMagnitude = averageMCMagnitude;
+			String notes, String reference, Float RANKMagnitude,
+			Float MLMagnitude, Float MBMagnitude, Float MSMagnitude,
+			Float MWMagnitude, Float MBLGMagnitude, Float MCMagnitude,
+			List<MagnitudeDto> magnitudes) {
+		super(id, latitude, longitude, depth, date, name, notes, reference,
+				RANKMagnitude, MLMagnitude, MBMagnitude, MSMagnitude,
+				MWMagnitude, MBLGMagnitude, MCMagnitude);
+		this.magnitudes = magnitudes;
 	}
 
-	public Float getAverageMBMagnitude() {
-		return averageMBMagnitude;
+	public List<MagnitudeDto> getMagnitudes() {
+		return magnitudes;
 	}
-
-	public Float getAverageMBLGMagnitude() {
-		return averageMBLGMagnitude;
-	}
-
-	public Float getAverageMCMagnitude() {
-		return averageMCMagnitude;
-	}
-
-	public Float getAverageMLMagnitude() {
-		return averageMLMagnitude;
-	}
-
-	public Float getAverageMSMagnitude() {
-		return averageMSMagnitude;
-	}
-
-	public Float getAverageMWMagnitude() {
-		return averageMWMagnitude;
-	}
-
 }
