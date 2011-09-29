@@ -12,12 +12,12 @@ public class CreateMapRequestDto extends RequestDto {
 	private Long userId;
 
 	@JsonProperty
-	private BasicMapDataDto map;
+	private ModifiableMapDataDto map;
 
 	protected CreateMapRequestDto() {
 	}
 
-	public CreateMapRequestDto(Long userId, BasicMapDataDto map) {
+	public CreateMapRequestDto(Long userId, ModifiableMapDataDto map) {
 		this.userId = userId;
 		this.map = map;
 	}
@@ -26,7 +26,7 @@ public class CreateMapRequestDto extends RequestDto {
 		return userId;
 	}
 
-	public BasicMapDataDto getMap() {
+	public ModifiableMapDataDto getMap() {
 		return map;
 	}
 }

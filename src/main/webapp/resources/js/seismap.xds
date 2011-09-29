@@ -531,25 +531,25 @@
                         },
                         {
                             "id": "MyForm",
-                            "cid": "form",
+                            "cid": "panel",
                             "jsClass": "MyForm",
                             "snapToGrid": 10,
                             "userConfig": {
-                                "title": "Parámetros",
-                                "region": "east",
+                                "title": "-ext-undefined-",
                                 "width": 500,
-                                "split": true,
                                 "layout": "accordion",
-                                "activeItem": 1,
                                 "collapsible": true,
-                                "collapseMode": "-ext-undefined-",
                                 "titleCollapse": true,
                                 "hideCollapseTool": "-ext-undefined-",
-                                "id": "parametersForm"
+                                "id": "parametersPanel",
+                                "region": "east",
+                                "split": true,
+                                "floatable": false,
+                                "activeItem": 1
                             },
                             "cn": [
                                 {
-                                    "id": "MyPanel5",
+                                    "id": "MyPanel4",
                                     "cid": "panel",
                                     "jsClass": "MyPanel5",
                                     "snapToGrid": 10,
@@ -560,7 +560,8 @@
                                         "titleCollapse": true,
                                         "layout": "form",
                                         "padding": 4,
-                                        "id": "viewPanel"
+                                        "id": "viewPanel",
+                                        "autoScroll": true
                                     },
                                     "cn": [
                                         {
@@ -579,7 +580,7 @@
                                             }
                                         },
                                         {
-                                            "id": "MyNumberField7",
+                                            "id": "MyNumberField",
                                             "cid": "numberfield",
                                             "jsClass": "MyNumberField7",
                                             "snapToGrid": 10,
@@ -596,7 +597,7 @@
                                             }
                                         },
                                         {
-                                            "id": "MyNumberField8",
+                                            "id": "MyNumberField1",
                                             "cid": "numberfield",
                                             "jsClass": "MyNumberField8",
                                             "snapToGrid": 10,
@@ -612,7 +613,7 @@
                                             }
                                         },
                                         {
-                                            "id": "MyCompositeField12",
+                                            "id": "MyCompositeField",
                                             "cid": "compositefield",
                                             "jsClass": "MyCompositeField1",
                                             "snapToGrid": 10,
@@ -621,7 +622,8 @@
                                                 "hideLabel": "-ext-undefined-",
                                                 "labelSeparator": " ",
                                                 "id": "initialViewCompositeField",
-                                                "fieldClass": "-ext-undefined-"
+                                                "fieldClass": "-ext-undefined-",
+                                                "anchor": "100%"
                                             },
                                             "cn": [
                                                 {
@@ -632,45 +634,47 @@
                                                     "userConfig": {
                                                         "value": "Usar vista actual",
                                                         "flex": "-ext-undefined-",
-                                                        "fieldLabel": "-ext-undefined-",
                                                         "margins": "2px 5px 0px -1px",
                                                         "id": "useCurrentViewLink",
                                                         "disabled": "-ext-undefined-",
                                                         "ctCls": "-ext-undefined-",
                                                         "fieldClass": "-ext-undefined-",
-                                                        "cls": "linkField"
+                                                        "cls": "linkField",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyDisplayField19",
+                                                    "id": "MyDisplayField1",
                                                     "cid": "displayfield",
                                                     "jsClass": "MyDisplayField20",
                                                     "snapToGrid": 10,
                                                     "userConfig": {
                                                         "value": "Mostrar vista inicial",
                                                         "flex": "-ext-undefined-",
-                                                        "fieldLabel": "Label",
                                                         "margins": "2px 5px 0px 10px",
                                                         "id": "showInitialViewLink",
                                                         "disabled": "-ext-undefined-",
                                                         "ctCls": "-ext-undefined-",
                                                         "fieldClass": "-ext-undefined-",
-                                                        "cls": "linkField"
+                                                        "cls": "linkField",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 }
                                             ]
                                         },
                                         {
-                                            "id": "MyDisplayField20",
+                                            "id": "MyDisplayField2",
                                             "cid": "displayfield",
                                             "jsClass": "MyDisplayField10",
                                             "snapToGrid": 10,
                                             "userConfig": {
-                                                "value": "-ext-undefined-"
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
                                             }
                                         },
                                         {
-                                            "id": "MyCombo3",
+                                            "id": "MyCombo",
                                             "cid": "combobox",
                                             "jsClass": "MyCombo4",
                                             "snapToGrid": 10,
@@ -695,7 +699,7 @@
                                     ]
                                 },
                                 {
-                                    "id": "MyPanel4",
+                                    "id": "MyPanel5",
                                     "cid": "panel",
                                     "jsClass": "MyPanel4",
                                     "snapToGrid": 10,
@@ -725,11 +729,12 @@
                                                 "fieldLabel": "Desde",
                                                 "hideLabel": "-ext-undefined-",
                                                 "id": "dateMinModeNoneRadio",
-                                                "inputValue": "none"
+                                                "inputValue": "none",
+                                                "anchor": "100%"
                                             }
                                         },
                                         {
-                                            "id": "MyCompositeField",
+                                            "id": "MyCompositeField1",
                                             "cid": "compositefield",
                                             "jsClass": "MyCompositeField1",
                                             "snapToGrid": 10,
@@ -738,7 +743,8 @@
                                                 "hideLabel": "-ext-undefined-",
                                                 "labelSeparator": " ",
                                                 "id": "dateMinModeRelativeCompositeField",
-                                                "fieldClass": "x-form-field seismap-radio-composite-field"
+                                                "fieldClass": "x-form-field seismap-radio-composite-field",
+                                                "anchor": "100%"
                                             },
                                             "cn": [
                                                 {
@@ -753,27 +759,28 @@
                                                         "name": "dateMinMode",
                                                         "flex": "-ext-undefined-",
                                                         "id": "dateMinModeRelativeRadio",
-                                                        "inputValue": "relative"
+                                                        "inputValue": "relative",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyDisplayField24",
+                                                    "id": "MyDisplayField3",
                                                     "cid": "displayfield",
                                                     "jsClass": "MyDisplayField20",
                                                     "snapToGrid": 10,
                                                     "userConfig": {
                                                         "value": "Hace",
                                                         "flex": "-ext-undefined-",
-                                                        "fieldLabel": "Label",
                                                         "margins": "2px 5px 0px -1px",
                                                         "id": "dateMinRelativeHeadingLabel",
                                                         "disabled": "-ext-undefined-",
                                                         "ctCls": "-ext-undefined-",
-                                                        "fieldClass": "-ext-undefined-"
+                                                        "fieldClass": "-ext-undefined-",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyNumberField",
+                                                    "id": "MyNumberField2",
                                                     "cid": "numberfield",
                                                     "jsClass": "MyNumberField",
                                                     "snapToGrid": 10,
@@ -784,11 +791,12 @@
                                                         "id": "dateMinRelativeAmountField",
                                                         "disabled": "-ext-undefined-",
                                                         "allowBlank": false,
-                                                        "allowNegative": false
+                                                        "allowNegative": false,
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyCombo",
+                                                    "id": "MyCombo1",
                                                     "cid": "combobox",
                                                     "jsClass": "MyCombo",
                                                     "snapToGrid": 10,
@@ -811,12 +819,12 @@
                                                         "triggerAction": "all",
                                                         "forceSelection": true,
                                                         "lazyInit": false,
-                                                        "fieldLabel": "-ext-undefined-",
-                                                        "mode": "local"
+                                                        "mode": "local",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyDisplayField1",
+                                                    "id": "MyDisplayField4",
                                                     "cid": "displayfield",
                                                     "jsClass": "MyDisplayField",
                                                     "snapToGrid": 10,
@@ -827,13 +835,14 @@
                                                         "disabled": "-ext-undefined-",
                                                         "margins": "2px 0px 0px 0px",
                                                         "ctCls": "-ext-undefined-",
-                                                        "hidden": true
+                                                        "hidden": true,
+                                                        "fieldLabel": "Label"
                                                     }
                                                 }
                                             ]
                                         },
                                         {
-                                            "id": "MyCompositeField1",
+                                            "id": "MyCompositeField2",
                                             "cid": "compositefield",
                                             "jsClass": "MyCompositeField2",
                                             "snapToGrid": 10,
@@ -842,7 +851,7 @@
                                                 "anchor": "100%",
                                                 "hideLabel": "-ext-undefined-",
                                                 "labelSeparator": " ",
-                                                "id": "dateMinAbsoluteCompositeField",
+                                                "id": "dateMinModeAbsoluteCompositeField",
                                                 "fieldClass": "x-form-field seismap-radio-composite-field"
                                             },
                                             "cn": [
@@ -856,7 +865,8 @@
                                                         "name": "dateMinMode",
                                                         "flex": "-ext-undefined-",
                                                         "id": "dateMinModeAbsoluteRadio",
-                                                        "inputValue": "absolute"
+                                                        "inputValue": "absolute",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
@@ -872,7 +882,8 @@
                                                         "allowBlank": false,
                                                         "width": 100,
                                                         "editable": false,
-                                                        "format": "d/m/Y"
+                                                        "format": "d/m/Y",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
@@ -887,14 +898,15 @@
                                                         "disabled": "-ext-undefined-",
                                                         "allowBlank": false,
                                                         "editable": false,
-                                                        "increment": 30,
-                                                        "format": "h:i a"
+                                                        "increment": "-ext-undefined-",
+                                                        "format": "h:i a",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 }
                                             ]
                                         },
                                         {
-                                            "id": "MyDisplayField2",
+                                            "id": "MyDisplayField5",
                                             "cid": "displayfield",
                                             "jsClass": "MyDisplayField10",
                                             "snapToGrid": 10,
@@ -917,11 +929,12 @@
                                                 "fieldLabel": "Hasta",
                                                 "hideLabel": "-ext-undefined-",
                                                 "id": "dateMaxModeNoneRadio",
-                                                "inputValue": "none"
+                                                "inputValue": "none",
+                                                "anchor": "100%"
                                             }
                                         },
                                         {
-                                            "id": "MyCompositeField2",
+                                            "id": "MyCompositeField3",
                                             "cid": "compositefield",
                                             "jsClass": "MyCompositeField1",
                                             "snapToGrid": 10,
@@ -930,7 +943,8 @@
                                                 "hideLabel": "-ext-undefined-",
                                                 "labelSeparator": " ",
                                                 "id": "dateMaxModeRelativeCompositeField",
-                                                "fieldClass": "x-form-field seismap-radio-composite-field"
+                                                "fieldClass": "x-form-field seismap-radio-composite-field",
+                                                "anchor": "100%"
                                             },
                                             "cn": [
                                                 {
@@ -945,40 +959,44 @@
                                                         "name": "dateMaxMode",
                                                         "flex": "-ext-undefined-",
                                                         "id": "dateMaxModeRelativeRadio",
-                                                        "inputValue": "relative"
+                                                        "inputValue": "relative",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyDisplayField3",
+                                                    "id": "MyDisplayField6",
                                                     "cid": "displayfield",
                                                     "jsClass": "MyDisplayField20",
                                                     "snapToGrid": 10,
                                                     "userConfig": {
                                                         "value": "Hace",
                                                         "flex": "-ext-undefined-",
-                                                        "fieldLabel": "Label",
                                                         "margins": "2px 5px 0px -1px",
                                                         "id": "dateMaxRelativeHeadingLabel",
-                                                        "disabled": "-ext-undefined-"
+                                                        "disabled": "-ext-undefined-",
+                                                        "ctCls": "-ext-undefined-",
+                                                        "fieldClass": "-ext-undefined-",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyNumberField1",
+                                                    "id": "MyNumberField3",
                                                     "cid": "numberfield",
                                                     "jsClass": "MyNumberField",
                                                     "snapToGrid": 10,
                                                     "userConfig": {
                                                         "value": 1,
                                                         "width": 50,
-                                                        "id": "dateMaxRelativeAmountField",
                                                         "name": "dateMaxRelativeAmount",
+                                                        "id": "dateMaxRelativeAmountField",
                                                         "disabled": "-ext-undefined-",
                                                         "allowBlank": false,
-                                                        "allowNegative": false
+                                                        "allowNegative": false,
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyCombo1",
+                                                    "id": "MyCombo2",
                                                     "cid": "combobox",
                                                     "jsClass": "MyCombo",
                                                     "snapToGrid": 10,
@@ -988,24 +1006,25 @@
                                                         "height": "-ext-undefined-",
                                                         "editable": false,
                                                         "title": "-ext-undefined-",
-                                                        "width": 80,
-                                                        "id": "dateMaxRelativeUnitsCombo",
-                                                        "name": "dateMaxRelativeUnits",
-                                                        "disabled": "-ext-undefined-",
+                                                        "width": 70,
                                                         "store": "dateUnitsStore",
-                                                        "displayField": "name",
+                                                        "name": "dateMaxRelativeUnits",
+                                                        "id": "dateMaxRelativeUnitsCombo",
+                                                        "disabled": "-ext-undefined-",
+                                                        "itemId": "id",
                                                         "valueField": "id",
+                                                        "displayField": "name",
+                                                        "hideTrigger": "-ext-undefined-",
                                                         "minChars": "-ext-undefined-",
                                                         "triggerAction": "all",
                                                         "forceSelection": true,
                                                         "lazyInit": false,
-                                                        "fieldLabel": "name",
-                                                        "itemId": "id",
-                                                        "mode": "local"
+                                                        "mode": "local",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyDisplayField4",
+                                                    "id": "MyDisplayField7",
                                                     "cid": "displayfield",
                                                     "jsClass": "MyDisplayField",
                                                     "snapToGrid": 10,
@@ -1015,13 +1034,15 @@
                                                         "id": "dateMaxRelativeTrailingLabel",
                                                         "disabled": "-ext-undefined-",
                                                         "margins": "2px 0px 0px 0px",
-                                                        "hidden": true
+                                                        "ctCls": "-ext-undefined-",
+                                                        "hidden": true,
+                                                        "fieldLabel": "Label"
                                                     }
                                                 }
                                             ]
                                         },
                                         {
-                                            "id": "MyCompositeField3",
+                                            "id": "MyCompositeField4",
                                             "cid": "compositefield",
                                             "jsClass": "MyCompositeField5",
                                             "snapToGrid": 10,
@@ -1030,7 +1051,7 @@
                                                 "anchor": "100%",
                                                 "hideLabel": "-ext-undefined-",
                                                 "labelSeparator": " ",
-                                                "id": "dateMaxAbsoluteCompositeField",
+                                                "id": "dateMaxModeAbsoluteCompositeField",
                                                 "fieldClass": "x-form-field seismap-radio-composite-field"
                                             },
                                             "cn": [
@@ -1040,12 +1061,12 @@
                                                     "jsClass": "MyRadio4",
                                                     "snapToGrid": 10,
                                                     "userConfig": {
-                                                        "fieldLabel": "Label",
                                                         "boxLabel": "",
                                                         "name": "dateMaxMode",
                                                         "flex": "-ext-undefined-",
                                                         "id": "dateMaxModeAbsoluteRadio",
-                                                        "inputValue": "absolute"
+                                                        "inputValue": "absolute",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
@@ -1055,14 +1076,14 @@
                                                     "snapToGrid": 10,
                                                     "userConfig": {
                                                         "flex": "-ext-undefined-",
-                                                        "fieldLabel": "Label",
                                                         "id": "dateMaxAbsoluteDateField",
                                                         "name": "dateMaxAbsoluteDate",
                                                         "disabled": "-ext-undefined-",
                                                         "width": 100,
                                                         "allowBlank": false,
                                                         "editable": false,
-                                                        "format": "d/m/Y"
+                                                        "format": "d/m/Y",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
@@ -1072,22 +1093,22 @@
                                                     "snapToGrid": 10,
                                                     "userConfig": {
                                                         "flex": "-ext-undefined-",
-                                                        "fieldLabel": "Label",
                                                         "autoWidth": true,
                                                         "width": 80,
                                                         "id": "dateMaxAbsoluteTimeField",
                                                         "name": "dateMaxAbsoluteTime",
                                                         "disabled": "-ext-undefined-",
                                                         "allowBlank": false,
-                                                        "increment": 30,
+                                                        "increment": "-ext-undefined-",
                                                         "editable": false,
-                                                        "format": "h:i a"
+                                                        "format": "h:i a",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 }
                                             ]
                                         },
                                         {
-                                            "id": "MyDisplayField5",
+                                            "id": "MyDisplayField8",
                                             "cid": "displayfield",
                                             "jsClass": "MyDisplayField10",
                                             "snapToGrid": 10,
@@ -1111,11 +1132,12 @@
                                                 "hideLabel": "-ext-undefined-",
                                                 "labelSeparator": " ",
                                                 "id": "depthMinModeNoneRadio",
-                                                "inputValue": "none"
+                                                "inputValue": "none",
+                                                "anchor": "100%"
                                             }
                                         },
                                         {
-                                            "id": "MyCompositeField4",
+                                            "id": "MyCompositeField5",
                                             "cid": "compositefield",
                                             "jsClass": "MyCompositeField1",
                                             "snapToGrid": 10,
@@ -1124,7 +1146,8 @@
                                                 "hideLabel": "-ext-undefined-",
                                                 "labelSeparator": " ",
                                                 "id": "depthMinAbsoluteCompositeField",
-                                                "fieldClass": "x-form-field seismap-radio-composite-field"
+                                                "fieldClass": "x-form-field seismap-radio-composite-field",
+                                                "anchor": "100%"
                                             },
                                             "cn": [
                                                 {
@@ -1139,11 +1162,12 @@
                                                         "name": "depthMinMode",
                                                         "flex": "-ext-undefined-",
                                                         "id": "depthMinModeAbsoluteRadio",
-                                                        "inputValue": "absolute"
+                                                        "inputValue": "absolute",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyNumberField2",
+                                                    "id": "MyNumberField4",
                                                     "cid": "numberfield",
                                                     "jsClass": "MyNumberField",
                                                     "snapToGrid": 10,
@@ -1154,11 +1178,12 @@
                                                         "id": "depthMinAbsoluteAmountField",
                                                         "disabled": "-ext-undefined-",
                                                         "allowNegative": false,
-                                                        "allowBlank": false
+                                                        "allowBlank": false,
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyDisplayField6",
+                                                    "id": "MyDisplayField9",
                                                     "cid": "displayfield",
                                                     "jsClass": "MyDisplayField",
                                                     "snapToGrid": 10,
@@ -1167,13 +1192,14 @@
                                                         "flex": "-ext-undefined-",
                                                         "id": "depthMinAbsoluteUnitsLabel",
                                                         "margins": "2px 0px 0px 0px",
-                                                        "disabled": "-ext-undefined-"
+                                                        "disabled": "-ext-undefined-",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 }
                                             ]
                                         },
                                         {
-                                            "id": "MyDisplayField7",
+                                            "id": "MyDisplayField10",
                                             "cid": "displayfield",
                                             "jsClass": "MyDisplayField10",
                                             "snapToGrid": 10,
@@ -1196,11 +1222,12 @@
                                                 "fieldLabel": "Hasta",
                                                 "hideLabel": "-ext-undefined-",
                                                 "id": "depthMaxModeNoneRadio",
-                                                "inputValue": "none"
+                                                "inputValue": "none",
+                                                "anchor": "100%"
                                             }
                                         },
                                         {
-                                            "id": "MyCompositeField5",
+                                            "id": "MyCompositeField6",
                                             "cid": "compositefield",
                                             "jsClass": "MyCompositeField1",
                                             "snapToGrid": 10,
@@ -1209,7 +1236,8 @@
                                                 "hideLabel": "-ext-undefined-",
                                                 "labelSeparator": " ",
                                                 "id": "depthMaxAbsoluteCompositeField",
-                                                "fieldClass": "x-form-field seismap-radio-composite-field"
+                                                "fieldClass": "x-form-field seismap-radio-composite-field",
+                                                "anchor": "100%"
                                             },
                                             "cn": [
                                                 {
@@ -1224,11 +1252,12 @@
                                                         "name": "depthMaxMode",
                                                         "flex": "-ext-undefined-",
                                                         "inputValue": "absolute",
-                                                        "id": "depthMaxModeAbsoluteRadio"
+                                                        "id": "depthMaxModeAbsoluteRadio",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyNumberField3",
+                                                    "id": "MyNumberField5",
                                                     "cid": "numberfield",
                                                     "jsClass": "MyNumberField",
                                                     "snapToGrid": 10,
@@ -1239,11 +1268,12 @@
                                                         "name": "depthMaxAbsoluteAmount",
                                                         "disabled": "-ext-undefined-",
                                                         "allowNegative": false,
-                                                        "allowBlank": false
+                                                        "allowBlank": false,
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyDisplayField8",
+                                                    "id": "MyDisplayField11",
                                                     "cid": "displayfield",
                                                     "jsClass": "MyDisplayField",
                                                     "snapToGrid": 10,
@@ -1253,22 +1283,25 @@
                                                         "name": "-ext-undefined-",
                                                         "id": "depthMaxModeAbsoluteUnitsLabel",
                                                         "margins": "2px 0px 0px 0px",
-                                                        "disabled": "-ext-undefined-"
+                                                        "disabled": "-ext-undefined-",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 }
                                             ]
                                         },
                                         {
-                                            "id": "MyDisplayField9",
+                                            "id": "MyDisplayField12",
                                             "cid": "displayfield",
                                             "jsClass": "MyDisplayField10",
                                             "snapToGrid": 10,
                                             "userConfig": {
-                                                "value": "-ext-undefined-"
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
                                             }
                                         },
                                         {
-                                            "id": "MyCombo2",
+                                            "id": "MyCombo3",
                                             "cid": "combobox",
                                             "jsClass": "MyCombo4",
                                             "snapToGrid": 10,
@@ -1291,12 +1324,14 @@
                                             }
                                         },
                                         {
-                                            "id": "MyDisplayField10",
+                                            "id": "MyDisplayField13",
                                             "cid": "displayfield",
                                             "jsClass": "MyDisplayField10",
                                             "snapToGrid": 10,
                                             "userConfig": {
-                                                "value": "-ext-undefined-"
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
                                             }
                                         },
                                         {
@@ -1312,11 +1347,12 @@
                                                 "fieldLabel": "Desde",
                                                 "hideLabel": "-ext-undefined-",
                                                 "id": "magnitudeMinModeNoneRadio",
-                                                "inputValue": "none"
+                                                "inputValue": "none",
+                                                "anchor": "100%"
                                             }
                                         },
                                         {
-                                            "id": "MyCompositeField6",
+                                            "id": "MyCompositeField7",
                                             "cid": "compositefield",
                                             "jsClass": "MyCompositeField1",
                                             "snapToGrid": 10,
@@ -1325,7 +1361,8 @@
                                                 "hideLabel": "-ext-undefined-",
                                                 "labelSeparator": " ",
                                                 "id": "magnitudeMinAbsoluteCompositeField",
-                                                "fieldClass": "x-form-field seismap-radio-composite-field"
+                                                "fieldClass": "x-form-field seismap-radio-composite-field",
+                                                "anchor": "100%"
                                             },
                                             "cn": [
                                                 {
@@ -1340,11 +1377,12 @@
                                                         "name": "magnitudeMinMode",
                                                         "flex": "-ext-undefined-",
                                                         "id": "magnitudeMinModeAbsoluteRadio",
-                                                        "inputValue": "absolute"
+                                                        "inputValue": "absolute",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyNumberField4",
+                                                    "id": "MyNumberField6",
                                                     "cid": "numberfield",
                                                     "jsClass": "MyNumberField",
                                                     "snapToGrid": 10,
@@ -1355,11 +1393,12 @@
                                                         "name": "magnitudeMinAbsoluteAmount",
                                                         "disabled": "-ext-undefined-",
                                                         "allowNegative": "-ext-undefined-",
-                                                        "allowBlank": false
+                                                        "allowBlank": false,
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyDisplayField11",
+                                                    "id": "MyDisplayField14",
                                                     "cid": "displayfield",
                                                     "jsClass": "MyDisplayField",
                                                     "snapToGrid": 10,
@@ -1368,18 +1407,21 @@
                                                         "flex": "-ext-undefined-",
                                                         "id": "magnitudeMinAbsoluteUnitsLabel",
                                                         "margins": "2px 0px 0px 0px",
-                                                        "disabled": "-ext-undefined-"
+                                                        "disabled": "-ext-undefined-",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 }
                                             ]
                                         },
                                         {
-                                            "id": "MyDisplayField12",
+                                            "id": "MyDisplayField15",
                                             "cid": "displayfield",
                                             "jsClass": "MyDisplayField10",
                                             "snapToGrid": 10,
                                             "userConfig": {
-                                                "value": "-ext-undefined-"
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
                                             }
                                         },
                                         {
@@ -1395,11 +1437,12 @@
                                                 "fieldLabel": "Hasta",
                                                 "hideLabel": "-ext-undefined-",
                                                 "id": "magnitudeMaxModeNoneRadio",
-                                                "inputValue": "none"
+                                                "inputValue": "none",
+                                                "anchor": "100%"
                                             }
                                         },
                                         {
-                                            "id": "MyCompositeField7",
+                                            "id": "MyCompositeField8",
                                             "cid": "compositefield",
                                             "jsClass": "MyCompositeField1",
                                             "snapToGrid": 10,
@@ -1408,7 +1451,8 @@
                                                 "hideLabel": "-ext-undefined-",
                                                 "labelSeparator": " ",
                                                 "id": "magnitudeMaxAbsoluteCompositeField",
-                                                "fieldClass": "x-form-field seismap-radio-composite-field"
+                                                "fieldClass": "x-form-field seismap-radio-composite-field",
+                                                "anchor": "100%"
                                             },
                                             "cn": [
                                                 {
@@ -1423,11 +1467,12 @@
                                                         "name": "magnitudeMaxMode",
                                                         "flex": "-ext-undefined-",
                                                         "inputValue": "absolute",
-                                                        "id": "magnitudeMaxModeAbsoluteRadio"
+                                                        "id": "magnitudeMaxModeAbsoluteRadio",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyNumberField5",
+                                                    "id": "MyNumberField7",
                                                     "cid": "numberfield",
                                                     "jsClass": "MyNumberField",
                                                     "snapToGrid": 10,
@@ -1438,11 +1483,12 @@
                                                         "name": "magnitudeMinAbsoluteAmount",
                                                         "disabled": "-ext-undefined-",
                                                         "allowNegative": "-ext-undefined-",
-                                                        "allowBlank": false
+                                                        "allowBlank": false,
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyDisplayField13",
+                                                    "id": "MyDisplayField16",
                                                     "cid": "displayfield",
                                                     "jsClass": "MyDisplayField",
                                                     "snapToGrid": 10,
@@ -1451,18 +1497,21 @@
                                                         "flex": "-ext-undefined-",
                                                         "id": "magnitudeMaxAbsoluteUnitsLabel",
                                                         "margins": "2px 0px 0px 0px",
-                                                        "disabled": "-ext-undefined-"
+                                                        "disabled": "-ext-undefined-",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 }
                                             ]
                                         },
                                         {
-                                            "id": "MyDisplayField14",
+                                            "id": "MyDisplayField17",
                                             "cid": "displayfield",
                                             "jsClass": "MyDisplayField10",
                                             "snapToGrid": 10,
                                             "userConfig": {
-                                                "value": "-ext-undefined-"
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
                                             }
                                         },
                                         {
@@ -1493,7 +1542,8 @@
                                         "padding": 4,
                                         "id": "animationPanel",
                                         "hideLabels": "-ext-undefined-",
-                                        "collapsed": "-ext-undefined-"
+                                        "collapsed": "-ext-undefined-",
+                                        "autoScroll": true
                                     },
                                     "cn": [
                                         {
@@ -1558,52 +1608,6 @@
                                             }
                                         },
                                         {
-                                            "id": "MyDisplayField15",
-                                            "cid": "displayfield",
-                                            "jsClass": "MyDisplayField15",
-                                            "snapToGrid": 10,
-                                            "userConfig": {
-                                                "value": "-ext-undefined-",
-                                                "fieldLabel": "-ext-undefined-",
-                                                "anchor": "100%"
-                                            }
-                                        },
-                                        {
-                                            "id": "MyCompositeField8",
-                                            "cid": "compositefield",
-                                            "jsClass": "MyCompositeField6",
-                                            "snapToGrid": 10,
-                                            "userConfig": {
-                                                "fieldLabel": "Cuadros",
-                                                "id": "animationStepCompositeField",
-                                                "disabled": "-ext-undefined-",
-                                                "hidden": "-ext-undefined-",
-                                                "hideLabel": "-ext-undefined-",
-                                                "fieldClass": "-ext-undefined-"
-                                            },
-                                            "cn": [
-                                                {
-                                                    "id": "MyTextField",
-                                                    "cid": "numberfield",
-                                                    "jsClass": "MyTextField",
-                                                    "snapToGrid": 10,
-                                                    "userConfig": {
-                                                        "flex": "-ext-undefined-",
-                                                        "width": 50,
-                                                        "value": 1,
-                                                        "id": "animationStepAmountField",
-                                                        "name": "animationStepAmount",
-                                                        "disabled": true,
-                                                        "fieldClass": "x-form-field seismap-animation-field",
-                                                        "allowBlank": false,
-                                                        "fieldLabel": "Label",
-                                                        "allowNegative": false,
-                                                        "allowDecimals": false
-                                                    }
-                                                }
-                                            ]
-                                        },
-                                        {
                                             "id": "MyDisplayField18",
                                             "cid": "displayfield",
                                             "jsClass": "MyDisplayField15",
@@ -1616,6 +1620,53 @@
                                         },
                                         {
                                             "id": "MyCompositeField9",
+                                            "cid": "compositefield",
+                                            "jsClass": "MyCompositeField6",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "fieldLabel": "Cuadros",
+                                                "id": "animationStepCompositeField",
+                                                "disabled": "-ext-undefined-",
+                                                "hidden": "-ext-undefined-",
+                                                "hideLabel": "-ext-undefined-",
+                                                "fieldClass": "-ext-undefined-",
+                                                "anchor": "100%"
+                                            },
+                                            "cn": [
+                                                {
+                                                    "id": "MyNumberField8",
+                                                    "cid": "numberfield",
+                                                    "jsClass": "MyTextField",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "flex": "-ext-undefined-",
+                                                        "width": 50,
+                                                        "value": 1,
+                                                        "id": "animationStepAmountField",
+                                                        "name": "animationStepAmount",
+                                                        "disabled": true,
+                                                        "fieldClass": "x-form-field seismap-animation-field",
+                                                        "allowBlank": false,
+                                                        "allowNegative": false,
+                                                        "allowDecimals": false,
+                                                        "fieldLabel": "Label"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "id": "MyDisplayField19",
+                                            "cid": "displayfield",
+                                            "jsClass": "MyDisplayField15",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
+                                            }
+                                        },
+                                        {
+                                            "id": "MyCompositeField10",
                                             "cid": "compositefield",
                                             "jsClass": "MyCompositeField",
                                             "snapToGrid": 10,
@@ -1630,7 +1681,7 @@
                                             },
                                             "cn": [
                                                 {
-                                                    "id": "MyTextField1",
+                                                    "id": "MyNumberField11",
                                                     "cid": "numberfield",
                                                     "jsClass": "MyTextField",
                                                     "snapToGrid": 10,
@@ -1642,13 +1693,13 @@
                                                         "id": "animationDurationField",
                                                         "disabled": true,
                                                         "fieldClass": "x-form-field seismap-animation-field",
-                                                        "fieldLabel": "Label",
                                                         "allowNegative": false,
-                                                        "allowBlank": false
+                                                        "allowBlank": false,
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyDisplayField22",
+                                                    "id": "MyDisplayField20",
                                                     "cid": "displayfield",
                                                     "jsClass": "MyDisplayField20",
                                                     "snapToGrid": 10,
@@ -1658,22 +1709,25 @@
                                                         "disabled": true,
                                                         "flex": "-ext-undefined-",
                                                         "margins": "2px 0px 0px 2px",
-                                                        "fieldClass": "x-form-display-field seismap-animation-field"
+                                                        "fieldClass": "x-form-display-field seismap-animation-field",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 }
                                             ]
                                         },
                                         {
-                                            "id": "MyDisplayField23",
+                                            "id": "MyDisplayField22",
                                             "cid": "displayfield",
                                             "jsClass": "MyDisplayField15",
                                             "snapToGrid": 10,
                                             "userConfig": {
-                                                "value": "-ext-undefined-"
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
                                             }
                                         },
                                         {
-                                            "id": "MyCompositeField10",
+                                            "id": "MyCompositeField11",
                                             "cid": "compositefield",
                                             "jsClass": "MyCompositeField",
                                             "snapToGrid": 10,
@@ -1688,7 +1742,7 @@
                                             },
                                             "cn": [
                                                 {
-                                                    "id": "MyNumberField6",
+                                                    "id": "MyNumberField12",
                                                     "cid": "numberfield",
                                                     "jsClass": "MyTextField",
                                                     "snapToGrid": 10,
@@ -1700,13 +1754,13 @@
                                                         "id": "animationKeepPreviousAmountField",
                                                         "disabled": true,
                                                         "fieldClass": "x-form-field seismap-animation-field",
-                                                        "fieldLabel": "Label",
                                                         "allowNegative": false,
-                                                        "allowBlank": false
+                                                        "allowBlank": false,
+                                                        "fieldLabel": "Label"
                                                     }
                                                 },
                                                 {
-                                                    "id": "MyDisplayField16",
+                                                    "id": "MyDisplayField23",
                                                     "cid": "displayfield",
                                                     "jsClass": "MyDisplayField20",
                                                     "snapToGrid": 10,
@@ -1716,13 +1770,14 @@
                                                         "disabled": true,
                                                         "flex": "-ext-undefined-",
                                                         "margins": "2px 0px 0px 2px",
-                                                        "fieldClass": "x-form-display-field seismap-animation-field"
+                                                        "fieldClass": "x-form-display-field seismap-animation-field",
+                                                        "fieldLabel": "Label"
                                                     }
                                                 }
                                             ]
                                         },
                                         {
-                                            "id": "MyDisplayField17",
+                                            "id": "MyDisplayField24",
                                             "cid": "displayfield",
                                             "jsClass": "MyDisplayField15",
                                             "snapToGrid": 10,
@@ -1782,7 +1837,7 @@
                     "userConfig": {
                         "title": "Sismo: [event-information]",
                         "width": 640,
-                        "height": 270,
+                        "height": 380,
                         "region": "-ext-undefined-",
                         "shim": "-ext-undefined-",
                         "floating": true,
@@ -1792,7 +1847,9 @@
                         "autoHide": false,
                         "closeAction": "hide",
                         "maximizable": true,
-                        "maximized": true
+                        "maximized": "-ext-undefined-",
+                        "layout": "border",
+                        "modal": true
                     },
                     "cn": [
                         {
@@ -1801,7 +1858,8 @@
                             "jsClass": "MyTabPanel1",
                             "snapToGrid": 10,
                             "userConfig": {
-                                "activeTab": 0
+                                "activeTab": 0,
+                                "region": "center"
                             },
                             "cn": [
                                 {
@@ -1811,7 +1869,8 @@
                                     "snapToGrid": 10,
                                     "userConfig": {
                                         "title": "Mapa",
-                                        "id": "eventMapTab"
+                                        "id": "eventMapTab",
+                                        "layout": "border"
                                     },
                                     "cn": [
                                         {
@@ -1820,7 +1879,8 @@
                                             "jsClass": "MyContainer2",
                                             "snapToGrid": 10,
                                             "userConfig": {
-                                                "id": "eventMapArea"
+                                                "id": "eventMapArea",
+                                                "region": "center"
                                             }
                                         }
                                     ]
@@ -1864,11 +1924,215 @@
                                     "jsClass": "MyButton7",
                                     "snapToGrid": 10,
                                     "userConfig": {
-                                        "text": "Detalles",
+                                        "text": "Guardar",
                                         "scale": "medium",
-                                        "id": "eventDetailsButton",
-                                        "disabled": true
+                                        "id": "eventSaveButton",
+                                        "disabled": "-ext-undefined-"
                                     }
+                                }
+                            ]
+                        },
+                        {
+                            "id": "MyForm1",
+                            "cid": "panel",
+                            "jsClass": "MyForm",
+                            "snapToGrid": 10,
+                            "userConfig": {
+                                "title": "-ext-undefined-",
+                                "width": 320,
+                                "layout": "accordion",
+                                "activeItem": 0,
+                                "collapsible": true,
+                                "titleCollapse": true,
+                                "hideCollapseTool": "-ext-undefined-",
+                                "id": "eventPanel",
+                                "region": "east",
+                                "split": true
+                            },
+                            "cn": [
+                                {
+                                    "id": "MyPanel11",
+                                    "cid": "panel",
+                                    "jsClass": "MyPanel3",
+                                    "snapToGrid": 10,
+                                    "userConfig": {
+                                        "title": "Información",
+                                        "layout": "form",
+                                        "padding": 4,
+                                        "id": "eventInformationPanel",
+                                        "hideLabels": "-ext-undefined-",
+                                        "collapsed": "-ext-undefined-",
+                                        "autoScroll": true
+                                    },
+                                    "cn": [
+                                        {
+                                            "id": "MyTextField2",
+                                            "cid": "textfield",
+                                            "jsClass": "MyTextField2",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "id": "eventNameField",
+                                                "name": "ventName",
+                                                "fieldLabel": "Nombre",
+                                                "anchor": "100%",
+                                                "readOnly": "-ext-undefined-"
+                                            }
+                                        },
+                                        {
+                                            "id": "MyDisplayField26",
+                                            "cid": "displayfield",
+                                            "jsClass": "MyDisplayField21",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
+                                            }
+                                        },
+                                        {
+                                            "id": "MyCompositeField13",
+                                            "cid": "compositefield",
+                                            "jsClass": "MyCompositeField2",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "id": "eventDateCompositeField",
+                                                "fieldClass": "-ext-undefined-",
+                                                "fieldLabel": "Fecha"
+                                            },
+                                            "cn": [
+                                                {
+                                                    "id": "MyDateField3",
+                                                    "cid": "datefield",
+                                                    "jsClass": "MyDateField",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "flex": "-ext-undefined-",
+                                                        "id": "eventDateDateField",
+                                                        "name": "eventDateDate",
+                                                        "disabled": "-ext-undefined-",
+                                                        "allowBlank": false,
+                                                        "width": 100,
+                                                        "editable": false,
+                                                        "format": "d/m/Y",
+                                                        "fieldLabel": "Label",
+                                                        "readOnly": true
+                                                    }
+                                                },
+                                                {
+                                                    "id": "MyTimeField3",
+                                                    "cid": "timefield",
+                                                    "jsClass": "MyTimeField",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "width": 80,
+                                                        "name": "eventDateTime",
+                                                        "id": "eventDateTimeField",
+                                                        "disabled": "-ext-undefined-",
+                                                        "allowBlank": false,
+                                                        "editable": false,
+                                                        "increment": 1,
+                                                        "format": "h:i a",
+                                                        "fieldLabel": "Label",
+                                                        "readOnly": true
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "id": "MyDisplayField28",
+                                            "cid": "displayfield",
+                                            "jsClass": "MyDisplayField21",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
+                                            }
+                                        },
+                                        {
+                                            "id": "MyTextField3",
+                                            "cid": "textfield",
+                                            "jsClass": "MyTextField3",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "fieldLabel": "Referencia",
+                                                "anchor": "100%",
+                                                "id": "eventReferenceField",
+                                                "name": "eventReference"
+                                            }
+                                        },
+                                        {
+                                            "id": "MyDisplayField27",
+                                            "cid": "displayfield",
+                                            "jsClass": "MyDisplayField21",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
+                                            }
+                                        },
+                                        {
+                                            "id": "MyNumberField9",
+                                            "cid": "numberfield",
+                                            "jsClass": "MyNumberField9",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "fieldLabel": "Magnitud",
+                                                "anchor": "100%",
+                                                "id": "eventMagnitudeField",
+                                                "name": "eventMagnitude",
+                                                "readOnly": true
+                                            }
+                                        },
+                                        {
+                                            "id": "MyDisplayField25",
+                                            "cid": "displayfield",
+                                            "jsClass": "MyDisplayField21",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
+                                            }
+                                        },
+                                        {
+                                            "id": "MyNumberField10",
+                                            "cid": "numberfield",
+                                            "jsClass": "MyNumberField10",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "fieldLabel": "Ranking",
+                                                "anchor": "100%",
+                                                "id": "eventRankMagnitudeField",
+                                                "name": "eventRankMagnitude",
+                                                "readOnly": true
+                                            }
+                                        },
+                                        {
+                                            "id": "MyDisplayField21",
+                                            "cid": "displayfield",
+                                            "jsClass": "MyDisplayField21",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
+                                            }
+                                        },
+                                        {
+                                            "id": "MyTextArea",
+                                            "cid": "textarea",
+                                            "jsClass": "MyTextArea",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "anchor": "100%",
+                                                "fieldLabel": "Descripción",
+                                                "id": "eventNotesArea",
+                                                "name": "eventNotes"
+                                            }
+                                        }
+                                    ]
                                 }
                             ]
                         }
@@ -1882,7 +2146,7 @@
                     "userConfig": {
                         "title": "Sismos en esa ubicación",
                         "width": 620,
-                        "height": 250,
+                        "height": 350,
                         "region": "-ext-undefined-",
                         "shim": "-ext-undefined-",
                         "floating": true,
@@ -1972,13 +2236,14 @@
                                     "jsClass": "MyColumn10",
                                     "snapToGrid": 10,
                                     "userConfig": {
-                                        "header": "Magnitude",
+                                        "header": "Magnitud",
                                         "sortable": true,
                                         "resizable": "-ext-undefined-",
                                         "width": 60,
                                         "align": "right",
                                         "id": "locationEventsMagnitudeColumn",
-                                        "dataIndex": "magnitude"
+                                        "dataIndex": "magnitude",
+                                        "format": "0.000,00/i"
                                     }
                                 },
                                 {
@@ -1993,7 +2258,8 @@
                                         "width": 60,
                                         "align": "right",
                                         "id": "locationEventsRankMagnitudeColumn",
-                                        "dataIndex": "rankmagnitude"
+                                        "dataIndex": "rankmagnitude",
+                                        "format": "0.000,00/i"
                                     }
                                 }
                             ]
@@ -2160,7 +2426,8 @@
                     "jsClass": "MyField6",
                     "snapToGrid": 10,
                     "userConfig": {
-                        "name": "id"
+                        "name": "id",
+                        "type": "int"
                     }
                 },
                 {
@@ -2169,7 +2436,8 @@
                     "jsClass": "MyField7",
                     "snapToGrid": 10,
                     "userConfig": {
-                        "name": "information"
+                        "name": "information",
+                        "type": "string"
                     }
                 },
                 {
@@ -2178,7 +2446,8 @@
                     "jsClass": "MyField8",
                     "snapToGrid": 10,
                     "userConfig": {
-                        "name": "date"
+                        "name": "date",
+                        "type": "date"
                     }
                 },
                 {
@@ -2187,7 +2456,9 @@
                     "jsClass": "MyField9",
                     "snapToGrid": 10,
                     "userConfig": {
-                        "name": "magnitude"
+                        "name": "magnitude",
+                        "type": "float",
+                        "defaultValue": "-ext-undefined-"
                     }
                 },
                 {
@@ -2196,7 +2467,9 @@
                     "jsClass": "MyField10",
                     "snapToGrid": 10,
                     "userConfig": {
-                        "name": "rankmagnitude"
+                        "name": "rankmagnitude",
+                        "type": "float",
+                        "defaultValue": "-ext-undefined-"
                     }
                 }
             ]

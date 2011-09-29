@@ -1,51 +1,43 @@
-package com.seismap.model.entity;
+package com.seismap.service.event;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-import com.vividsolutions.jts.geom.Point;
+public class EventInfoAndAverageMagnitudesDto extends EventInfoDto {
 
-@Entity
-public class EventAndAverageMagnitudes extends EventInfo {
+	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(nullable = false)
-	private Long id;
-
-	@Column(nullable = true)
+	@JsonProperty
 	private Float RANKMagnitude;
 
-	@Column(nullable = true)
+	@JsonProperty
 	private Float MBMagnitude;
 
-	@Column(nullable = true)
+	@JsonProperty
 	private Float MBLGMagnitude;
 
-	@Column(nullable = true)
+	@JsonProperty
 	private Float MCMagnitude;
 
-	@Column(nullable = true)
+	@JsonProperty
 	private Float MLMagnitude;
 
-	@Column(nullable = true)
+	@JsonProperty
 	private Float MSMagnitude;
 
-	@Column(nullable = true)
+	@JsonProperty
 	private Float MWMagnitude;
 
-	protected EventAndAverageMagnitudes() {
-
+	protected EventInfoAndAverageMagnitudesDto() {
 	}
 
-	protected EventAndAverageMagnitudes(Long id, Point location, float depth,
-			Date date, Float RANKMagnitude, Float MLMagnitude,
-			Float MBMagnitude, Float MSMagnitude, Float MWMagnitude,
-			Float MBLGMagnitude, Float MCMagnitude, String name, String notes,
-			String reference) {
-		super(location, depth, date, name, notes, reference);
+	public EventInfoAndAverageMagnitudesDto(Long id, Double latitude,
+			Double longitude, Float depth, Date date, String name,
+			String notes, String reference, Float RANKMagnitude,
+			Float MLMagnitude, Float MBMagnitude, Float MSMagnitude,
+			Float MWMagnitude, Float MBLGMagnitude, Float MCMagnitude) {
+		super(id, latitude, longitude, depth, date, name, notes, reference);
 		this.RANKMagnitude = RANKMagnitude;
 		this.MLMagnitude = MLMagnitude;
 		this.MBMagnitude = MBMagnitude;
@@ -53,10 +45,6 @@ public class EventAndAverageMagnitudes extends EventInfo {
 		this.MWMagnitude = MWMagnitude;
 		this.MBLGMagnitude = MBLGMagnitude;
 		this.MCMagnitude = MCMagnitude;
-	}
-
-	public Long getId() {
-		return id;
 	}
 
 	public Float getRANKMagnitude() {

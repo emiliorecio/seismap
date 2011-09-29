@@ -6,7 +6,7 @@ import com.seismap.service.common.ExceptionCause;
 import com.seismap.service.common.ResponseDto;
 
 public class FindEventsAndAverageMagnitudesResponseDto extends
-		ResponseDto<List<EventAndAverageMagnitudesDto>> {
+		ResponseDto<List<EventInfoAndAverageMagnitudesDto>> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -15,7 +15,7 @@ public class FindEventsAndAverageMagnitudesResponseDto extends
 	}
 
 	public FindEventsAndAverageMagnitudesResponseDto(
-			List<EventAndAverageMagnitudesDto> eventsAndAverageMagnitudes) {
+			List<EventInfoAndAverageMagnitudesDto> eventsAndAverageMagnitudes) {
 		super(eventsAndAverageMagnitudes);
 	}
 

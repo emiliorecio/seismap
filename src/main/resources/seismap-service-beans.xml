@@ -28,6 +28,7 @@
     <constructor-arg ref="model_eventAndAverageMagnitudesRepository" />
     <constructor-arg ref="model_dataBoundsRepository" />
     <constructor-arg ref="model_magnitudeLimitsRepository" />
+    <constructor-arg ref="model_userRepository" />
   </bean>
 
   <bean id="service_dataLoadService" class="com.seismap.service.impl.DataLoadServiceImpl">

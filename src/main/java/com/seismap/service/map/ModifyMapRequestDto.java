@@ -12,12 +12,12 @@ public class ModifyMapRequestDto extends RequestDto {
 	private Long mapId;
 
 	@JsonProperty
-	private BasicMapDataDto map;
+	private ModifiableMapDataDto map;
 
 	protected ModifyMapRequestDto() {
 	}
 
-	public ModifyMapRequestDto(Long mapId, BasicMapDataDto map) {
+	public ModifyMapRequestDto(Long mapId, ModifiableMapDataDto map) {
 		this.mapId = mapId;
 		this.map = map;
 	}
@@ -26,7 +26,7 @@ public class ModifyMapRequestDto extends RequestDto {
 		return mapId;
 	}
 
-	public BasicMapDataDto getMap() {
+	public ModifiableMapDataDto getMap() {
 		return map;
 	}
 

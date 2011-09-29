@@ -34,6 +34,9 @@ public class User implements Identifiable<Long> {
 	@Column(nullable = false)
 	private String passwordHash;
 
+	@Column(nullable = false)
+	private boolean administrator;
+
 	@IndexColumn(name = "inUserIndex")
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id", nullable = true)
@@ -45,11 +48,13 @@ public class User implements Identifiable<Long> {
 	protected User() {
 	}
 
-	public User(String name, String email, String passwordHash) {
+	public User(String name, String email, String passwordHash,
+			boolean administrator) {
 		super();
 		this.name = name;
 		this.email = email;
 		this.passwordHash = passwordHash;
+		this.administrator = administrator;
 	}
 
 	public String getName() {
@@ -89,6 +94,14 @@ public class User implements Identifiable<Long> {
 
 	public List<Map> getMaps() {
 		return getMapsManager().getList();
+	}
+
+	public boolean isAdministrator() {
+		return administrator;
+	}
+
+	public void setAdministrator(boolean administrator) {
+		this.administrator = administrator;
 	}
 
 }

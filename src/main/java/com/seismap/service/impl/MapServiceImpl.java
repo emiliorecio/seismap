@@ -22,7 +22,7 @@ import com.seismap.service.common.ExceptionCause;
 import com.seismap.service.common.ExceptionCause.ExceptionParameter;
 import com.seismap.service.event.ExtendedMagnitudeType;
 import com.seismap.service.map.AnimationType;
-import com.seismap.service.map.BasicMapDataDto;
+import com.seismap.service.map.ModifiableMapDataDto;
 import com.seismap.service.map.CreateMapRequestDto;
 import com.seismap.service.map.CreateMapResponseDto;
 import com.seismap.service.map.DateLimitType;
@@ -156,7 +156,7 @@ public class MapServiceImpl implements MapService {
 			maxDate = calendar.getTime();
 		}
 
-		BasicMapDataDto mapDto = new BasicMapDataDto(name, description,
+		ModifiableMapDataDto mapDto = new ModifiableMapDataDto(name, description,
 				Double.valueOf(centerLatitude),
 				Double.valueOf(centerLongitude), Integer.valueOf(zoom),
 				minDateType, Float.valueOf(minDateRelativeAmount),
@@ -213,7 +213,7 @@ public class MapServiceImpl implements MapService {
 					ExceptionParameter.MAP_NAME, name);
 			return exceptionResponse;
 		}
-		BasicMapDataDto mapDataDto = request.getMap();
+		ModifiableMapDataDto mapDataDto = request.getMap();
 		Long styleId = mapDataDto.getStyleId();
 		Style style = styleRepository.get(styleId);
 		if (style == null) {
@@ -333,7 +333,7 @@ public class MapServiceImpl implements MapService {
 					userId);
 			return exceptionResponse;
 		}
-		BasicMapDataDto mapDataDto = request.getMap();
+		ModifiableMapDataDto mapDataDto = request.getMap();
 		String name = mapDataDto.getName();
 		Map existingMap = mapRepository.getByUserAndName(map.getUser(), name);
 		if (existingMap != null && existingMap != map) {

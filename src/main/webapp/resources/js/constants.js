@@ -1,5 +1,7 @@
 seismap = {};
 seismap.constants = {};
+seismap.constants.eventMapZoom = 7;
+seismap.constants.layerName = 'seismap:eventandaveragemagnitudes';
 seismap.constants.dateUnits = [ {
   id : 'MINUTE',
   name : 'Minutos'
@@ -42,3 +44,13 @@ seismap.constants.magnitudeTypes = [ {
   id : 'MC',
   name : 'Magnitud de Mercalli (MC/MM/MMI)'
 } ];
+
+Ext.data.SortTypes.asNullableFloat = function(s) {
+  var val = parseFloat(String(s).replace(/,/g, ""));
+  return isNaN(val) ? Number.NEGATIVE_INFINITY : val;
+};
+
+Ext.data.SortTypes.asNullableInt = function(s) {
+  var val = parseInt(String(s).replace(/,/g, ""), 10);
+  return isNaN(val) ? Number.NEGATIVE_INFINITY : val;
+};

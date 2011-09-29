@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 		}
 		String name = request.getUserName();
 		String password = request.getUserPassword();
-		User user = new User(name, email, password);
+		User user = new User(name, email, password, false);
 		UserDto userDto = DtoMarshaler.unmarshallUser(user);
 		CreateUserResponseDto response = new CreateUserResponseDto(userDto);
 		return response;

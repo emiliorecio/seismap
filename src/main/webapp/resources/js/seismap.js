@@ -23,6 +23,16 @@ new EventStore();
 new LocationEventStore({
   data : []
 });
+seismap.init = function() {
+  var locationEventStore = Ext.StoreMgr.get('locationEventStore');
+  var magnitudeField = locationEventStore.fields.get('magnitude');
+  magnitudeField.useNull = true;
+  magnitudeField.sortType = Ext.data.SortTypes.asNullableFloat;
+  var rankMagnitudeField = locationEventStore.fields.get('rankmagnitude');
+  rankMagnitudeField.useNull = true;
+  rankMagnitudeField.sortType = Ext.data.SortTypes.asNullableFloat;
+  return true;
+}();
 
 SeismapViewport = Ext.extend(SeismapViewportUi, {
   initComponent : function() {
@@ -141,42 +151,195 @@ seismap.ui.initLocationEventsWindow = function() {
     var record = grid.getSelectionModel().getSelected();
     var eventId = record.get('id');
     var eventInformation = record.get('information');
-    var request = {
-        eventId: eventId
-      };
-    Ext.Ajax.request({
-      url: seismap.constants.baseUri + '/action/event/get',
-      method: 'POST',
-      jsonData: request,
-      success: function(response, opts) {
-        var response = Ext.decode(response.responseText);
-        if(response.exception) {
-          Ext.Msg.alert('Sismo: ' + eventInformation, response.exception.message);
-        } else {
-          eventWindow.setTitle('Sismo: ' + eventInformation);
-          eventWindow.show();
-        }
-      },
-      failure: function(response, opts) {
-        Ext.Msg.alert('Sismo: ' + eventInformation, 'Uy.. hubo un error!');
-      }
-   });
+    self.showEventWindow(eventId, eventInformation);
   });
 
 };
 seismap.ui.initEventWindow = function() {
   var self = this;
-  var locationEventsWindow = Ext.WindowMgr.get('eventWindow');
+  var eventWindow = Ext.WindowMgr.get('eventWindow');
   // This fixes an ExtJs problem with the window not showing if started as
-  // hidden
-  locationEventsWindow.getEl().setStyle('visibility', 'visible');
+  // hidden.
+  eventWindow.getEl().setStyle('visibility', 'visible');
+  // End of fix.
+  
   var closeButton = Ext.getCmp('eventCloseButton');
+  var eventSaveButton = Ext.getCmp('eventSaveButton');
+  var eventPanel = Ext.getCmp('eventPanel');
+  
+  var nameControl = Ext.getCmp('eventNameField');
+  var referenceControl = Ext.getCmp('eventReferenceField');
+  var notesControl = Ext.getCmp('eventNotesArea');
+
+  if (!seismap.constants.user.administrator) {
+    eventSaveButton.hide();
+    nameControl.setReadOnly(true);
+    referenceControl.setReadOnly(true);
+    notesControl.setReadOnly(true);
+  }
 
   closeButton.on('click', function() {
     eventWindow.hide();
   });
+  
 
+  var allFields = eventPanel.findByType(Ext.form.Field);
+  eventSaveButton.on('click', function() {
+    var errors = false;
+    Ext.each(allFields, function(field) {
+      errors = errors || !field.isValid();
+    });
+    if (errors) {
+      Ext.Msg.alert('Guardar', 'Por favor, corrija primero los errores.');
+      return;
+    }
+    var eventData = {};
+    eventData.name = nameControl.getValue();
+    eventData.reference = referenceControl.getValue();
+    eventData.notes = notesControl.getValue();
+
+    var request = {
+      eventId: self.eventData.id,
+      event: eventData
+    };
+    Ext.Ajax.request({
+      url: seismap.constants.baseUri + '/action/event/modify',
+      method: 'POST',
+      jsonData: request,
+      success: function(response, opts) {
+        var response = Ext.decode(response.responseText);
+        if(response.exception) {
+          Ext.Msg.alert('Guardar', response.exception.message);
+        } else {
+          var event = response.value;
+          event.date = new Date(event.date);
+          self.eventData = event;
+          var eventInformation = self.buildEventInformation(event.id, event.name, event.reference, event.date, event.notes);
+          eventWindow.setTitle('Sismo: ' + eventInformation);
+          self.loadEventLayers();
+          self.loadLayers();
+        }
+      },
+      failure: function(response, opts) {
+        Ext.Msg.alert('Guardar', 'Uy.. hubo un error!');
+      }
+    });
+  });
+  
 };
+seismap.ui.initEventWindowMap = function() {
+  if (this.initEventWindowMap.done) {
+    return;
+  }
+  this.initEventWindowMap.done = true;
+  var bounds =  new OpenLayers.Bounds(-20037508.34, -20037508.34,
+      20037508.34, 20037508.34)
+  var options = {
+    controls : [],
+    maxExtent : bounds,
+    numZoomLevels : 22,
+    projection : "EPSG:900913",
+    units : 'm',
+    theme : seismap.constants.baseUri
+        + "/resources/css/lib/openlayers/theme/default/style.css"
+  };
+  this.eventMap = new OpenLayers.Map(options);
+  this.eventMap.addControl(new OpenLayers.Control.PanZoom({
+    position : new OpenLayers.Pixel(2, 15)
+  }));
+  this.eventMap.addControl(new OpenLayers.Control.Navigation());
+  this.eventMap.addControl(new OpenLayers.Control.LayerSwitcher({'div':OpenLayers.Util.getElement('layerswitcher')}));
+  var eventMapArea = Ext.getCmp('eventMapArea');
+  var self = this;
+
+  var center = new OpenLayers.LonLat(this.mapData.centerLongitude,
+      this.mapData.centerLatitude);
+
+  var zoom = seismap.constants.eventMapZoom;
+  this.eventMapPanel = new GeoExt.MapPanel({
+    renderTo : "eventMapArea",
+    stateId : "eventMapArea",
+    height : eventMapArea.getSize().height,
+    width : eventMapArea.getSize().width,
+    center : center,
+    zoom : zoom,
+    map : this.eventMap
+  });
+  var gphy = new OpenLayers.Layer.Google("Google Physical", {
+    type : google.maps.MapTypeId.TERRAIN,
+  });
+  var gmap = new OpenLayers.Layer.Google("Google Streets", // the default
+  {
+    numZoomLevels : 20
+  });
+  var ghyb = new OpenLayers.Layer.Google("Google Hybrid", {
+    type : google.maps.MapTypeId.HYBRID,
+    numZoomLevels : 20
+  });
+  var gsat = new OpenLayers.Layer.Google("Google Satellite", {
+    type : google.maps.MapTypeId.SATELLITE,
+    numZoomLevels : 22
+  });
+
+  this.eventMap.addLayers([ gphy, gmap, ghyb, gsat ]);
+  var proj = new OpenLayers.Projection("EPSG:4326");
+  center = center.transform(proj, this.eventMap.getProjectionObject());
+  this.eventMap.setCenter(center, zoom);
+  var self = this;
+  eventMapArea.on('resize', function(eventMapArea) {
+    self.eventMapPanel.setSize(eventMapArea.getSize());
+  });
+};
+seismap.ui.getEventFeatures = function(e) {
+  Ext.each(e.features, function(feature) {
+    alert(feature);
+  });
+}
+seismap.ui.showEventWindow = function(eventId, eventInformation) {
+  var self = this;
+  if (!eventInformation) {
+    eventInformation = this.buildEventInformation(eventId);
+  }
+  var request = {
+      eventId: eventId
+    };
+  var eventWindow = Ext.WindowMgr.get('eventWindow');
+  Ext.Ajax.request({
+    url: seismap.constants.baseUri + '/action/event/get',
+    method: 'POST',
+    jsonData: request,
+    success: function(response, opts) {
+      var response = Ext.decode(response.responseText);
+      if(response.exception) {
+        Ext.Msg.alert('Sismo: ' + eventInformation, response.exception.message);
+      } else {
+        var event = response.value;        
+        event.date = new Date(event.date);
+        self.eventData = event;
+        var information = self.buildEventInformation(event.id, 
+            event.name, event.reference, event.date, event.notes);
+        eventWindow.setTitle('Sismo: ' + information);
+        eventWindow.show();
+        self.initEventWindowMap();
+        self.loadEventLayers();
+        var center = new OpenLayers.LonLat(event.longitude, event.latitude);
+        self.eventMap.setCenter(center, seismap.constants.eventMapZoom);
+        self.initEventParameters();
+      }
+    },
+    failure: function(response, opts) {
+      Ext.Msg.alert('Sismo: ' + eventInformation, 'Uy.. hubo un error!');
+    }
+ });  
+};
+seismap.ui.loadEventLayers = function() {
+  if (this.eventLayer) {
+    this.eventMap.removeLayer(this.eventLayer);
+  }
+  this.eventLayer = this.createLayer(this.eventMap, 'id = ' + this.eventData.id, 'Sismo');
+  this.registerGetFeaturesControl(this.eventMap, this.getEventFeatures);
+  this.addLayer(this.eventLayer);
+}
 seismap.ui.registerControlHandles = function() {
   function parseDateTime(dateValue, timeValue) {
     var timeSeparatorIndex = timeValue.indexOf(':');
@@ -260,7 +423,7 @@ seismap.ui.registerControlHandles = function() {
   });
 
   var mapViewPanel = Ext.getCmp('mapViewPanel');
-  var parametersForm = Ext.getCmp('parametersForm').getForm();
+  var parametersPanel = Ext.getCmp('parametersPanel');
   var applyButton = Ext.getCmp('applyButton');
   var saveChangesButton = Ext.getCmp('saveChangesButton');
   var discardChangesButton = Ext.getCmp('discardChangesButton');
@@ -272,88 +435,94 @@ seismap.ui.registerControlHandles = function() {
     deleteMapButton.enable();
   }
 
+  var allFields = parametersPanel.findByType(Ext.form.Field);
   applyButton.on('click', function() {
     self.mapData.zoom = zoomControl.getValue();
     self.mapData.centerLatitude = centerLatitudeControl.getValue();
     self.mapData.centerLongitude = centerLongitudeControl.getValue();
     self.mapData.styleId = styleControl.getValue();
-
-    if (parametersForm.isValid()) {
-      if (minDateTypeNoneControl.getValue()) {
-        self.mapData.minDateType = 'NONE';
-      } else if (minDateTypeRelativeControl.getValue()) {
-        self.mapData.minDateType = 'RELATIVE';
-      } else if (minDateTypeAbsoluteControl.getValue()) {
-        self.mapData.minDateType = 'ABSOLUTE';
-      }
-      self.mapData.minDateRelativeAmount = minDateRelativeAmountControl
-          .getValue();
-      self.mapData.minDateRelativeUnits = minDateRelativeUnitsControl
-          .getValue();
-      self.mapData.minDate = parseDateTime(minDateControl.getValue(),
-          minTimeControl.getValue());
-      if (maxDateTypeNoneControl.getValue()) {
-        self.mapData.maxDateType = 'NONE';
-      } else if (maxDateTypeRelativeControl.getValue()) {
-        self.mapData.maxDateType = 'RELATIVE';
-      } else if (maxDateTypeAbsoluteControl.getValue()) {
-        self.mapData.maxDateType = 'ABSOLUTE';
-      }
-      self.mapData.maxDateRelativeAmount = maxDateRelativeAmountControl
-          .getValue();
-      self.mapData.maxDateRelativeUnits = maxDateRelativeUnitsControl
-          .getValue();
-      self.mapData.maxDate = parseDateTime(maxDateControl.getValue(),
-          maxTimeControl.getValue());
-      if (maxDepthTypeNoneControl.getValue()) {
-        self.mapData.maxDepthType = 'NONE';
-      } else if (maxDepthTypeAbsoluteControl.getValue()) {
-        self.mapData.maxDepthType = 'ABSOLUTE';
-      }
-      self.mapData.maxDepth = maxDepthControl.getValue();
-      if (minDepthTypeNoneControl.getValue()) {
-        self.mapData.minDepthType = 'NONE';
-      } else if (minDepthTypeAbsoluteControl.getValue()) {
-        self.mapData.minDepthType = 'ABSOLUTE';
-      }
-      self.mapData.minDepth = minDepthControl.getValue();
-      self.mapData.magnitudeType = magnitudeTypeControl.getValue();
-      if (maxMagnitudeTypeNoneControl.getValue()) {
-        self.mapData.maxMagnitudeType = 'NONE';
-      } else if (maxMagnitudeTypeAbsoluteControl.getValue()) {
-        self.mapData.maxMagnitudeType = 'ABSOLUTE';
-      }
-      self.mapData.maxMagnitude = maxMagnitudeControl.getValue();
-      if (minMagnitudeTypeNoneControl.getValue()) {
-        self.mapData.minMagnitudeType = 'NONE';
-      } else if (minMagnitudeTypeAbsoluteControl.getValue()) {
-        self.mapData.minMagnitudeType = 'ABSOLUTE';
-      }
-
-      self.mapData.minMagnitude = minMagnitudeControl.getValue();
-      self.mapData.listUnmeasured = listUnmeasuredControl.getValue();
-      if (animationTypeNoneControl.getValue()) {
-        self.mapData.animationType = 'NONE';
-      } else if (animationTypeDateControl.getValue()) {
-        self.mapData.animationType = 'DATE';
-      } else if (animationTypeDepthControl.getValue()) {
-        self.mapData.animationType = 'DEPTH';
-      } else if (animationTypeMagnitudeControl.getValue()) {
-        self.mapData.animationType = 'MAGNITUDE';
-      }
-      self.mapData.animationSteps = animationStepsControl.getValue();
-      self.mapData.animationStepDuration = animationStepDurationControl
-          .getValue();
-      self.mapData.animationStepKeep = animationStepKeepControl.getValue();
-      self.mapData.reverseAnimation = reverseAnimationControl.getValue();
-
-      self.modified = true;
-      if (self.mapData.id) {
-        saveChangesButton.enable();
-      }
-      discardChangesButton.enable();
-      self.loadLayers();
+    var errors = false;
+    Ext.each(allFields, function(field) {
+      errors = errors || !field.isValid();
+    });
+    if (errors) {
+      Ext.Msg.alert('Aplicar', 'Por favor, corrija primero los errores.');
+      return;
     }
+    if (minDateTypeNoneControl.getValue()) {
+      self.mapData.minDateType = 'NONE';
+    } else if (minDateTypeRelativeControl.getValue()) {
+      self.mapData.minDateType = 'RELATIVE';
+    } else if (minDateTypeAbsoluteControl.getValue()) {
+      self.mapData.minDateType = 'ABSOLUTE';
+    }
+    self.mapData.minDateRelativeAmount = minDateRelativeAmountControl
+        .getValue();
+    self.mapData.minDateRelativeUnits = minDateRelativeUnitsControl
+        .getValue();
+    self.mapData.minDate = parseDateTime(minDateControl.getValue(),
+        minTimeControl.getValue());
+    if (maxDateTypeNoneControl.getValue()) {
+      self.mapData.maxDateType = 'NONE';
+    } else if (maxDateTypeRelativeControl.getValue()) {
+      self.mapData.maxDateType = 'RELATIVE';
+    } else if (maxDateTypeAbsoluteControl.getValue()) {
+      self.mapData.maxDateType = 'ABSOLUTE';
+    }
+    self.mapData.maxDateRelativeAmount = maxDateRelativeAmountControl
+        .getValue();
+    self.mapData.maxDateRelativeUnits = maxDateRelativeUnitsControl
+        .getValue();
+    self.mapData.maxDate = parseDateTime(maxDateControl.getValue(),
+        maxTimeControl.getValue());
+    if (maxDepthTypeNoneControl.getValue()) {
+      self.mapData.maxDepthType = 'NONE';
+    } else if (maxDepthTypeAbsoluteControl.getValue()) {
+      self.mapData.maxDepthType = 'ABSOLUTE';
+    }
+    self.mapData.maxDepth = maxDepthControl.getValue();
+    if (minDepthTypeNoneControl.getValue()) {
+      self.mapData.minDepthType = 'NONE';
+    } else if (minDepthTypeAbsoluteControl.getValue()) {
+      self.mapData.minDepthType = 'ABSOLUTE';
+    }
+    self.mapData.minDepth = minDepthControl.getValue();
+    self.mapData.magnitudeType = magnitudeTypeControl.getValue();
+    if (maxMagnitudeTypeNoneControl.getValue()) {
+      self.mapData.maxMagnitudeType = 'NONE';
+    } else if (maxMagnitudeTypeAbsoluteControl.getValue()) {
+      self.mapData.maxMagnitudeType = 'ABSOLUTE';
+    }
+    self.mapData.maxMagnitude = maxMagnitudeControl.getValue();
+    if (minMagnitudeTypeNoneControl.getValue()) {
+      self.mapData.minMagnitudeType = 'NONE';
+    } else if (minMagnitudeTypeAbsoluteControl.getValue()) {
+      self.mapData.minMagnitudeType = 'ABSOLUTE';
+    }
+
+    self.mapData.minMagnitude = minMagnitudeControl.getValue();
+    self.mapData.listUnmeasured = listUnmeasuredControl.getValue();
+    if (animationTypeNoneControl.getValue()) {
+      self.mapData.animationType = 'NONE';
+    } else if (animationTypeDateControl.getValue()) {
+      self.mapData.animationType = 'DATE';
+    } else if (animationTypeDepthControl.getValue()) {
+      self.mapData.animationType = 'DEPTH';
+    } else if (animationTypeMagnitudeControl.getValue()) {
+      self.mapData.animationType = 'MAGNITUDE';
+    }
+    self.mapData.animationSteps = animationStepsControl.getValue();
+    self.mapData.animationStepDuration = animationStepDurationControl
+        .getValue();
+    self.mapData.animationStepKeep = animationStepKeepControl.getValue();
+    self.mapData.reverseAnimation = reverseAnimationControl.getValue();
+
+    self.modified = true;
+    if (self.mapData.id) {
+      saveChangesButton.enable();
+    }
+    discardChangesButton.enable();
+    self.loadLayers();
   });
   mapViewPanel.setTitle('Mapa: ' + self.mapData.name);
 
@@ -428,6 +597,9 @@ seismap.ui.registerControlHandles = function() {
       });
     });
   });
+
+  
+
 };
 seismap.ui.initParameters = function () {
   function formatDate(dateTimeValue) {
@@ -555,7 +727,67 @@ seismap.ui.initParameters = function () {
   animationStepKeepControl.setValue(self.mapData.animationStepKeep);
   reverseAnimationControl.setValue(self.mapData.reverseAnimation);
 };
-
+seismap.ui.initEventParameters = function () {
+  function formatDate(dateTimeValue) {
+    var dateValue = new Date(dateTimeValue);
+    dateValue.setHours(0);
+    dateValue.setMinutes(0);
+    return dateValue;
+  }
+  function formatTime(dateTimeValue) {
+    var hours = dateTimeValue.getHours();
+    var minutes = dateTimeValue.getMinutes();
+    var ampm = 'AM';
+    if (hours > 12) {
+      hours -= 12;
+      ampm = 'PM';
+    }
+    if (hours == 0) {
+      hours = 12;
+    }
+    var timeValue = hours + ':' + (minutes < 10 ? '0' + minutes : minutes)
+        + ' ' + ampm;
+    return timeValue;
+  }
+  var self = this;
+  var nameControl = Ext.getCmp('eventNameField');
+  var dateControl = Ext.getCmp('eventDateDateField');
+  var timeControl = Ext.getCmp('eventDateTimeField');
+  var referenceControl = Ext.getCmp('eventReferenceField');
+  var magnitudeControl = Ext.getCmp('eventMagnitudeField');
+  var rankMagnitudeControl = Ext.getCmp('eventRankMagnitudeField');
+  var notesControl = Ext.getCmp('eventNotesArea');
+  
+  nameControl.setValue(self.eventData.name);
+  dateControl.setValue(formatDate(self.eventData.date));
+  timeControl.setValue(formatTime(self.eventData.date));
+  referenceControl.setValue(self.eventData.reference);
+  magnitudeControl.setValue(self.eventData[self.mapData.magnitudeType + 'Magnitude']);
+  rankMagnitudeControl.setValue(self.eventData.RANKMagnitude);
+  notesControl.setValue(self.eventData.notes);
+};
+seismap.ui.buildEventInformation = function (id, name, reference, date, notes) {
+  var information = name;
+  if (information == null || information.length == 0) {
+    if (reference != null && reference.length > 0) {
+      information = reference + ' '+ date.format('d/m/Y h:i a');
+    }
+  }
+  if (information == null || information.length == 0) {
+    if (notes != null && notes.length > 0) {
+      information = date.format('d/m/Y h:i a') + ' ' + notes;
+    }
+  }
+  if (information == null || information.length == 0) {
+    if (date != null) {
+      information = 'Sismo ' + id + ' del ' + date.format('d/m/Y h:i a');
+    }
+  }
+  if (information == null || information.length == 0) {
+    information = 'Sismo ' + id;
+  }
+  return information;
+}
 seismap.ui.initMap = function() {
   this.minWait = -1;
 
@@ -578,52 +810,8 @@ seismap.ui.initMap = function() {
     position : new OpenLayers.Pixel(2, 15)
   }));
   this.map.addControl(new OpenLayers.Control.Navigation());
+  this.map.addControl(new OpenLayers.Control.LayerSwitcher({'div':OpenLayers.Util.getElement('layerswitcher')}));
   var mapArea = Ext.getCmp('mapArea');
-  var self = this;
-  this.map.addControl(new OpenLayers.Control.WMSGetFeatureInfo({
-      autoActivate: true,
-      infoFormat: "application/vnd.ogc.gml",
-      maxFeatures: 1000,
-      eventListeners: {
-          "getfeatureinfo": function(e) {
-              var data = [];
-              Ext.each(e.features, function(feature) {
-                var attributes = feature.attributes;
-                var date = new Date(attributes.date);
-                var information = attributes.name;
-                if (information == null || information.length == 0) {
-                  if (attributes.reference != null && attributes.reference.length > 0) {
-                    information = attributes.reference + ' '+ date.format('d/m/Y h:i:s a');
-                  }
-                }
-                if (information == null || information.length == 0) {
-                  if (attributes.notes != null && attributes.notes.length > 0) {
-                    information = date.format('d/m/Y h:i:s a') + ' ' + attributes.notes;
-                  }
-                }
-                if (information == null || information.length == 0) {
-                  information = 'Sismo ' + attributes.id + ' del ' + date.format('d/m/Y h:i:s a');
-                }
-                var event = {
-                    id: attributes.id,
-                    information: information,
-                    date : attributes.date,
-                    magnitude: attributes.magnitude,
-                    rankmagnitude: attributes.rankmagnitude
-                };
-                data.push(event);
-              });
-              var locationEventStore = Ext.StoreMgr.get('locationEventStore');
-              locationEventStore.loadData(data);
-              if (data.length == 0) {
-                return;
-              }
-              var locationEventsWindow = Ext.WindowMgr.get('locationEventsWindow');
-              locationEventsWindow.show();
-          }
-      }
-  }));
-
 
   var center = new OpenLayers.LonLat(this.mapData.centerLongitude,
       this.mapData.centerLatitude);
@@ -673,6 +861,50 @@ seismap.ui.initMap = function() {
   this.currentFrame = -1
   this.loadLayers();
 };
+seismap.ui.registerGetFeaturesControl = function (map, infoFunction) {
+  map.addControl(new OpenLayers.Control.WMSGetFeatureInfo({
+      id: 'featureInfo',
+      autoActivate: true,
+      infoFormat: "application/vnd.ogc.gml",
+      maxFeatures: 1000,
+      eventListeners: {
+          "getfeatureinfo": infoFunction
+      }
+    }));
+}
+seismap.ui.getFeatures = function(e) {
+  var self = seismap.ui;
+  var data = [];
+  Ext.each(e.features, function(feature) {
+    var attributes = feature.attributes;
+    var id = parseInt(attributes.id);
+    var date = new Date(attributes.date);
+    var information = self.buildEventInformation(id, 
+        attributes.name, attributes.reference, date, attributes.notes);
+    var event = {
+        id: id,
+        information: information,
+        date : date
+    };
+    if (attributes.magnitude != undefined) {
+      event.magnitude = parseFloat(attributes.magnitude);
+    }
+    if (attributes.rankmagnitude != undefined) {
+      event.rankmagnitude = parseFloat(attributes.rankmagnitude);
+    }
+    data.push(event);
+  });
+  var locationEventStore = Ext.StoreMgr.get('locationEventStore');
+  locationEventStore.loadData(data);
+  if (data.length == 0) {
+    // ignore
+  } else if (data.length == 1) {
+    self.showEventWindow(data[0].id, data[0].information);
+  } else { 
+    var locationEventsWindow = Ext.WindowMgr.get('locationEventsWindow');
+    locationEventsWindow.show();
+  }
+};
 seismap.ui.loadLayers = function() {
   document.title = (isNaN(parseInt(document.title)) ? 0
       : parseInt(document.title)) + 1;
@@ -690,8 +922,10 @@ seismap.ui.loadLayers = function() {
   for ( var i = 0; i < this.cqlFilters.length; i++) {
     var cqlFilter = this.cqlFilters[i];
     // document.id('mapUris').value += cqlFilter + '\n';
-    this.layers[i] = this.createLayer(cqlFilter);
+    var layerName = this.cqlFilters.length == 1 ? 'Sismos' : 'Sismos - Cuadro ' + (i + 1); 
+    this.layers[i] = this.createLayer(this.map, cqlFilter, layerName);
   }
+  this.registerGetFeaturesControl(this.map, this.getFeatures);
   this.currentFrame = -1;
   this.start();
 };
@@ -778,8 +1012,7 @@ seismap.ui.removeLayer = function(layer) {
     }
   }
 };
-seismap.ui.createLayer = function(cqlFilter) {
-  var layerName = 'seismap:eventandaveragemagnitudes';
+seismap.ui.createLayer = function(map, cqlFilter, layerName) {
   var style = null;
   for ( var i = 0; i < seismap.constants.styles.length; i++) {
     var aStyle = seismap.constants.styles[i];
@@ -790,7 +1023,8 @@ seismap.ui.createLayer = function(cqlFilter) {
   }
   var sld = style.sld;
   var params = '';
-  params += '?viewparams=';
+  params += '?nocache=' + new Date().getTime();
+  params += '&viewparams=';
   params += 'magnitudeType:' + this.mapData.magnitudeType.toLowerCase();
   params += '&env=';
   params += 'map.magnitudeType:' + this.mapData.magnitudeType;
@@ -798,20 +1032,23 @@ seismap.ui.createLayer = function(cqlFilter) {
     var value = style.variables[name];
     params += ';var.' + escape(name) + ':' + escape(value);
   }
+  if (cqlFilter != null) {
+    params += '&CQL_FILTER=' + escape(cqlFilter);
+  }
   var layer = new OpenLayers.Layer.WMS(
-      "SeisMap",
+      layerName,
       seismap.constants.layerServerUri + '/wms' + params,
       {
         width : '1679',
         srs : 'EPSG:900913',
-        layers : layerName,
+        layers : seismap.constants.layerName,
         height : '330',
         styles : sld,
         format : 'image/png',
-        cql_filter : cqlFilter,
+        // cql_filter : cqlFilter,
         tiled : 'false',
         feature_count : 1,
-        tilesOrigin : this.map.maxExtent.left + ',' + this.map.maxExtent.bottom,
+        tilesOrigin : map.maxExtent.left + ',' + map.maxExtent.bottom,
         transparent : true
       }, {
         buffer : 0,
@@ -820,7 +1057,7 @@ seismap.ui.createLayer = function(cqlFilter) {
   layer.setVisibility(false);
   layer.seismapAdded = -1;
   layer.seismapRemoved = new Date().getTime() - 1;
-  this.map.addLayer(layer);
+  map.addLayer(layer);
   return layer;
 };
 seismap.ui.buildCqlDate = function(date) {
@@ -911,7 +1148,7 @@ seismap.ui.buildCqlFilter = function(map, effectiveLimits, windowStart,
       '<=', map.maxDepthType, effectiveLimits, windowEnd);
   filter = this.concatenateCqlFilter(filter, maxDepthFilter);
   var minMagnitudeFilter = this.buildCqlMagnitudeFilter(map,
-      effectiveLimits.minMagnitude, '>=', map.minagnitudeType, effectiveLimits,
+      effectiveLimits.minMagnitude, '>=', map.minMagnitudeType, effectiveLimits,
       windowStart);
   filter = this.concatenateCqlFilter(filter, minMagnitudeFilter);
   var maxMagnitudeFilter = this.buildCqlMagnitudeFilter(map, map.maxMagnitude,
