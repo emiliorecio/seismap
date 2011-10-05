@@ -126,6 +126,8 @@ public class EventServiceImpl implements EventService {
 		event.setName(eventDataDto.getName());
 		event.setReference(eventDataDto.getReference());
 		event.setNotes(eventDataDto.getNotes());
+		event.setPerceivedDistance(eventDataDto.getPerceivedDistance());
+		event.setDamagedDistance(eventDataDto.getDamagedDistance());
 
 		EventAndAverageMagnitudes eventAndAverageMagnitudes = eventAndAverageMagnitudesRepository
 				.get(eventId);

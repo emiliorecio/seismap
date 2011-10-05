@@ -107,7 +107,7 @@ var seismap = {
     dialog.open();
   },
   showGenericError : function() {
-    seismap.showError('Ups! Hubo un error. Perdón!');
+    seismap.showError('Ups! Hubo un error. Perdï¿½n!');
   },
   request : function(action, data, callback, errorCallback) {
     if (!errorCallback) {
@@ -275,8 +275,8 @@ var basePage = {
     document.id('newMap').addEvent('click', basePage.newMap.bind(basePage));
   },
   newCategory : function() {
-    seismap.showPrompt('Ingrese el nombre para la nueva categoría:',
-        basePage.createCategory.bind(basePage), null, '', 'Nueva Categoría',
+    seismap.showPrompt('Ingrese el nombre para la nueva categorï¿½a:',
+        basePage.createCategory.bind(basePage), null, '', 'Nueva Categorï¿½a',
         'Crear');
     return false;
   },
@@ -324,7 +324,7 @@ var mapPage = {
       controls : [],
       maxExtent : bounds,
       maxResolution : 121816.57063671875,
-      projection : "EPSG:900913",
+      projection : "EPSG:4326",
       units : 'm',
       theme : seismap.baseUrl
           + "/resources/css/lib/openlayers/theme/default/style.css"
@@ -429,7 +429,7 @@ var mapPage = {
     nameControl.addEvent('blur', function() {
       var value = nameControl.value;
       if (value == 0) {
-        seismap.showAlertAndFocus('El nombre no puede estar vacío.',
+        seismap.showAlertAndFocus('El nombre no puede estar vacï¿½o.',
             nameControl);
       } else {
         if (mapPage.mapData.name != value) {
@@ -450,7 +450,7 @@ var mapPage = {
     centerLatitudeControl.addEvent('blur', function() {
       var value = seismap.parseFloat(centerLatitudeControl.value);
       if (value == null || value < -90 || value > 90) {
-        seismap.showAlertAndFocus('La latitude debe estar entre -90º y 90º',
+        seismap.showAlertAndFocus('La latitude debe estar entre -90ï¿½ y 90ï¿½',
             centerLatitudeControl);
       } else {
         centerLatitudeControl.value = seismap.formatFloat(value);
@@ -464,7 +464,7 @@ var mapPage = {
     centerLongitudeControl.addEvent('blur', function() {
       var value = seismap.parseFloat(centerLongitudeControl.value);
       if (value == null || value < -180 || value > 180) {
-        seismap.showAlertAndFocus('La longitud debe estar entre -180º y 180º',
+        seismap.showAlertAndFocus('La longitud debe estar entre -180ï¿½ y 180ï¿½',
             centerLongitudeControl);
       } else {
         centerLongitudeControl.value = seismap.formatFloat(value);
@@ -549,7 +549,7 @@ var mapPage = {
       var value = seismap.parseFloat(minDateRelativeAmountControl.value);
       if (value == null || value < 0) {
         seismap.showAlertAndFocus(
-            'La fecha relativa mínima debe ser mayor a cero',
+            'La fecha relativa mï¿½nima debe ser mayor a cero',
             minDateRelativeAmountControl);
       } else {
         minDateRelativeAmountControl.value = seismap.formatFloat(value);
@@ -581,7 +581,7 @@ var mapPage = {
       var value = seismap.parseDateTime(minDateControl.value,
           minTimeControl.value);
       if (value == null) {
-        seismap.showAlertAndFocus('La fecha mínima debe ser válida',
+        seismap.showAlertAndFocus('La fecha mï¿½nima debe ser vï¿½lida',
             minDateControl);
       } else {
         minDateControl.value = seismap.formatDate(value);
@@ -596,7 +596,7 @@ var mapPage = {
       var value = seismap.parseDateTime(minDateControl.value,
           minTimeControl.value);
       if (value == null) {
-        seismap.showAlertAndFocus('La hora mínima debe ser válida',
+        seismap.showAlertAndFocus('La hora mï¿½nima debe ser vï¿½lida',
             minTimeControl);
       } else {
         minDateControl.value = seismap.formatDate(value);
@@ -633,7 +633,7 @@ var mapPage = {
       var value = seismap.parseFloat(maxDateRelativeAmountControl.value);
       if (value == null || value < 0) {
         seismap.showAlertAndFocus(
-            'La fecha relativa máxima debe ser mayor a cero',
+            'La fecha relativa mï¿½xima debe ser mayor a cero',
             maxDateRelativeAmountControl);
       } else {
         maxDateRelativeAmountControl.value = seismap.formatFloat(value);
@@ -665,7 +665,7 @@ var mapPage = {
       var value = seismap.parseDateTime(maxDateControl.value,
           maxTimeControl.value);
       if (value == null || value < 0) {
-        seismap.showAlertAndFocus('La fecha máxima debe ser válida',
+        seismap.showAlertAndFocus('La fecha mï¿½xima debe ser vï¿½lida',
             maxDateControl);
       } else {
         maxDateControl.value = seismap.formatDate(value);
@@ -680,7 +680,7 @@ var mapPage = {
       var value = seismap.parseDateTime(maxDateControl.value,
           maxTimeControl.value);
       if (value == null || value < 0) {
-        seismap.showAlertAndFocus('La hora máxima debe ser válida',
+        seismap.showAlertAndFocus('La hora mï¿½xima debe ser vï¿½lida',
             maxTimeControl);
       } else {
         maxDateControl.value = seismap.formatDate(value);
@@ -711,7 +711,7 @@ var mapPage = {
       var value = seismap.parseFloat(maxDepthControl.value);
       if (value == null || value < 0) {
         seismap.showAlertAndFocus(
-            'La profundidad máxima debe ser mayor a cero', maxDepthControl);
+            'La profundidad mï¿½xima debe ser mayor a cero', maxDepthControl);
       } else {
         maxDepthControl.value = seismap.formatFloat(value);
         if (mapPage.mapData.maxDepth != value) {
@@ -740,7 +740,7 @@ var mapPage = {
       var value = seismap.parseFloat(minDepthControl.value);
       if (value == null || value < 0) {
         seismap.showAlertAndFocus(
-            'La profundidad mínima debe ser mayor a cero', minDepthControl);
+            'La profundidad mï¿½nima debe ser mayor a cero', minDepthControl);
       } else {
         minDepthControl.value = seismap.formatFloat(value);
         if (mapPage.mapData.minDepth != value) {
@@ -783,7 +783,7 @@ var mapPage = {
       var value = seismap.parseInt(animationStepsControl.value);
       if (value == null || value < 2) {
         seismap.showAlertAndFocus(
-            'Los cantidad de cuadros de la animación ser mayor o igual a 2',
+            'Los cantidad de cuadros de la animaciï¿½n ser mayor o igual a 2',
             animationStepsControl);
       } else {
         animationStepsControl.value = seismap.formatInt(value);
@@ -803,7 +803,7 @@ var mapPage = {
               if (value == null || value < 1) {
                 seismap
                     .showAlertAndFocus(
-                        'Los duración de los cuadros de la animación ser mayor o igual a 1',
+                        'Los duraciï¿½n de los cuadros de la animaciï¿½n ser mayor o igual a 1',
                         animationStepDurationControl);
               } else {
                 animationStepDurationControl.value = seismap.formatInt(value);
@@ -822,7 +822,7 @@ var mapPage = {
               if (value == null || value < 0 || value > 100) {
                 seismap
                     .showAlertAndFocus(
-                        'Los preservación de los cuadros de la animación ser estar entre 0% y 100%',
+                        'Los preservaciï¿½n de los cuadros de la animaciï¿½n ser estar entre 0% y 100%',
                         animationStepKeepControl);
               } else {
                 animationStepKeepControl.value = seismap.formatFloat(value);
@@ -1032,7 +1032,7 @@ var mapPage = {
     var layer = new OpenLayers.Layer.WMS("SeisMap", this.layerServerUri
         + '/wms' + env, {
       width : '1679',
-      srs : 'EPSG:900913',
+      srs : 'EPSG:4326',
       layers : layerName,
       height : '330',
       styles : sld,

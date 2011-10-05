@@ -21,8 +21,6 @@ import com.seismap.model.entity.Magnitude;
 import com.seismap.model.repository.AgencyRepository;
 import com.seismap.model.repository.EventRepository;
 import com.seismap.service.dataload.DataLoadService;
-import com.seismap.service.impl.CoordinatesConverter.LatitudeLongitudePosition;
-import com.seismap.service.impl.CoordinatesConverter.SphericalMercatorPosition;
 import com.seismap.service.parser.DataProviderException;
 import com.seismap.service.parser.InvalidDataException;
 import com.seismap.service.parser.LogEvent;
@@ -40,18 +38,15 @@ public class DataLoadServiceImpl implements DataLoadService {
 	private AgencyRepository agencyRepository;
 	private EventRepository eventRepository;
 	private GeometryFactory geometryFactory;
-	private CoordinatesConverter coordinatesConverter;
 
 	protected DataLoadServiceImpl() {
 	}
 
 	public DataLoadServiceImpl(AgencyRepository agencyRepository,
-			EventRepository eventRepository, GeometryFactory geometryFactory,
-			CoordinatesConverter coordinatesConverter) {
+			EventRepository eventRepository, GeometryFactory geometryFactory) {
 		this.agencyRepository = agencyRepository;
 		this.eventRepository = eventRepository;
 		this.geometryFactory = geometryFactory;
-		this.coordinatesConverter = coordinatesConverter;
 	}
 
 	private class DatabaseLogEventConsumer implements LogEventConsumer {
@@ -103,16 +98,10 @@ public class DataLoadServiceImpl implements DataLoadService {
 				System.out.println("Warning: incomplete event " + date);
 				return;
 			}
-			LatitudeLongitudePosition latitudeLongitudePosition = coordinatesConverter
-					.createLatitudeLongitudePosition(latitude.floatValue(),
-							longitude.floatValue());
-			SphericalMercatorPosition sphericalMercatorPosition = latitudeLongitudePosition
-					.getSphericalMercatorPosition();
 			Point location = geometryFactory.createPoint(new Coordinate(
-					sphericalMercatorPosition.getX(), sphericalMercatorPosition
-							.getY()));
-			Event event = new Event(location, depth.floatValue(), date,
-					magnitudes, null, null, null);
+					longitude.floatValue(), latitude.floatValue()));
+			Event event = new Event(location, depth.floatValue(), date, null,
+					null, null, null, null, magnitudes);
 			eventRepository.put(event);
 		}
 

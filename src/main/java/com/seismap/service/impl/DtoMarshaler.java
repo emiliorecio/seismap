@@ -37,7 +37,8 @@ class DtoMarshaler {
 				Double.valueOf(event.getLatitude()), Double.valueOf(event
 						.getLongitude()), Float.valueOf(event.getDepth()),
 				event.getDate(), event.getName(), event.getNotes(),
-				event.getReference(),
+				event.getReference(), event.getPerceivedDistance(),
+				event.getDamagedDistance(),
 				eventAndAverageMagnitudes.getRANKMagnitude(),
 				eventAndAverageMagnitudes.getMLMagnitude(),
 				eventAndAverageMagnitudes.getMBMagnitude(),
@@ -53,6 +54,7 @@ class DtoMarshaler {
 				Double.valueOf(event.getLongitude()), Float.valueOf(event
 						.getDepth()), event.getDate(), event.getName(),
 				event.getNotes(), event.getReference(),
+				event.getPerceivedDistance(), event.getDamagedDistance(),
 				unmarshallMagnitudes(event.getMagnitudes()));
 	}
 
@@ -103,6 +105,8 @@ class DtoMarshaler {
 				eventAndAverageMagnitudes.getName(),
 				eventAndAverageMagnitudes.getNotes(),
 				eventAndAverageMagnitudes.getReference(),
+				eventAndAverageMagnitudes.getPerceivedDistance(),
+				eventAndAverageMagnitudes.getDamagedDistance(),
 				eventAndAverageMagnitudes.getRANKMagnitude(),
 				eventAndAverageMagnitudes.getMLMagnitude(),
 				eventAndAverageMagnitudes.getMBLGMagnitude(),

@@ -31,10 +31,11 @@ public class Event extends EventInfo {
 
 	}
 
-	public Event(Point location, float depth, Date date,
-			List<Magnitude> magnitudes, String name, String notes,
-			String reference) {
-		super(location, depth, date, name, notes, reference);
+	public Event(Point location, float depth, Date date, String name,
+			String notes, String reference, Integer perceivedDistance,
+			Integer damagedDistance, List<Magnitude> magnitudes) {
+		super(location, depth, date, name, notes, reference, perceivedDistance,
+				damagedDistance);
 		this.magnitudes = new ArrayList<Magnitude>(magnitudes);
 	}
 

@@ -303,7 +303,7 @@
                                     "jsClass": "MyButton6",
                                     "snapToGrid": 10,
                                     "userConfig": {
-                                        "text": "Discard changes",
+                                        "text": "Descartar cambios",
                                         "id": "discardChangesButton",
                                         "disabled": true
                                     }
@@ -354,10 +354,10 @@
                                     "jsClass": "MyButton3",
                                     "snapToGrid": 10,
                                     "userConfig": {
-                                        "text": "Toggle public map status",
+                                        "text": "Mapa de profundidad",
                                         "stateful": "-ext-undefined-",
                                         "enableToggle": true,
-                                        "id": "publicMapToggleButton"
+                                        "id": "depthMapButton"
                                     }
                                 }
                             ]
@@ -545,7 +545,7 @@
                                 "region": "east",
                                 "split": true,
                                 "floatable": false,
-                                "activeItem": 1
+                                "activeItem": 2
                             },
                             "cn": [
                                 {
@@ -2121,6 +2121,53 @@
                                             }
                                         },
                                         {
+                                            "id": "MyCompositeField12",
+                                            "cid": "compositefield",
+                                            "jsClass": "MyCompositeField12",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "fieldLabel": "Profundidad",
+                                                "anchor": "100%",
+                                                "id": "eventDepthCompositeField"
+                                            },
+                                            "cn": [
+                                                {
+                                                    "id": "MyNumberField15",
+                                                    "cid": "numberfield",
+                                                    "jsClass": "MyNumberField10",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "id": "eventDepthField",
+                                                        "name": "eventDepth",
+                                                        "readOnly": true
+                                                    }
+                                                },
+                                                {
+                                                    "id": "MyDisplayField30",
+                                                    "cid": "displayfield",
+                                                    "jsClass": "MyDisplayField29",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "value": "km",
+                                                        "flex": 1,
+                                                        "fieldLabel": "Label",
+                                                        "id": "eventDepthTrailingLabel"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "id": "MyDisplayField31",
+                                            "cid": "displayfield",
+                                            "jsClass": "MyDisplayField21",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
+                                            }
+                                        },
+                                        {
                                             "id": "MyTextArea",
                                             "cid": "textarea",
                                             "jsClass": "MyTextArea",
@@ -2133,6 +2180,168 @@
                                             }
                                         }
                                     ]
+                                },
+                                {
+                                    "id": "MyPanel9",
+                                    "cid": "panel",
+                                    "jsClass": "MyPanel3",
+                                    "snapToGrid": 10,
+                                    "userConfig": {
+                                        "title": "Adicional",
+                                        "layout": "form",
+                                        "padding": 4,
+                                        "id": "eventIAditionalPanel",
+                                        "hideLabels": "-ext-undefined-",
+                                        "collapsed": "-ext-undefined-",
+                                        "autoScroll": true
+                                    },
+                                    "cn": [
+                                        {
+                                            "id": "MyCompositeField15",
+                                            "cid": "compositefield",
+                                            "jsClass": "MyCompositeField12",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "fieldLabel": "Distancia percibida",
+                                                "anchor": "100%",
+                                                "id": "eventPerceivedDistanceCompositeField"
+                                            },
+                                            "cn": [
+                                                {
+                                                    "id": "MyNumberField16",
+                                                    "cid": "numberfield",
+                                                    "jsClass": "MyNumberField9",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "id": "eventPerceivedDistanceField",
+                                                        "name": "eventPerceivedDistanceRadius",
+                                                        "readOnly": "-ext-undefined-",
+                                                        "flex": 1
+                                                    }
+                                                },
+                                                {
+                                                    "id": "MyDisplayField33",
+                                                    "cid": "displayfield",
+                                                    "jsClass": "MyDisplayField29",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "value": "km",
+                                                        "flex": 1,
+                                                        "fieldLabel": "Label",
+                                                        "id": "eventPerceivedDistanceTrailingLabel"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "id": "MyDisplayField32",
+                                            "cid": "displayfield",
+                                            "jsClass": "MyDisplayField21",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "value": "-ext-undefined-",
+                                                "fieldLabel": "-ext-undefined-",
+                                                "anchor": "100%"
+                                            }
+                                        },
+                                        {
+                                            "id": "MyCompositeField14",
+                                            "cid": "compositefield",
+                                            "jsClass": "MyCompositeField14",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "id": "eventDamagedDistanceCompositeField",
+                                                "fieldLabel": "Distancia de daños"
+                                            },
+                                            "cn": [
+                                                {
+                                                    "id": "MyNumberField14",
+                                                    "cid": "numberfield",
+                                                    "jsClass": "MyNumberField10",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "id": "eventDamagedDistanceField",
+                                                        "name": "eventDamagedDistance",
+                                                        "readOnly": "-ext-undefined-",
+                                                        "flex": 1
+                                                    }
+                                                },
+                                                {
+                                                    "id": "MyDisplayField29",
+                                                    "cid": "displayfield",
+                                                    "jsClass": "MyDisplayField29",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "value": "km",
+                                                        "flex": 1,
+                                                        "fieldLabel": "-ext-undefined-",
+                                                        "id": "eventDamagedDistanceTrailingLabel"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "MyWindow2",
+                    "cid": "window",
+                    "jsClass": "MyWindow",
+                    "snapToGrid": 10,
+                    "userConfig": {
+                        "title": "Mapa de profundidad",
+                        "width": 660,
+                        "height": 400,
+                        "region": "-ext-undefined-",
+                        "shim": "-ext-undefined-",
+                        "floating": true,
+                        "id": "depthWindow",
+                        "hidden": "-ext-undefined-",
+                        "initHidden": "-ext-undefined-",
+                        "autoHide": false,
+                        "closeAction": "hide",
+                        "maximizable": true,
+                        "maximized": "-ext-undefined-",
+                        "layout": "border",
+                        "modal": true,
+                        "collapseFirst": "-ext-undefined-",
+                        "collapsible": "-ext-undefined-",
+                        "floatable": false
+                    },
+                    "cn": [
+                        {
+                            "id": "MyContainer3",
+                            "cid": "container",
+                            "jsClass": "MyContainer2",
+                            "snapToGrid": 10,
+                            "userConfig": {
+                                "id": "depthMapArea",
+                                "region": "center"
+                            }
+                        },
+                        {
+                            "id": "MyToolbar6",
+                            "cid": "toolbar",
+                            "jsClass": "MyToolbar3",
+                            "dock": "bbar",
+                            "snapToGrid": 10,
+                            "userConfig": {
+                                "buttonAlign": "right"
+                            },
+                            "cn": [
+                                {
+                                    "id": "MyButton14",
+                                    "cid": "button",
+                                    "jsClass": "MyButton7",
+                                    "snapToGrid": 10,
+                                    "userConfig": {
+                                        "text": "Cerrar",
+                                        "scale": "medium",
+                                        "id": "depthCloseButton"
+                                    }
                                 }
                             ]
                         }
@@ -2146,7 +2355,7 @@
                     "userConfig": {
                         "title": "Sismos en esa ubicación",
                         "width": 620,
-                        "height": 350,
+                        "height": 360,
                         "region": "-ext-undefined-",
                         "shim": "-ext-undefined-",
                         "floating": true,

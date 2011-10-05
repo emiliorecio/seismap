@@ -35,6 +35,8 @@
   seismap.constants.baseUri = '${baseUri}';
   seismap.constants.styles = ${styles_json};
   seismap.constants.dataBounds = ${dataBounds_json};
+  seismap.constants.dataBounds.minDate = seismap.constants.dataBounds.minDate == null ? null : new Date(seismap.constants.dataBounds.minDate);
+  seismap.constants.dataBounds.maxDate = seismap.constants.dataBounds.maxDate == null ? null : new Date(seismap.constants.dataBounds.maxDate);
   seismap.constants.layerServerUri = '${baseUri}/layerServer/' //'${layerServerUri}';
   seismap.constants.magnitudeLimits = ${magnitudeLimits_json};
 </script>

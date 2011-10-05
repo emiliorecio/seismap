@@ -17,14 +17,23 @@ public class ModifiableEventDataDto implements Serializable {
 	@JsonProperty
 	private String reference;
 
+	@JsonProperty
+	private Integer perceivedDistance;
+
+	@JsonProperty
+	private Integer damagedDistance;
+
 	protected ModifiableEventDataDto() {
 
 	}
 
-	public ModifiableEventDataDto(String name, String notes, String reference) {
+	public ModifiableEventDataDto(String name, String notes, String reference,
+			Integer perceivedDistance, Integer damagedDistance) {
 		this.name = name;
 		this.notes = notes;
 		this.reference = reference;
+		this.perceivedDistance = perceivedDistance;
+		this.damagedDistance = damagedDistance;
 	}
 
 	public String getName() {
@@ -37,6 +46,14 @@ public class ModifiableEventDataDto implements Serializable {
 
 	public String getReference() {
 		return reference;
+	}
+
+	public Integer getPerceivedDistance() {
+		return perceivedDistance;
+	}
+
+	public Integer getDamagedDistance() {
+		return damagedDistance;
 	}
 
 }

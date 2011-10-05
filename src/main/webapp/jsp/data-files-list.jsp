@@ -8,19 +8,28 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>SeisMap Server</title>
-
+<link rel="stylesheet" type="text/css"
+  href="${baseUri}/resources/css/lib/extjs/css/ext-all.css" />
 <script type="text/javascript"
-	src="/js/mootools/mootools-core-1.3-full-nocompat.js"></script>
+  src="${baseUri}/resources/js/lib/extjs/ext-base-debug.js"></script>
+<script type="text/javascript"
+  src="${baseUri}/resources/js/lib/extjs/ext-all-debug.js"></script>
+<script type="text/javascript" src="${baseUri}/resources/js/constants.js"></script>
 <script type="text/javascript">
 //<![CDATA[
     function load(file) {
-        var jsonRequest = new Request.JSON({url: '/view/admin/load-data-file', onSuccess: function(response){
-               if (response) {
-                   alert('Successfully loaded!');
-               } else {
-            	   alert('Problem while loading')
-               }s
-            }}).get({file: file});
+      Ext.Ajax.request({
+        url: 'http://localhost:7000/admin/load-data-file',
+        method: 'POST',
+        params: {file: file},
+        success: function(response, opts) {
+          var response = Ext.decode(response.responseText);
+          Ext.Msg.alert('Data load', 'Datos cargados');
+        },
+        failure: function(response, opts) {
+          Ext.Msg.alert('Data load', 'Uy.. hubo un error!');
+        }
+      });
     }
 //]]>
 </script>

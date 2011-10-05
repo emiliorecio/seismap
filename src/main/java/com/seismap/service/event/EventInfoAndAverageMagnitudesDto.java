@@ -34,10 +34,12 @@ public class EventInfoAndAverageMagnitudesDto extends EventInfoDto {
 
 	public EventInfoAndAverageMagnitudesDto(Long id, Double latitude,
 			Double longitude, Float depth, Date date, String name,
-			String notes, String reference, Float RANKMagnitude,
-			Float MLMagnitude, Float MBMagnitude, Float MSMagnitude,
-			Float MWMagnitude, Float MBLGMagnitude, Float MCMagnitude) {
-		super(id, latitude, longitude, depth, date, name, notes, reference);
+			String notes, String reference, Integer perceivedDistance,
+			Integer damagedDistance, Float RANKMagnitude, Float MLMagnitude,
+			Float MBMagnitude, Float MSMagnitude, Float MWMagnitude,
+			Float MBLGMagnitude, Float MCMagnitude) {
+		super(id, latitude, longitude, depth, date, name, notes, reference,
+				perceivedDistance, damagedDistance);
 		this.RANKMagnitude = RANKMagnitude;
 		this.MLMagnitude = MLMagnitude;
 		this.MBMagnitude = MBMagnitude;
