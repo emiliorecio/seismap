@@ -22,7 +22,7 @@
 <body onload="setupMap()">
 <h2>Administrative Console</h2>
 <ul>
-    <li><a href="/view/admin/data-files">Load data files</a></li>
+    <li><a href="/admin/data-files">Load data files</a></li>
 </ul>
 </body>
 </html>

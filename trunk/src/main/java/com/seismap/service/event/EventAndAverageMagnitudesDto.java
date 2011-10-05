@@ -18,13 +18,15 @@ public class EventAndAverageMagnitudesDto extends
 
 	public EventAndAverageMagnitudesDto(Long id, Double latitude,
 			Double longitude, Float depth, Date date, String name,
-			String notes, String reference, Float RANKMagnitude,
-			Float MLMagnitude, Float MBMagnitude, Float MSMagnitude,
-			Float MWMagnitude, Float MBLGMagnitude, Float MCMagnitude,
+			String notes, String reference, Integer perceivedDistance,
+			Integer damagedDistance, Float RANKMagnitude, Float MLMagnitude,
+			Float MBMagnitude, Float MSMagnitude, Float MWMagnitude,
+			Float MBLGMagnitude, Float MCMagnitude,
 			List<MagnitudeDto> magnitudes) {
 		super(id, latitude, longitude, depth, date, name, notes, reference,
-				RANKMagnitude, MLMagnitude, MBMagnitude, MSMagnitude,
-				MWMagnitude, MBLGMagnitude, MCMagnitude);
+				perceivedDistance, damagedDistance, RANKMagnitude, MLMagnitude,
+				MBMagnitude, MSMagnitude, MWMagnitude, MBLGMagnitude,
+				MCMagnitude);
 		this.magnitudes = magnitudes;
 	}
 

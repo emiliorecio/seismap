@@ -28,8 +28,9 @@ public class EventInfoDto extends ModifiableEventDataDto {
 	}
 
 	public EventInfoDto(Long id, Double latitude, Double longitude,
-			Float depth, Date date, String name, String notes, String reference) {
-		super(name, notes, reference);
+			Float depth, Date date, String name, String notes,
+			String reference, Integer perceivedDistance, Integer damagedDistance) {
+		super(name, notes, reference, perceivedDistance, damagedDistance);
 		this.id = id;
 		this.latitude = latitude;
 		this.longitude = longitude;

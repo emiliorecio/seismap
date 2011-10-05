@@ -25,7 +25,7 @@ ALTER TABLE event OWNER TO postgres;
 
 CREATE INDEX event_oid ON event (oid);
 
-SELECT AddGeometryColumn('event', 'location', 900913, 'POINT', 2);
+SELECT AddGeometryColumn('event', 'location', 4326, 'POINT', 2);
 
 CREATE TABLE magnitude
 (
@@ -57,6 +57,8 @@ CREATE VIEW eventandaveragemagnitudes AS
       event.name,
       event.notes,
       event.reference,
+      event.perceiveddistance,
+      event.damageddistance,
       /* Magnitudes by type - aka: (ml, mb, ms, ...)magnitude */
       avg(mlmagnitude.value) AS mlmagnitude,
       avg(mbmagnitude.value) AS mbmagnitude,
@@ -118,6 +120,8 @@ CREATE VIEW eventandaveragemagnitudes AS
       event.name,
       event.notes,
       event.reference,
+      event.perceiveddistance,
+      event.damageddistance,
       minmlmagnitude, maxmlmagnitude,
       minmbmagnitude, maxmbmagnitude,
       minmsmagnitude, maxmsmagnitude,

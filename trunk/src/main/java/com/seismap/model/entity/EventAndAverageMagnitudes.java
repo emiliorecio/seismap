@@ -44,8 +44,9 @@ public class EventAndAverageMagnitudes extends EventInfo {
 			Date date, Float RANKMagnitude, Float MLMagnitude,
 			Float MBMagnitude, Float MSMagnitude, Float MWMagnitude,
 			Float MBLGMagnitude, Float MCMagnitude, String name, String notes,
-			String reference) {
-		super(location, depth, date, name, notes, reference);
+			String reference, Integer perceivedDistance, Integer damagedDistance) {
+		super(location, depth, date, name, notes, reference, perceivedDistance,
+				damagedDistance);
 		this.RANKMagnitude = RANKMagnitude;
 		this.MLMagnitude = MLMagnitude;
 		this.MBMagnitude = MBMagnitude;

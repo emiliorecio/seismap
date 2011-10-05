@@ -31,18 +31,27 @@ public abstract class EventInfo implements Identifiable<Long> {
 	@Column(nullable = true)
 	private String reference;
 
+	@Column(nullable = true)
+	private Integer perceivedDistance;
+
+	@Column(nullable = true)
+	private Integer damagedDistance;
+
 	protected EventInfo() {
 
 	}
 
 	public EventInfo(Point location, float depth, Date date, String name,
-			String notes, String reference) {
+			String notes, String reference, Integer perceivedDistance,
+			Integer damagedDistance) {
 		this.location = location;
 		this.depth = depth;
 		this.date = date;
 		this.name = name;
 		this.notes = notes;
 		this.reference = reference;
+		this.perceivedDistance = perceivedDistance;
+		this.damagedDistance = damagedDistance;
 	}
 
 	public Point getLocation() {
@@ -87,5 +96,21 @@ public abstract class EventInfo implements Identifiable<Long> {
 
 	public void setReference(String reference) {
 		this.reference = reference;
+	}
+
+	public Integer getPerceivedDistance() {
+		return perceivedDistance;
+	}
+
+	public void setPerceivedDistance(Integer perceivedDistance) {
+		this.perceivedDistance = perceivedDistance;
+	}
+
+	public Integer getDamagedDistance() {
+		return damagedDistance;
+	}
+
+	public void setDamagedDistance(Integer damagedDistance) {
+		this.damagedDistance = damagedDistance;
 	}
 }
