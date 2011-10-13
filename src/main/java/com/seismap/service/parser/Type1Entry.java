@@ -14,7 +14,7 @@ import com.seismap.service.parser.enumeration.DistanceIndicator;
 import com.seismap.service.parser.enumeration.EventId;
 import com.seismap.service.parser.enumeration.MagnitudeType;
 
-@Entry(id ="1", after = {"^", "1"}, whitespaces = {
+@Entry(id = "1", after = { "^", "1" }, whitespaces = {
 		@Whitespace(position = 1, length = 1),
 		@Whitespace(position = 6, length = 1),
 		@Whitespace(position = 16, length = 1) })
@@ -55,7 +55,9 @@ public class Type1Entry extends AbstractEntry {
 			@EnumerationMapping(value = "E", mapsTo = "EXPLOSION"),
 			@EnumerationMapping(value = "P", mapsTo = "PROBABLE_EXPLOSION"),
 			@EnumerationMapping(value = "V", mapsTo = "VOLCANIC"),
-			@EnumerationMapping(value = "Q", mapsTo = "PROBABLE_VOLCANIC") })
+			@EnumerationMapping(value = "Q", mapsTo = "PROBABLE_VOLCANIC"),
+			@EnumerationMapping(value = "l", mapsTo = "L"),
+			@EnumerationMapping(value = "*", mapsTo = "ASTERISK") })
 	private EventId eventId;
 
 	@FloatField(position = 24, digits = 7, decimals = 3)
@@ -80,7 +82,7 @@ public class Type1Entry extends AbstractEntry {
 	private String hypocenterReportingAgency;
 
 	@IntegerField(position = 49, digits = 3)
-	private int numberOfStationsUsed;
+	private Integer numberOfStationsUsed;
 
 	@FloatField(position = 52, digits = 4, decimals = 1)
 	private Float rmsOfTimeResiduals;
@@ -91,8 +93,8 @@ public class Type1Entry extends AbstractEntry {
 	@EnumeratedField(position = 60, length = 1, mappings = {
 			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
 			@EnumerationMapping(value = "L", mapsTo = "ML"),
-			@EnumerationMapping(value = "B", mapsTo = "MB"),
-			@EnumerationMapping(value = "S", mapsTo = "MS"),
+			@EnumerationMapping(value = { "B", "b" }, mapsTo = "MB"),
+			@EnumerationMapping(value = { "S", "s" }, mapsTo = "MS"),
 			@EnumerationMapping(value = "W", mapsTo = "MW"),
 			@EnumerationMapping(value = "G", mapsTo = "MBLG"),
 			@EnumerationMapping(value = "C", mapsTo = "MC") })
@@ -107,8 +109,8 @@ public class Type1Entry extends AbstractEntry {
 	@EnumeratedField(position = 68, length = 1, mappings = {
 			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
 			@EnumerationMapping(value = "L", mapsTo = "ML"),
-			@EnumerationMapping(value = "B", mapsTo = "MB"),
-			@EnumerationMapping(value = "S", mapsTo = "MS"),
+			@EnumerationMapping(value = { "B", "b" }, mapsTo = "MB"),
+			@EnumerationMapping(value = { "S", "s" }, mapsTo = "MS"),
 			@EnumerationMapping(value = "W", mapsTo = "MW"),
 			@EnumerationMapping(value = "G", mapsTo = "MBLG"),
 			@EnumerationMapping(value = "C", mapsTo = "MC") })
@@ -123,8 +125,8 @@ public class Type1Entry extends AbstractEntry {
 	@EnumeratedField(position = 76, length = 1, mappings = {
 			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
 			@EnumerationMapping(value = "L", mapsTo = "ML"),
-			@EnumerationMapping(value = "B", mapsTo = "MB"),
-			@EnumerationMapping(value = "S", mapsTo = "MS"),
+			@EnumerationMapping(value = { "B", "b" }, mapsTo = "MB"),
+			@EnumerationMapping(value = { "S", "s" }, mapsTo = "MS"),
 			@EnumerationMapping(value = "W", mapsTo = "MW"),
 			@EnumerationMapping(value = "G", mapsTo = "MBLG"),
 			@EnumerationMapping(value = "C", mapsTo = "MC") })
@@ -197,7 +199,7 @@ public class Type1Entry extends AbstractEntry {
 		return hypocenterReportingAgency;
 	}
 
-	public int getNumberOfStationsUsed() {
+	public Integer getNumberOfStationsUsed() {
 		return numberOfStationsUsed;
 	}
 

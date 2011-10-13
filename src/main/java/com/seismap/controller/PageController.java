@@ -16,14 +16,18 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.seismap.service.category.ListCategoriesRequestDto;
 import com.seismap.service.category.ListCategoriesResponseDto;
@@ -35,6 +39,7 @@ import com.seismap.service.map.GetDefaultMapRequestDto;
 import com.seismap.service.map.GetDefaultMapResponseDto;
 import com.seismap.service.map.GetLayerServerUriRequestDto;
 import com.seismap.service.map.GetLayerServerUriResponseDto;
+import com.seismap.service.map.GetLegendRequestDto;
 import com.seismap.service.map.ListUserMapsRequestDto;
 import com.seismap.service.map.ListUserMapsResponseDto;
 import com.seismap.service.style.ListStylesRequestDto;
@@ -98,7 +103,7 @@ public class PageController extends SeismapController {
 	}
 
 	@RequestMapping("")
-	public String map(Model model) {
+	public String index(Model model) {
 		loadGeneralData(model);
 		GetDefaultMapResponseDto mapResponse = mapController
 				.getDefault(new GetDefaultMapRequestDto());
@@ -193,5 +198,11 @@ public class PageController extends SeismapController {
 		InputStream targetResponseBody = targetResponse.getBody();
 		OutputStream responseBody = response.getOutputStream();
 		IOUtils.copy(targetResponseBody, responseBody);
+	}
+
+	@RequestMapping("legend/{sld}")
+	@ResponseBody
+	public ResponseEntity<Resource> legend(@PathVariable("sld") String sld) {
+		return mapController.getLegend(new GetLegendRequestDto(sld));
 	}
 }

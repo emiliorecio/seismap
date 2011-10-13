@@ -13,4 +13,6 @@ public @interface IntegerField {
 	public int position();
 	
 	public int digits();
+
+	public String[] nullAlias() default {};
 }

@@ -23,6 +23,9 @@ new EventStore();
 new LocationEventStore({
   data : []
 });
+new EventMagnitudeStore({
+  data : []
+});
 seismap.init = function() {
   var locationEventStore = Ext.StoreMgr.get('locationEventStore');
   var magnitudeField = locationEventStore.fields.get('magnitude');
@@ -115,6 +118,7 @@ seismap.ui.initUi = function(viewport) {
       }
     });
   }
+  this.legendWindow = Ext.WindowMgr.get('legendWindow');
   initRadioCompositeFields();
   initAnimationPanel();
   this.initMap();
@@ -379,6 +383,7 @@ seismap.ui.showDepthWindow = function(vector) {
   
   var depthWindow = Ext.WindowMgr.get('depthWindow');
   depthWindow.show();
+  this.legendWindow.toFront();
   this.initDepthWindowMap();
   this.loadDepthLayers(vertices);
   this.depthMap.setCenter(new OpenLayers.Geometry.Point({x: 0, y: 0}), 1);
@@ -408,6 +413,7 @@ seismap.ui.showEventWindow = function(eventId, eventInformation) {
             event.name, event.reference, event.date, event.notes);
         eventWindow.setTitle('Sismo: ' + information);
         eventWindow.show();
+        self.legendWindow.toFront();
         self.initEventWindowMap();
         self.loadEventLayers();
         var center = new OpenLayers.LonLat(event.longitude, event.latitude);
@@ -445,7 +451,8 @@ seismap.ui.loadDepthLayers = function(vertices) {
     if (i>0) {
       cqlFilter +=', '
     }
-    var vertex = vertices[i % vertices.length]; // Add first vertex also at the end
+    var vertex = vertices[i % vertices.length]; // Add first vertex also at the
+                                                // end
     vertex = vertex.clone().transform(this.map.getProjectionObject(), this.map.displayProjection);
     cqlFilter += vertex.x + ' ' + vertex.y;
   }
@@ -726,7 +733,48 @@ seismap.ui.registerControlHandles = function() {
     });
   });
 
+  var showLegendButton = Ext.getCmp('showLegendButton');
+  showLegendButton.on('toggle',  function(control, status) {
+    if(status) {
+      self.legendWindow.show();
+    } else {
+      self.legendWindow.hide();
+    }
+  });
+  this.legendWindow.on('hide', function() {
+    if (showLegendButton.pressed) {
+      showLegendButton.toggle();
+    }
+  });
   
+  var self = this;
+  Ext.getCmp('mapsTree').on('click', function(node) {
+    if (node.isLeaf()) {
+      var request = {
+        mapId: node.id
+      };
+      Ext.Ajax.request({
+        url: seismap.constants.baseUri + '/action/map/get',
+        method: 'POST',
+        jsonData: request,
+        success: function(response, opts) {
+          var response = Ext.decode(response.responseText);
+          if(response.exception) {
+            Ext.Msg.alert('Abrir mapa', response.exception.message);
+          } else {
+            var map = response.value;
+            mapViewPanel.setTitle('Mapa: ' + self.mapData.name);
+            self.setMapData(map);
+            self.initParameters();
+            self.loadLayers();
+          }
+        },
+        failure: function(response, opts) {
+          Ext.Msg.alert('Abrir mapa', 'Uy.. hubo un error!');
+        }
+      });
+    }
+  });
 
 };
 seismap.ui.initParameters = function () {
@@ -899,6 +947,27 @@ seismap.ui.initEventParameters = function () {
   depthControl.setValue(self.eventData.depth);
   perceivedDistanceControl.setValue(self.eventData.perceivedDistance == null ? null : self.eventData.perceivedDistance / 1000);
   damagedDistanceControl.setValue(self.eventData.damagedDistance == null ? null : self.eventData.damagedDistance / 1000);
+  
+  var magnitudesData = [];
+  for (var i=0; i<self.eventData.magnitudes.length; i++) {
+    var magnitude = self.eventData.magnitudes[i];
+    var typeName = null;
+    for (var j=0; j<seismap.constants.magnitudeTypes.length; j++) {
+      var type = seismap.constants.magnitudeTypes[j];
+      if (type.id == magnitude.type) {
+        typeName = type.name;
+        break;
+      }
+    }
+    magnitudesData.push({
+      id: magnitude.id,
+      agency: magnitude.reportingAgency.code,
+      value: magnitude.value,
+      type: typeName
+    });
+  }
+  var eventMagnitudeStore = Ext.StoreMgr.get('eventMagnitudeStore');
+  eventMagnitudeStore.loadData(magnitudesData);
 };
 seismap.ui.buildEventInformation = function (id, name, reference, date, notes) {
   var information = name;
@@ -1047,6 +1116,7 @@ seismap.ui.getFeatures = function(e) {
   } else { 
     var locationEventsWindow = Ext.WindowMgr.get('locationEventsWindow');
     locationEventsWindow.show();
+    self.legendWindow.toFront();
   }
 };
 seismap.ui.loadLayers = function() {
@@ -1060,6 +1130,7 @@ seismap.ui.loadLayers = function() {
       this.map.removeLayer(layer);
     }
   }
+  this.updateLegendWindow();
   this.cqlFilters = this.buildCqlFilters(this.mapData,
       seismap.constants.dataBounds, new Date());
   this.layers = [];
@@ -1071,6 +1142,18 @@ seismap.ui.loadLayers = function() {
   }
   this.currentFrame = -1;
   this.start();
+};
+seismap.ui.updateLegendWindow = function () {
+  var style;
+  for ( var i = 0; i < seismap.constants.styles.length; i++) {
+    var aStyle = seismap.constants.styles[i];
+    if (aStyle.id == this.mapData.styleId) {
+      style = aStyle;
+      break;
+    }
+  }
+  var url = seismap.constants.baseUri + 'legend/' + style.sld;
+  Ext.getCmp('legendImage').getEl().setStyle('background-image', 'url(' + url + ')');
 };
 seismap.ui.start = function() {
   this.cycle();

@@ -6,6 +6,8 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.seismap.service.parser.annotation.BooleanField;
 import com.seismap.service.parser.annotation.CharacterField;
 import com.seismap.service.parser.annotation.ConstantField;
@@ -21,6 +23,7 @@ import com.seismap.service.parser.annotation.Whitespace;
 public class RowReader {
 
 	private abstract class FieldReader {
+
 		private Field field;
 		private int startColumn;
 		private int endColumn;
@@ -37,6 +40,12 @@ public class RowReader {
 
 		public void read(AbstractEntry entry, int line, String content)
 				throws InvalidDataException {
+			if (startColumn > content.length() || endColumn > content.length()) {
+				throw new InvalidDataException("Illegal length for "
+						+ entryClass.getName() + " at line: " + line
+						+ ", columns: " + (startColumn + 1) + "-" + endColumn
+						+ ", value=" + content);
+			}
 			String value = content.substring(startColumn, endColumn);
 			Object object = read(line, startColumn, endColumn, value);
 			if (!readOnly) {
@@ -279,12 +288,11 @@ public class RowReader {
 	private InvalidDataException invalidData(int line, int startColumn,
 			int endColumn, String value, Field field)
 			throws InvalidDataException {
-		return new InvalidDataException("Illegal value"
-				+ (field == null ? "" : " for "
-						+ field.getDeclaringClass().getName() + "."
-						+ field.getName()) + " at line: " + line
-				+ ", columns: " + (startColumn + 1) + "-" + endColumn
-				+ ", value=" + value);
+		return new InvalidDataException("Illegal value for "
+				+ (field == null ? entryClass.getName() + " whitespace" : field
+						.getDeclaringClass().getName() + "." + field.getName())
+				+ " at line: " + line + ", columns: " + (startColumn + 1) + "-"
+				+ endColumn + ", value=" + value);
 	}
 
 	private void processField(int index, final Field field,
@@ -333,33 +341,36 @@ public class RowReader {
 		Class<?> enumClass = field.getType();
 		Enum<?>[] enumConstants = (Enum<?>[]) enumClass.getEnumConstants();
 		for (EnumerationMapping mapping : mappings) {
-			String value = mapping.value();
-			if (value.length() != length) {
-				throw new EntryDefinitionException("Mapping value (" + value
-						+ ") length does not match field: "
-						+ field.getDeclaringClass().getName() + "."
-						+ field.getName());
-			}
-
-			String mapsTo = mapping.mapsTo();
-			Enum<?> mapsToConstant = null;
-			for (Enum<?> enumConstant : enumConstants) {
-				if (enumConstant.name().equals(mapsTo)) {
-					mapsToConstant = enumConstant;
-					break;
+			String[] values = mapping.value();
+			for (int i = 0; i < values.length; i++) {
+				String value = values[i];
+				if (value.length() != length) {
+					throw new EntryDefinitionException("Mapping value ("
+							+ value + ") length does not match field: "
+							+ field.getDeclaringClass().getName() + "."
+							+ field.getName());
 				}
-			}
-			if (mapsToConstant == null) {
-				throw new EntryDefinitionException("Mapping constant ("
-						+ mapsTo + ") does not exist: "
-						+ field.getDeclaringClass().getName() + "."
-						+ field.getName());
-			}
-			if (map.put(value, mapsToConstant) != null) {
-				throw new EntryDefinitionException("Mapping value (" + value
-						+ ") defined twice: "
-						+ field.getDeclaringClass().getName() + "."
-						+ field.getName());
+
+				String mapsTo = mapping.mapsTo();
+				Enum<?> mapsToConstant = null;
+				for (Enum<?> enumConstant : enumConstants) {
+					if (enumConstant.name().equals(mapsTo)) {
+						mapsToConstant = enumConstant;
+						break;
+					}
+				}
+				if (mapsToConstant == null) {
+					throw new EntryDefinitionException("Mapping constant ("
+							+ mapsTo + ") does not exist: "
+							+ field.getDeclaringClass().getName() + "."
+							+ field.getName());
+				}
+				if (map.put(value, mapsToConstant) != null) {
+					throw new EntryDefinitionException("Mapping value ("
+							+ value + ") defined twice: "
+							+ field.getDeclaringClass().getName() + "."
+							+ field.getName());
+				}
 			}
 		}
 		fieldReaders[index] = new FieldReader(field, annotation.position(),
@@ -387,7 +398,8 @@ public class RowReader {
 					throws InvalidDataException {
 				int indexOfDot = value.indexOf('.');
 				String processedValue = value.trim();
-				if (processedValue.length() == 0) {
+				if (processedValue.length() == 0
+						|| ArrayUtils.contains(annotation.nullAlias(), value)) {
 					if (field.getType() == Float.class) {
 						return null;
 					} else {
@@ -422,7 +434,9 @@ public class RowReader {
 				Object read(int line, int startColumn, int endColumn,
 						String value) throws InvalidDataException {
 					String processedValue = value.trim();
-					if (processedValue.length() == 0) {
+					if (processedValue.length() == 0
+							|| ArrayUtils.contains(annotation.nullAlias(),
+									value)) {
 						if (field.getType() == Integer.class) {
 							return null;
 						} else {
@@ -547,7 +561,8 @@ public class RowReader {
 		}
 		for (int i = 0; i < whiteSpacePositions.length; i++) {
 			if (whiteSpacePositions[i] && content.charAt(i) != ' ') {
-				invalidData(line, i, i + 1, " ", null);
+				throw invalidData(line, i, i + 1,
+						Character.toString(content.charAt(i)), null);
 			}
 
 		}

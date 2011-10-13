@@ -95,8 +95,9 @@
                                             "jsClass": "MyTreeNode",
                                             "snapToGrid": 10,
                                             "userConfig": {
-                                                "text": "Category 1",
-                                                "id": "categoryNode1"
+                                                "text": "Recientes",
+                                                "id": "",
+                                                "expanded": true
                                             },
                                             "cn": [
                                                 {
@@ -105,8 +106,8 @@
                                                     "jsClass": "MyTreeNode2",
                                                     "snapToGrid": 10,
                                                     "userConfig": {
-                                                        "text": "Map 1",
-                                                        "id": "mapNode1",
+                                                        "text": "País - Ultimas 24h",
+                                                        "id": "pais24h",
                                                         "allowChildren": false,
                                                         "leaf": true
                                                     }
@@ -117,8 +118,8 @@
                                                     "jsClass": "MyTreeNode4",
                                                     "snapToGrid": 10,
                                                     "userConfig": {
-                                                        "text": "Map 2",
-                                                        "id": "mapNode2",
+                                                        "text": "Cuyo - Ultima semana",
+                                                        "id": "cuyo24h",
                                                         "allowChildren": false,
                                                         "leaf": true
                                                     }
@@ -131,8 +132,9 @@
                                             "jsClass": "MyTreeNode1",
                                             "snapToGrid": 10,
                                             "userConfig": {
-                                                "text": "Category 2",
-                                                "id": "categoryNode2"
+                                                "text": "Historicos",
+                                                "id": "",
+                                                "expanded": true
                                             },
                                             "cn": [
                                                 {
@@ -141,8 +143,8 @@
                                                     "jsClass": "MyTreeNode3",
                                                     "snapToGrid": 10,
                                                     "userConfig": {
-                                                        "text": "Map 3",
-                                                        "id": "mapNode3",
+                                                        "text": "País - todos",
+                                                        "id": "paisAll",
                                                         "allowChildren": false,
                                                         "leaf": true
                                                     }
@@ -359,175 +361,39 @@
                                         "enableToggle": true,
                                         "id": "depthMapButton"
                                     }
+                                },
+                                {
+                                    "id": "MySeparator3",
+                                    "cid": "tbseparator",
+                                    "jsClass": "MySeparator",
+                                    "snapToGrid": 10
+                                },
+                                {
+                                    "id": "MyButton15",
+                                    "cid": "button",
+                                    "jsClass": "MyButton3",
+                                    "snapToGrid": 10,
+                                    "userConfig": {
+                                        "text": "Mostrar leyenda",
+                                        "stateful": "-ext-undefined-",
+                                        "enableToggle": true,
+                                        "id": "showLegendButton",
+                                        "allowDepress": "-ext-undefined-",
+                                        "pressed": true
+                                    }
                                 }
                             ]
                         },
                         {
-                            "id": "MyTabPanel",
-                            "cid": "tabpanel",
-                            "jsClass": "MyTabPanel",
+                            "id": "MyContainer1",
+                            "cid": "container",
+                            "jsClass": "MyContainer1",
                             "snapToGrid": 10,
                             "userConfig": {
-                                "activeTab": 0,
-                                "id": "contentTabPanel",
-                                "region": "center"
-                            },
-                            "cn": [
-                                {
-                                    "id": "MyPanel2",
-                                    "cid": "panel",
-                                    "jsClass": "MyPanel1",
-                                    "snapToGrid": 10,
-                                    "userConfig": {
-                                        "title": "Mapa",
-                                        "id": "mapTab",
-                                        "width": 783,
-                                        "layout": "border"
-                                    },
-                                    "cn": [
-                                        {
-                                            "id": "MyContainer1",
-                                            "cid": "container",
-                                            "jsClass": "MyContainer1",
-                                            "snapToGrid": 10,
-                                            "userConfig": {
-                                                "region": "center",
-                                                "id": "mapArea",
-                                                "layout": "-ext-undefined-"
-                                            }
-                                        }
-                                    ]
-                                },
-                                {
-                                    "id": "MyPanel3",
-                                    "cid": "panel",
-                                    "jsClass": "MyPanel2",
-                                    "snapToGrid": 10,
-                                    "userConfig": {
-                                        "title": "Tabla",
-                                        "id": "tableTab",
-                                        "width": 414
-                                    },
-                                    "cn": [
-                                        {
-                                            "id": "MyGrid",
-                                            "cid": "grid",
-                                            "jsClass": "MyGrid",
-                                            "snapToGrid": 10,
-                                            "userConfig": {
-                                                "title": "My Grid",
-                                                "store": "eventStore",
-                                                "id": "dataGrid"
-                                            },
-                                            "cn": [
-                                                {
-                                                    "id": "MyColumn1",
-                                                    "cid": "numbercolumn",
-                                                    "jsClass": "MyColumn1",
-                                                    "snapToGrid": 10,
-                                                    "userConfig": {
-                                                        "dataIndex": "number",
-                                                        "header": "Column",
-                                                        "sortable": true,
-                                                        "resizable": "-ext-undefined-",
-                                                        "width": 100,
-                                                        "align": "right",
-                                                        "id": "dataIdColumn"
-                                                    }
-                                                },
-                                                {
-                                                    "id": "MyColumn2",
-                                                    "cid": "datecolumn",
-                                                    "jsClass": "MyColumn2",
-                                                    "snapToGrid": 10,
-                                                    "userConfig": {
-                                                        "dataIndex": "date",
-                                                        "header": "Column",
-                                                        "sortable": true,
-                                                        "resizable": "-ext-undefined-",
-                                                        "width": 100,
-                                                        "id": "dataDateColumn"
-                                                    }
-                                                },
-                                                {
-                                                    "id": "MyColumn",
-                                                    "cid": "gridcolumn",
-                                                    "jsClass": "MyColumn",
-                                                    "snapToGrid": 10,
-                                                    "userConfig": {
-                                                        "dataIndex": "location",
-                                                        "header": "Column",
-                                                        "sortable": true,
-                                                        "resizable": "-ext-undefined-",
-                                                        "width": 100,
-                                                        "id": "dataLocationColumn"
-                                                    }
-                                                },
-                                                {
-                                                    "id": "MyColumn3",
-                                                    "cid": "numbercolumn",
-                                                    "jsClass": "MyColumn1",
-                                                    "snapToGrid": 10,
-                                                    "userConfig": {
-                                                        "dataIndex": "latitude",
-                                                        "header": "Column",
-                                                        "sortable": true,
-                                                        "resizable": "-ext-undefined-",
-                                                        "width": 100,
-                                                        "align": "right",
-                                                        "id": "dataLatitudeColumn"
-                                                    }
-                                                },
-                                                {
-                                                    "id": "MyColumn4",
-                                                    "cid": "numbercolumn",
-                                                    "jsClass": "MyColumn1",
-                                                    "snapToGrid": 10,
-                                                    "userConfig": {
-                                                        "dataIndex": "longitude",
-                                                        "header": "Column",
-                                                        "sortable": true,
-                                                        "resizable": "-ext-undefined-",
-                                                        "width": 100,
-                                                        "align": "right",
-                                                        "id": "dataLongitudeColumn"
-                                                    }
-                                                },
-                                                {
-                                                    "id": "MyColumn5",
-                                                    "cid": "numbercolumn",
-                                                    "jsClass": "MyColumn1",
-                                                    "snapToGrid": 10,
-                                                    "userConfig": {
-                                                        "dataIndex": "magnitude",
-                                                        "header": "Column",
-                                                        "sortable": true,
-                                                        "resizable": "-ext-undefined-",
-                                                        "width": 100,
-                                                        "align": "right",
-                                                        "id": "dataMagnitudeColumn"
-                                                    }
-                                                },
-                                                {
-                                                    "id": "MyColumn6",
-                                                    "cid": "numbercolumn",
-                                                    "jsClass": "MyColumn1",
-                                                    "snapToGrid": 10,
-                                                    "userConfig": {
-                                                        "dataIndex": "depth",
-                                                        "header": "Column",
-                                                        "sortable": true,
-                                                        "resizable": "-ext-undefined-",
-                                                        "width": 100,
-                                                        "align": "right",
-                                                        "id": "dataDepthColumn"
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                }
-                            ]
+                                "region": "center",
+                                "id": "mapArea",
+                                "layout": "-ext-undefined-"
+                            }
                         },
                         {
                             "id": "MyForm",
@@ -1836,7 +1702,7 @@
                     "snapToGrid": 10,
                     "userConfig": {
                         "title": "Sismo: [event-information]",
-                        "width": 640,
+                        "width": 620,
                         "height": 380,
                         "region": "-ext-undefined-",
                         "shim": "-ext-undefined-",
@@ -1849,7 +1715,9 @@
                         "maximizable": true,
                         "maximized": "-ext-undefined-",
                         "layout": "border",
-                        "modal": true
+                        "modal": true,
+                        "resizeHandles": "-ext-undefined-",
+                        "resizable": "-ext-undefined-"
                     },
                     "cn": [
                         {
@@ -1891,9 +1759,98 @@
                                     "jsClass": "MyPanel8",
                                     "snapToGrid": 10,
                                     "userConfig": {
-                                        "title": "Datos",
-                                        "id": "eventDataTab"
-                                    }
+                                        "title": "Magnitudes",
+                                        "id": "eventMagnitudesTab",
+                                        "layout": "border"
+                                    },
+                                    "cn": [
+                                        {
+                                            "id": "MyGrid1",
+                                            "cid": "grid",
+                                            "jsClass": "MyGrid1",
+                                            "snapToGrid": 10,
+                                            "userConfig": {
+                                                "title": "-ext-undefined-",
+                                                "store": "eventMagnitudeStore",
+                                                "id": "eventMagnitudesGrid",
+                                                "region": "center"
+                                            },
+                                            "cn": [
+                                                {
+                                                    "id": "MyRowSelectionModel",
+                                                    "cid": "gridrowselectionmodel",
+                                                    "jsClass": "MyRowSelectionModel",
+                                                    "dock": "selModel",
+                                                    "snapToGrid": 10,
+                                                    "dockCls": "Ext.grid.RowSelectionModel",
+                                                    "userConfig": {
+                                                        "singleSelect": true
+                                                    }
+                                                },
+                                                {
+                                                    "id": "MyColumn8",
+                                                    "cid": "numbercolumn",
+                                                    "jsClass": "MyColumn8",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "dataIndex": "id",
+                                                        "header": "Id",
+                                                        "sortable": true,
+                                                        "resizable": "-ext-undefined-",
+                                                        "width": 60,
+                                                        "align": "right",
+                                                        "id": "eventMagnitudesIdColumn",
+                                                        "groupable": false,
+                                                        "format": "0"
+                                                    }
+                                                },
+                                                {
+                                                    "id": "MyColumn7",
+                                                    "cid": "gridcolumn",
+                                                    "jsClass": "MyColumn7",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "dataIndex": "agency",
+                                                        "header": "Agencia",
+                                                        "sortable": true,
+                                                        "resizable": "-ext-undefined-",
+                                                        "width": 60,
+                                                        "id": "eventMagnitudesAgencyColumn"
+                                                    }
+                                                },
+                                                {
+                                                    "id": "MyColumn10",
+                                                    "cid": "numbercolumn",
+                                                    "jsClass": "MyColumn10",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "header": "Valor",
+                                                        "sortable": true,
+                                                        "resizable": "-ext-undefined-",
+                                                        "width": 60,
+                                                        "align": "right",
+                                                        "id": "eventMagnitudesValueColumn",
+                                                        "dataIndex": "value",
+                                                        "format": "0.000,00/i"
+                                                    }
+                                                },
+                                                {
+                                                    "id": "MyColumn9",
+                                                    "cid": "gridcolumn",
+                                                    "jsClass": "MyColumn7",
+                                                    "snapToGrid": 10,
+                                                    "userConfig": {
+                                                        "dataIndex": "type",
+                                                        "header": "Tipo",
+                                                        "sortable": true,
+                                                        "resizable": "-ext-undefined-",
+                                                        "width": 200,
+                                                        "id": "eventMagnitudesTypeColumn"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
                             ]
                         },
@@ -2139,7 +2096,8 @@
                                                     "userConfig": {
                                                         "id": "eventDepthField",
                                                         "name": "eventDepth",
-                                                        "readOnly": true
+                                                        "readOnly": true,
+                                                        "flex": 1
                                                     }
                                                 },
                                                 {
@@ -2294,7 +2252,7 @@
                     "userConfig": {
                         "title": "Mapa de profundidad",
                         "width": 660,
-                        "height": 400,
+                        "height": 420,
                         "region": "-ext-undefined-",
                         "shim": "-ext-undefined-",
                         "floating": true,
@@ -2348,6 +2306,47 @@
                     ]
                 },
                 {
+                    "id": "MyWindow3",
+                    "cid": "window",
+                    "jsClass": "MyWindow",
+                    "snapToGrid": 10,
+                    "userConfig": {
+                        "title": "Leyenda",
+                        "width": 311,
+                        "height": 201,
+                        "region": "-ext-undefined-",
+                        "shim": "-ext-undefined-",
+                        "floating": true,
+                        "id": "legendWindow",
+                        "hidden": false,
+                        "initHidden": false,
+                        "autoHide": false,
+                        "closeAction": "hide",
+                        "maximizable": "-ext-undefined-",
+                        "maximized": "-ext-undefined-",
+                        "layout": "border",
+                        "modal": "-ext-undefined-",
+                        "collapseFirst": "-ext-undefined-",
+                        "collapsible": "-ext-undefined-",
+                        "floatable": false,
+                        "closable": "-ext-undefined-",
+                        "resizable": false
+                    },
+                    "cn": [
+                        {
+                            "id": "MyContainer4",
+                            "cid": "container",
+                            "jsClass": "MyContainer4",
+                            "snapToGrid": 10,
+                            "userConfig": {
+                                "region": "center",
+                                "id": "legendImage",
+                                "autoHide": "-ext-undefined-"
+                            }
+                        }
+                    ]
+                },
+                {
                     "id": "MyWindow1",
                     "cid": "window",
                     "jsClass": "MyWindow",
@@ -2367,11 +2366,12 @@
                         "layout": "border",
                         "closeAction": "hide",
                         "defaultButton": "locationEventsDetailsButton",
-                        "maximizable": true
+                        "maximizable": true,
+                        "undefined": 100
                     },
                     "cn": [
                         {
-                            "id": "MyGrid1",
+                            "id": "MyGrid2",
                             "cid": "grid",
                             "jsClass": "MyGrid1",
                             "snapToGrid": 10,
@@ -2383,7 +2383,7 @@
                             },
                             "cn": [
                                 {
-                                    "id": "MyRowSelectionModel",
+                                    "id": "MyRowSelectionModel1",
                                     "cid": "gridrowselectionmodel",
                                     "jsClass": "MyRowSelectionModel",
                                     "dock": "selModel",
@@ -2394,7 +2394,7 @@
                                     }
                                 },
                                 {
-                                    "id": "MyColumn8",
+                                    "id": "MyColumn12",
                                     "cid": "numbercolumn",
                                     "jsClass": "MyColumn8",
                                     "snapToGrid": 10,
@@ -2411,7 +2411,7 @@
                                     }
                                 },
                                 {
-                                    "id": "MyColumn7",
+                                    "id": "MyColumn13",
                                     "cid": "gridcolumn",
                                     "jsClass": "MyColumn7",
                                     "snapToGrid": 10,
@@ -2425,7 +2425,7 @@
                                     }
                                 },
                                 {
-                                    "id": "MyColumn9",
+                                    "id": "MyColumn14",
                                     "cid": "datecolumn",
                                     "jsClass": "MyColumn9",
                                     "snapToGrid": 10,
@@ -2440,7 +2440,7 @@
                                     }
                                 },
                                 {
-                                    "id": "MyColumn10",
+                                    "id": "MyColumn15",
                                     "cid": "numbercolumn",
                                     "jsClass": "MyColumn10",
                                     "snapToGrid": 10,
@@ -2456,7 +2456,7 @@
                                     }
                                 },
                                 {
-                                    "id": "MyColumn11",
+                                    "id": "MyColumn16",
                                     "cid": "numbercolumn",
                                     "jsClass": "MyColumn11",
                                     "snapToGrid": 10,
@@ -2514,15 +2514,6 @@
         }
     ],
     "stores": [
-        {
-            "id": "MyStore1",
-            "cid": "directstore",
-            "jsClass": "EventStore",
-            "snapToGrid": 10,
-            "userConfig": {
-                "storeId": "eventStore"
-            }
-        },
         {
             "id": "MyStore3",
             "cid": "jsonstore",
@@ -2679,6 +2670,58 @@
                         "name": "rankmagnitude",
                         "type": "float",
                         "defaultValue": "-ext-undefined-"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "MyStore5",
+            "cid": "jsonstore",
+            "jsClass": "EventMagnitudeStore",
+            "snapToGrid": 10,
+            "userConfig": {
+                "storeId": "eventMagnitudeStore"
+            },
+            "cn": [
+                {
+                    "id": "MyField11",
+                    "cid": "datafield",
+                    "jsClass": "MyField6",
+                    "snapToGrid": 10,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int"
+                    }
+                },
+                {
+                    "id": "MyField12",
+                    "cid": "datafield",
+                    "jsClass": "MyField7",
+                    "snapToGrid": 10,
+                    "userConfig": {
+                        "name": "agency",
+                        "type": "string"
+                    }
+                },
+                {
+                    "id": "MyField14",
+                    "cid": "datafield",
+                    "jsClass": "MyField9",
+                    "snapToGrid": 10,
+                    "userConfig": {
+                        "name": "value",
+                        "type": "float",
+                        "defaultValue": "-ext-undefined-"
+                    }
+                },
+                {
+                    "id": "MyField13",
+                    "cid": "datafield",
+                    "jsClass": "MyField7",
+                    "snapToGrid": 10,
+                    "userConfig": {
+                        "name": "type",
+                        "type": "string"
                     }
                 }
             ]

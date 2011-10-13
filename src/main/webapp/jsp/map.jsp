@@ -46,6 +46,7 @@
 <script type="text/javascript" src="${baseUri}/resources/js/StyleStore.js"></script>
 <script type="text/javascript" src="${baseUri}/resources/js/EventStore.js"></script>
 <script type="text/javascript" src="${baseUri}/resources/js/LocationEventStore.js"></script>
+<script type="text/javascript" src="${baseUri}/resources/js/EventMagnitudeStore.js"></script>
 <script type="text/javascript"
   src="${baseUri}/resources/js/SeismapViewport.ui.js"></script>
 <script type="text/javascript" src="${baseUri}/resources/js/seismap.js"></script>

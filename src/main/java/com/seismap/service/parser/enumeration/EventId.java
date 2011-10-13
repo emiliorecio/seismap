@@ -1,6 +1,7 @@
 package com.seismap.service.parser.enumeration;
 
 public enum EventId {
+
 	UNSPECIFIED,
 
 	EXPLOSION,
@@ -9,5 +10,9 @@ public enum EventId {
 
 	VOLCANIC,
 
-	PROBABLE_VOLCANIC
+	PROBABLE_VOLCANIC,
+
+	L,
+	
+	ASTERISK
 }

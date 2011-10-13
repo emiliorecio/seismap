@@ -7,11 +7,12 @@ import com.seismap.service.parser.annotation.IntegerField;
 import com.seismap.service.parser.annotation.StringField;
 import com.seismap.service.parser.annotation.Whitespace;
 
-@Entry(id = "F", after = { }, whitespaces = {
-		@Whitespace(position = 37, length = 24),
-		@Whitespace(position = 64, length = 7),
+@Entry(id = "F", after = { "I", "E", "F", "1" }, whitespaces = {
+		@Whitespace(position = 37, length = 25),
+		@Whitespace(position = 63, length = 4),
+		@Whitespace(position = 70, length = 1),
 		@Whitespace(position = 77, length = 1) })
-public class TypeFEntry {
+public class TypeFEntry extends AbstractEntry {
 
 	@FloatField(position = 1, digits = 10, decimals = 0)
 	private float strike;
@@ -23,9 +24,12 @@ public class TypeFEntry {
 	private float rake;
 
 	@IntegerField(position = 31, digits = 6)
-	private int badPolarities;
+	private Integer badPolarities;
 
-	@StringField(position = 61, length = 3)
+	@IntegerField(position = 62, digits = 1)
+	private Integer undefinedNumber;
+
+	@StringField(position = 67, length = 3)
 	private String agencyCode;
 
 	@StringField(position = 71, length = 6)
@@ -49,8 +53,12 @@ public class TypeFEntry {
 		return rake;
 	}
 
-	public int getBadPolarities() {
+	public Integer getBadPolarities() {
 		return badPolarities;
+	}
+
+	public Integer getUndefinedNumber() {
+		return undefinedNumber;
 	}
 
 	public String getAgencyCode() {
