@@ -11,7 +11,11 @@
     <constructor-arg>
       <bean class="com.vividsolutions.jts.geom.PrecisionModel" />
     </constructor-arg>
-    <constructor-arg value="4326" />
+    <constructor-arg value="900913" />
+  </bean>
+  
+  <bean id="service_coordinatesConverter" class="com.seismap.service.impl.CoordinatesConverter">
+    <constructor-arg value="256"/>
   </bean>
 
   <bean id="service_categoryService" class="com.seismap.service.impl.CategoryServiceImpl">
@@ -31,6 +35,7 @@
     <constructor-arg ref="model_eventRepository" />
     <constructor-arg ref="model_agencyRepository" />
     <constructor-arg ref="service_geometryFactory" />
+    <constructor-arg ref="service_coordinatesConverter" />
   </bean>
 
   <bean id="service_mapService" class="com.seismap.service.impl.MapServiceImpl">

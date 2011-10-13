@@ -32,6 +32,8 @@ public enum Phase {
 	
 	AMPG,
 	
-	IAMB
+	IAMB,
+	
+	SG
 
 }

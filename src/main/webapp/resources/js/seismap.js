@@ -268,14 +268,17 @@ seismap.ui.initEventWindowMap = function() {
     return;
   }
   this.initEventWindowMap.done = true;
-  var bounds =  new OpenLayers.Bounds(-180, -90,
-      180, 90)
+  var bounds =  new OpenLayers.Bounds(
+      -seismap.constants.googleProjectionLimits,
+      -seismap.constants.googleProjectionLimits,
+      seismap.constants.googleProjectionLimits,
+      seismap.constants.googleProjectionLimits)
   var options = {
     controls : [],
     maxExtent : bounds,
     numZoomLevels : 22,
     displayProjection : new OpenLayers.Projection('EPSG:4326'),
-    units : 'degrees',
+    units : 'm',
     theme : seismap.constants.baseUri
         + "/resources/css/lib/openlayers/theme/default/style.css"
   };
@@ -333,15 +336,19 @@ seismap.ui.initDepthWindowMap = function() {
     return;
   }
   this.initDepthWindowMap.done = true;
-  var bounds =  new OpenLayers.Bounds(-180, -90,
-      180, 90)
+  var bounds =  new OpenLayers.Bounds(
+      -seismap.constants.googleProjectionLimits,
+      -seismap.constants.googleProjectionLimits,
+      seismap.constants.googleProjectionLimits,
+      seismap.constants.googleProjectionLimits)
   var options = {
     controls : [],
     maxExtent : bounds,
     numZoomLevels : 22,
-    projection : 'EPSG:4326',
+    projection : 'EPSG:900913',
+    maxResolution: 156543.0339,
     displayProjection : new OpenLayers.Projection('EPSG:4326'),
-    units : 'degrees',
+    units : 'm',
     theme : seismap.constants.baseUri
         + "/resources/css/lib/openlayers/theme/default/style.css"
   };
@@ -386,7 +393,9 @@ seismap.ui.showDepthWindow = function(vector) {
   this.legendWindow.toFront();
   this.initDepthWindowMap();
   this.loadDepthLayers(vertices);
-  this.depthMap.setCenter(new OpenLayers.Geometry.Point({x: 0, y: 0}), 1);
+  
+  var bounds = polygon.getBounds();
+  this.depthMap.zoomToExtent(new OpenLayers.Bounds(bounds.left, 0, bounds.right, 0));
 };
 seismap.ui.showEventWindow = function(eventId, eventInformation) {
   var self = this;
@@ -417,7 +426,7 @@ seismap.ui.showEventWindow = function(eventId, eventInformation) {
         self.initEventWindowMap();
         self.loadEventLayers();
         var center = new OpenLayers.LonLat(event.longitude, event.latitude);
-        center = center.transform(self.eventMap.displayProjection, self.eventMap.getProjectionObject());
+        //center = center.transform(self.eventMap.displayProjection, self.eventMap.getProjectionObject());
         self.eventMap.setCenter(center, seismap.constants.eventMapZoom);
         self.initEventParameters();
       }
@@ -453,7 +462,7 @@ seismap.ui.loadDepthLayers = function(vertices) {
     }
     var vertex = vertices[i % vertices.length]; // Add first vertex also at the
                                                 // end
-    vertex = vertex.clone().transform(this.map.getProjectionObject(), this.map.displayProjection);
+    //vertex = vertex.clone().transform(this.map.getProjectionObject(), this.map.displayProjection);
     cqlFilter += vertex.x + ' ' + vertex.y;
   }
   cqlFilter += ')))';
@@ -1000,7 +1009,7 @@ seismap.ui.initMap = function() {
   var options = {
     controls : [],
     numZoomLevels : 22,
-    units : 'degrees',
+    units : 'm',
     displayProjection : new OpenLayers.Projection('EPSG:4326'),
     theme : seismap.constants.baseUri
         + "/resources/css/lib/openlayers/theme/default/style.css"
@@ -1120,8 +1129,6 @@ seismap.ui.getFeatures = function(e) {
   }
 };
 seismap.ui.loadLayers = function() {
-  document.title = (isNaN(parseInt(document.title)) ? 0
-      : parseInt(document.title)) + 1;
   this.stop();
   if (this.currentFrame != -1) {
     this.removeLayer(this.layers[this.currentFrame]);
@@ -1266,7 +1273,7 @@ seismap.ui.createLayer = function(map, layerRef, cqlFilter, layerName, baseLayer
       seismap.constants.layerServerUri + '/wms' + params,
       {
         width : '1679',
-        srs : 'EPSG:4326',
+        srs : 'EPSG:900913',
         layers : layerRef == null? seismap.constants.layerName : layerRef,
         height : '330',
         styles : style.sld,
