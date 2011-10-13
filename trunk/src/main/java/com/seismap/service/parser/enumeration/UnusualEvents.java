@@ -1,6 +1,8 @@
 package com.seismap.service.parser.enumeration;
 
 public enum UnusualEvents {
+	
+	BLANK,
 
 	LIQUEFACTION,
 	

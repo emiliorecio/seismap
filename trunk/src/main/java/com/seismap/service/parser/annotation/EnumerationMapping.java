@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 public @interface EnumerationMapping {
 
-	public String value();
+	public String[] value();
 
 	public String mapsTo();
 }

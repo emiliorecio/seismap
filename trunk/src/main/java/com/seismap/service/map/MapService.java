@@ -1,5 +1,7 @@
 package com.seismap.service.map;
 
+import org.springframework.core.io.Resource;
+
 import com.seismap.service.common.ActorCredentialsDto;
 
 public interface MapService {
@@ -27,4 +29,7 @@ public interface MapService {
 
 	ModifyMapResponseDto modify(ActorCredentialsDto actorCredentials,
 			ModifyMapRequestDto request);
+
+	Resource getLegend(ActorCredentialsDto actorCredentials,
+			GetLegendRequestDto request);
 }

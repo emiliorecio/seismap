@@ -2,6 +2,8 @@ package com.seismap.service.parser.enumeration;
 
 public enum IntensityScale {
 	
+	M,
+	
 	MODIFIED_MERCALLI,
 	
 	ROSSI_FOREL,

@@ -21,7 +21,7 @@ public class ParserTest {
 		count = 0;
 		Parser parser = new Parser();
 		InputStream inputStream = ParserTest.class.getClassLoader()
-				.getResourceAsStream("datafiles/sample2.data");
+				.getResourceAsStream("datafiles/collect2010-2011.data");
 		Assert.assertNotNull(inputStream);
 		DataInputStream in = new DataInputStream(inputStream);
 		final BufferedReader br = new BufferedReader(new InputStreamReader(in));

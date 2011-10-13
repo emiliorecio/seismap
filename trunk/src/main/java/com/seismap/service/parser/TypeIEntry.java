@@ -9,6 +9,7 @@ import com.seismap.service.parser.annotation.IntegerField;
 import com.seismap.service.parser.annotation.StringField;
 import com.seismap.service.parser.annotation.Whitespace;
 import com.seismap.service.parser.enumeration.ActionIndicator;
+import com.seismap.service.parser.enumeration.ActionIndicatorText;
 
 @Entry(id = "I", after = { "1", "2", "3", "E" }, whitespaces = {
 		@Whitespace(position = 1, length = 1),
@@ -20,8 +21,10 @@ import com.seismap.service.parser.enumeration.ActionIndicator;
 		@Whitespace(position = 77, length = 3) })
 public class TypeIEntry extends AbstractEntry {
 
-	@ConstantField(position = 2)
-	static final String ACTION_INDICATOR_TEXT = "ACTION:";
+	@EnumeratedField(position = 2, length = 7, mappings = {
+			@EnumerationMapping(value = "ACTION:", mapsTo = "ACTION"),
+			@EnumerationMapping(value = "OLDACT:", mapsTo = "OLD_ACTION") })
+	private ActionIndicatorText actionIndicatorText;
 
 	@EnumeratedField(position = 9, length = 3, mappings = {
 			@EnumerationMapping(value = "SPL", mapsTo = "SPLIT"),
@@ -30,7 +33,7 @@ public class TypeIEntry extends AbstractEntry {
 			@EnumerationMapping(value = "UPD", mapsTo = "UPDATE"),
 			@EnumerationMapping(value = "UP ", mapsTo = "UPDATE_ONLY_FROM_EEV"),
 			@EnumerationMapping(value = "REE", mapsTo = "REGISTER_FROM_EEV"),
-			@EnumerationMapping(value = "DUB", mapsTo = "DUPLICATED_EVENT"),
+			@EnumerationMapping(value = "DUP", mapsTo = "DUPLICATED_EVENT"),
 			@EnumerationMapping(value = "NEW", mapsTo = "NEW_EVENT") })
 	private ActionIndicator lastAction;
 
@@ -81,6 +84,10 @@ public class TypeIEntry extends AbstractEntry {
 
 	@BooleanField(position = 76, off = ' ', on = 'L')
 	private boolean idLocked;
+
+	public ActionIndicatorText getActionIndicatorText() {
+		return actionIndicatorText;
+	}
 
 	public ActionIndicator getLastAction() {
 		return lastAction;

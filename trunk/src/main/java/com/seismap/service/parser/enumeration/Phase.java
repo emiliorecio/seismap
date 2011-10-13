@@ -1,23 +1,37 @@
 package com.seismap.service.parser.enumeration;
 
 public enum Phase {
-	
+
+	BLANK,
+
 	PN,
-	
+
 	PG,
-	
+
 	LG,
-	
+
 	P,
-	
+
 	S,
+
+	AML,
+
+	PN3,
+
+	IAML,
+
+	AMP,
+
+	AMB,
+
+	AMSN,
+
+	SN,
+
+	AMSG,
 	
-	AM,
+	AMPG,
 	
-	I,
-	
-	PG_LOWERCASE,
-	
-	SG
+	IAMB
 
 }

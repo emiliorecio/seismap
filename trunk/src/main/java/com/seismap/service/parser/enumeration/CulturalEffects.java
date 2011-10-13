@@ -2,6 +2,7 @@ package com.seismap.service.parser.enumeration;
 
 public enum CulturalEffects {
 	
+	BLANK,
 	
 	CASUALTIES_REPORTED,
 	

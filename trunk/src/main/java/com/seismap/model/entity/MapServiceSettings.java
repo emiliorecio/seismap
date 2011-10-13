@@ -120,6 +120,9 @@ public class MapServiceSettings {
 	@JoinColumn(name = "defaultMapStyle_id", nullable = false)
 	private Style defaultMapStyle;
 
+	@Column(nullable = false)
+	private String legendsDirectory;
+
 	protected MapServiceSettings() {
 
 	}
@@ -143,7 +146,8 @@ public class MapServiceSettings {
 			AnimationType defaultMapAnimationType,
 			float defaultMapAnimationStepKeep, int defaultMapAnimationSteps,
 			float defaultMapAnimationStepDuration,
-			boolean defaultMapReverseAnimation, Style defaultMapStyle) {
+			boolean defaultMapReverseAnimation, Style defaultMapStyle,
+			String legendsDirectory) {
 		super();
 		this.layerServerUri = layerServerUri;
 		this.defaultMapName = defaultMapName;
@@ -175,6 +179,7 @@ public class MapServiceSettings {
 		this.defaultMapAnimationStepDuration = defaultMapAnimationStepDuration;
 		this.defaultMapReverseAnimation = defaultMapReverseAnimation;
 		this.defaultMapStyle = defaultMapStyle;
+		this.legendsDirectory = legendsDirectory;
 	}
 
 	public String getLayerServerUri() {
@@ -423,6 +428,14 @@ public class MapServiceSettings {
 
 	public void setDefaultMapStyle(Style defaultMapStyle) {
 		this.defaultMapStyle = defaultMapStyle;
+	}
+
+	public String getLegendsDirectory() {
+		return legendsDirectory;
+	}
+
+	public void setLegendsDirectory(String legendsDirectory) {
+		this.legendsDirectory = legendsDirectory;
 	}
 
 }

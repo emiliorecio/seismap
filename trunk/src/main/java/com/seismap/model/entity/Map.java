@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.Type;
+
 import com.seismap.service.event.ExtendedMagnitudeType;
 import com.seismap.service.map.AnimationType;
 import com.seismap.service.map.DateLimitType;
@@ -46,6 +48,7 @@ public class Map implements Identifiable<Long> {
 	private String description;
 
 	@Column(nullable = false)
+	@Type(type = "org.hibernatespatial.GeometryUserType")
 	private Point center;
 
 	@Column(nullable = false)

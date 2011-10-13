@@ -11,8 +11,10 @@ import java.lang.annotation.Target;
 public @interface FloatField {
 
 	public int position();
-	
+
 	public int digits();
-	
+
 	public int decimals();
+
+	public String[] nullAlias() default {};
 }

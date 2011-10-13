@@ -16,7 +16,7 @@ import com.seismap.service.parser.enumeration.SeicheCode;
 import com.seismap.service.parser.enumeration.TsunamiCode;
 import com.seismap.service.parser.enumeration.UnusualEvents;
 
-@Entry(id = "2", after = "1", whitespaces = {
+@Entry(id = "2", after = { "1", "6", "3", "7", "E" }, whitespaces = {
 		@Whitespace(position = 1, length = 5),
 		@Whitespace(position = 21, length = 1),
 		@Whitespace(position = 27, length = 1),
@@ -31,22 +31,26 @@ public class Type2Entry extends AbstractEntry {
 	private String descriptiveText;
 
 	@EnumeratedField(position = 22, length = 1, mappings = {
+			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
 			@EnumerationMapping(value = "F", mapsTo = "SURFACE"),
 			@EnumerationMapping(value = "U", mapsTo = "UPLIFT"),
 			@EnumerationMapping(value = "D", mapsTo = "FAULTING") })
 	private DiastrophismCode diastrophismCode;
 
 	@EnumeratedField(position = 23, length = 1, mappings = {
+			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
 			@EnumerationMapping(value = "T", mapsTo = "TSUNAMI_GENERATED"),
 			@EnumerationMapping(value = "Q", mapsTo = "POSSIBLE_TSUNAMI") })
 	private TsunamiCode tsunamiCode;
 
 	@EnumeratedField(position = 24, length = 1, mappings = {
+			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
 			@EnumerationMapping(value = "S", mapsTo = "SEICHE"),
 			@EnumerationMapping(value = "Q", mapsTo = "POSSIBLE_SEICHE") })
 	private SeicheCode seicheCode;
 
 	@EnumeratedField(position = 25, length = 1, mappings = {
+			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
 			@EnumerationMapping(value = "C", mapsTo = "CASUALTIES_REPORTED"),
 			@EnumerationMapping(value = "D", mapsTo = "DAMAGE_REPORTED"),
 			@EnumerationMapping(value = "F", mapsTo = "EARTHQUAKE_WAS_LEFT"),
@@ -54,6 +58,7 @@ public class Type2Entry extends AbstractEntry {
 	private CulturalEffects culturalEffects;
 
 	@EnumeratedField(position = 26, length = 1, mappings = {
+			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
 			@EnumerationMapping(value = "L", mapsTo = "LIQUEFACTION"),
 			@EnumerationMapping(value = "G", mapsTo = "GEYSIR_FUMEROL"),
 			@EnumerationMapping(value = "S", mapsTo = "LANDSLIDES_AVALANCHES"),
@@ -71,41 +76,43 @@ public class Type2Entry extends AbstractEntry {
 	private char maxIntensityQualifier;
 
 	@EnumeratedField(position = 31, length = 2, mappings = {
+			@EnumerationMapping(value = "M ", mapsTo = "M"),
 			@EnumerationMapping(value = "MM", mapsTo = "MODIFIED_MERCALLI"),
 			@EnumerationMapping(value = "RF", mapsTo = "ROSSI_FOREL"),
 			@EnumerationMapping(value = "CS", mapsTo = "MERCALLI_CANCANI_SEBERG"),
 			@EnumerationMapping(value = "SK", mapsTo = "MEDEVEV_SPONHEUR_KARNIK33_FREE") })
 	private IntensityScale intensityScale;
 
-	@FloatField(position = 34, digits = 6, decimals = 2)
-	private float macroseismicLatitude;
+	@FloatField(position = 34, digits = 6, decimals = 2, nullAlias = "******")
+	private Float macroseismicLatitude;
 
 	@FloatField(position = 41, digits = 7, decimals = 2)
 	private float macroseismicLongitude;
 
 	@FloatField(position = 49, digits = 3, decimals = 1)
-	private float macroseismicMagnitude;
+	private Float macroseismicMagnitude;
 
 	@EnumeratedField(position = 52, length = 1, mappings = {
+			@EnumerationMapping(value = " ", mapsTo = "BLANK"),
 			@EnumerationMapping(value = "A", mapsTo = "MAGNITUDE_BASED_ON_FELT_AREA"),
 			@EnumerationMapping(value = "R", mapsTo = "MAGNITUDE_BASED_ON_RADIUS_AREA"),
 			@EnumerationMapping(value = "*", mapsTo = "MAGNITUDE_CUSTOM_CALCULATED") })
 	private MagnitudeIntensityType typeOfMagnitude_I;
 
 	@FloatField(position = 53, digits = 4, decimals = 2)
-	private float logarithmRadiusFeltArea;
+	private Float logarithmRadiusFeltArea;
 
 	@FloatField(position = 57, digits = 5, decimals = 2)
-	private float logarithmAreaNumber1;
+	private Float logarithmAreaNumber1;
 
 	@IntegerField(position = 62, digits = 2)
-	private int intensityBoardering1;
+	private Integer intensityBoardering1;
 
 	@FloatField(position = 64, digits = 5, decimals = 2)
-	private float logarithmAreaNumber2;
+	private Float logarithmAreaNumber2;
 
 	@IntegerField(position = 69, digits = 2)
-	private int intensityBoardering2;
+	private Integer intensityBoardering2;
 
 	@CharacterField(position = 72)
 	private char qualityRankReport;
@@ -149,7 +156,7 @@ public class Type2Entry extends AbstractEntry {
 		return intensityScale;
 	}
 
-	public float getMacroseismicLatitude() {
+	public Float getMacroseismicLatitude() {
 		return macroseismicLatitude;
 	}
 
@@ -157,7 +164,7 @@ public class Type2Entry extends AbstractEntry {
 		return macroseismicLongitude;
 	}
 
-	public float getMacroseismicMagnitude() {
+	public Float getMacroseismicMagnitude() {
 		return macroseismicMagnitude;
 	}
 
@@ -165,23 +172,23 @@ public class Type2Entry extends AbstractEntry {
 		return typeOfMagnitude_I;
 	}
 
-	public float getLogarithmRadiusFeltArea() {
+	public Float getLogarithmRadiusFeltArea() {
 		return logarithmRadiusFeltArea;
 	}
 
-	public float getLogarithmAreaNumber1() {
+	public Float getLogarithmAreaNumber1() {
 		return logarithmAreaNumber1;
 	}
 
-	public int getIntensityBoardering1() {
+	public Integer getIntensityBoardering1() {
 		return intensityBoardering1;
 	}
 
-	public float getLogarithmAreaNumber2() {
+	public Float getLogarithmAreaNumber2() {
 		return logarithmAreaNumber2;
 	}
 
-	public int getIntensityBoardering2() {
+	public Integer getIntensityBoardering2() {
 		return intensityBoardering2;
 	}
 

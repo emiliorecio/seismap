@@ -1,9 +1,13 @@
 package com.seismap.service.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.seismap.model.entity.Application;
@@ -22,7 +26,6 @@ import com.seismap.service.common.ExceptionCause;
 import com.seismap.service.common.ExceptionCause.ExceptionParameter;
 import com.seismap.service.event.ExtendedMagnitudeType;
 import com.seismap.service.map.AnimationType;
-import com.seismap.service.map.ModifiableMapDataDto;
 import com.seismap.service.map.CreateMapRequestDto;
 import com.seismap.service.map.CreateMapResponseDto;
 import com.seismap.service.map.DateLimitType;
@@ -32,6 +35,7 @@ import com.seismap.service.map.GetDefaultMapRequestDto;
 import com.seismap.service.map.GetDefaultMapResponseDto;
 import com.seismap.service.map.GetLayerServerUriRequestDto;
 import com.seismap.service.map.GetLayerServerUriResponseDto;
+import com.seismap.service.map.GetLegendRequestDto;
 import com.seismap.service.map.GetMapRequestDto;
 import com.seismap.service.map.GetMapResponseDto;
 import com.seismap.service.map.ListUserMapsRequestDto;
@@ -39,6 +43,7 @@ import com.seismap.service.map.ListUserMapsResponseDto;
 import com.seismap.service.map.MagnitudeLimitType;
 import com.seismap.service.map.MapDto;
 import com.seismap.service.map.MapService;
+import com.seismap.service.map.ModifiableMapDataDto;
 import com.seismap.service.map.ModifyMapRequestDto;
 import com.seismap.service.map.ModifyMapResponseDto;
 import com.seismap.service.map.RenameMapRequestDto;
@@ -156,8 +161,8 @@ public class MapServiceImpl implements MapService {
 			maxDate = calendar.getTime();
 		}
 
-		ModifiableMapDataDto mapDto = new ModifiableMapDataDto(name, description,
-				Double.valueOf(centerLatitude),
+		ModifiableMapDataDto mapDto = new ModifiableMapDataDto(name,
+				description, Double.valueOf(centerLatitude),
 				Double.valueOf(centerLongitude), Integer.valueOf(zoom),
 				minDateType, Float.valueOf(minDateRelativeAmount),
 				minDateRelativeUnits, minDate, maxDateType,
@@ -444,4 +449,27 @@ public class MapServiceImpl implements MapService {
 		return response;
 	}
 
+	@Transactional
+	public Resource getLegend(ActorCredentialsDto actorCredentials,
+			GetLegendRequestDto request) {
+		String sld = request.getSld();
+
+		Application application = applicationRepository.fetch();
+		MapServiceSettings settings = application.getMapServiceSettings();
+
+		String legendsDirectory = settings.getLegendsDirectory();
+		File legendsDirectoryFile = new File(legendsDirectory);
+		File legendFile;
+		try {
+			legendFile = new File(legendsDirectory, sld + ".png")
+					.getCanonicalFile();
+		} catch (IOException e) {
+			throw new RuntimeException("La leyenda no es válida: " + e, e);
+		}
+		if (!legendFile.exists()
+				|| !legendFile.getParentFile().equals(legendsDirectoryFile)) {
+			throw new RuntimeException("La leyenda no es válida.");
+		}
+		return new FileSystemResource(legendFile);
+	}
 }

@@ -1,9 +1,15 @@
 package com.seismap.controller;
 
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.seismap.service.map.CreateMapRequestDto;
@@ -12,6 +18,7 @@ import com.seismap.service.map.GetDefaultMapRequestDto;
 import com.seismap.service.map.GetDefaultMapResponseDto;
 import com.seismap.service.map.GetLayerServerUriRequestDto;
 import com.seismap.service.map.GetLayerServerUriResponseDto;
+import com.seismap.service.map.GetLegendRequestDto;
 import com.seismap.service.map.GetMapRequestDto;
 import com.seismap.service.map.GetMapResponseDto;
 import com.seismap.service.map.ListUserMapsRequestDto;
@@ -75,5 +82,15 @@ public class MapController extends SeismapController {
 	public GetLayerServerUriResponseDto getLayerServerUri(
 			@RequestBody GetLayerServerUriRequestDto request) {
 		return mapService.getLayerServerUri(getActorCredentials(), request);
+	}
+
+	@RequestMapping(value = "getLegend", method = RequestMethod.GET)
+	public ResponseEntity<Resource> getLegend(
+			@RequestParam("name") GetLegendRequestDto request) {
+		Resource resource = mapService
+				.getLegend(getActorCredentials(), request);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.IMAGE_PNG);
+		return new ResponseEntity<Resource>(resource, headers, HttpStatus.OK);
 	}
 }
