@@ -52,13 +52,13 @@
                   <sld:CssParameter name="fill">
                     <ogc:Function name="categorize">
                       <ogc:PropertyName>age</ogc:PropertyName>
-                      <ogc:Literal>#FC0003</ogc:Literal>
+                      <ogc:Literal>#FF0000</ogc:Literal>
                       <ogc:Literal>3600</ogc:Literal>
-                      <ogc:Literal>#309AFF</ogc:Literal>
+                      <ogc:Literal>#FF00FF</ogc:Literal>
                       <ogc:Literal>86400</ogc:Literal>
-                      <ogc:Literal>#FFFF09</ogc:Literal>
+                      <ogc:Literal>#FFFF00</ogc:Literal>
                       <ogc:Literal>604800</ogc:Literal>
-                      <ogc:Literal>#B5E61D</ogc:Literal>
+                      <ogc:Literal>#0000FF</ogc:Literal>
                     </ogc:Function>
                   </sld:CssParameter>
                   <sld:CssParameter name="fill-opacity">0.75
