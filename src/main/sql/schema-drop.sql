@@ -1,3 +1,31 @@
+/* Foreign keys */
+
+ALTER TABLE application
+  DROP CONSTRAINT application_defaultmapstyle_fk;
+
+ALTER TABLE category
+  DROP CONSTRAINT catergory_application_id_fk;
+
+ALTER TABLE magnitude
+  DROP CONSTRAINT magnitude_event_id_fk;
+ALTER TABLE magnitude
+  DROP CONSTRAINT magnitude_reportingagency_id_fk;
+
+ALTER TABLE style
+  DROP CONSTRAINT style_application_id_fk;
+
+ALTER TABLE stylevariable
+  DROP CONSTRAINT stylevariable_style_id_fk;
+
+ALTER TABLE map
+  DROP CONSTRAINT map_style_id_fk;
+ALTER TABLE map
+  DROP CONSTRAINT map_user_id_fk;
+ALTER TABLE map
+  DROP CONSTRAINT map_category_id_fk;
+
+/* Views */
+  
 DROP VIEW databounds;
 
 DROP VIEW magnitudedatabounds;
@@ -41,6 +69,8 @@ SELECT DropGeometryColumn('eventandaveragemagnitudes', 'location');
 DROP TABLE eventandaveragemagnitudes;
 
 DROP VIEW eventandaveragemagnitudes_unmaterialized;
+
+/* Tables */
 
 SELECT DropGeometryColumn('map', 'center');
 DROP INDEX map_oid;

@@ -44,10 +44,7 @@ CREATE TABLE application
   defaultmapstyle_id bigint,
   defaultmapname character varying(255),
   legendsdirectory character varying(255),
-  CONSTRAINT application_pkey PRIMARY KEY (id),
-  CONSTRAINT fkc00dad307bc7d5aa FOREIGN KEY (defaultmapstyle_id)
-      REFERENCES style (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+  CONSTRAINT application_pkey PRIMARY KEY (id)
 )
 WITH (
   OIDS=FALSE
@@ -60,10 +57,7 @@ CREATE TABLE category
   inapplicationindex integer NOT NULL,
   "name" character varying(255) NOT NULL,
   application_id bigint NOT NULL,
-  CONSTRAINT category_pkey PRIMARY KEY (id),
-  CONSTRAINT fk6dd211e1e61e90f FOREIGN KEY (application_id)
-      REFERENCES application (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+  CONSTRAINT category_pkey PRIMARY KEY (id)
 )
 WITH (
   OIDS=FALSE
@@ -98,13 +92,7 @@ CREATE TABLE magnitude
   "value" real NOT NULL,
   reportingagency_id bigint NOT NULL,
   event_id bigint NOT NULL,
-  CONSTRAINT magnitude_pkey PRIMARY KEY (id),
-  CONSTRAINT fkff3c71f062f7508f FOREIGN KEY (event_id)
-      REFERENCES event (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT fkff3c71f0a1e50ab7 FOREIGN KEY (reportingagency_id)
-      REFERENCES agency (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+  CONSTRAINT magnitude_pkey PRIMARY KEY (id)
 )
 WITH (
   OIDS=FALSE
@@ -145,10 +133,7 @@ CREATE TABLE style
   sld character varying(255),
   inapplicationindex integer,
   application_id bigint,
-  CONSTRAINT style_pkey PRIMARY KEY (id),
-  CONSTRAINT fk4c82d911e61e90f FOREIGN KEY (application_id)
-      REFERENCES application (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+  CONSTRAINT style_pkey PRIMARY KEY (id)
 )
 WITH (
   OIDS=FALSE
@@ -160,10 +145,7 @@ CREATE TABLE stylevariable
   style_id bigint NOT NULL,
   "value" character varying(255) NOT NULL,
   "name" character varying(255) NOT NULL,
-  CONSTRAINT stylevariable_pkey PRIMARY KEY (style_id, name),
-  CONSTRAINT fk786d432dca3de52f FOREIGN KEY (style_id)
-      REFERENCES style (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+  CONSTRAINT stylevariable_pkey PRIMARY KEY (style_id, name)
 )
 WITH (
   OIDS=FALSE
@@ -204,19 +186,7 @@ CREATE TABLE map
   category_id bigint,
   animationstepduration real NOT NULL,
   style_id bigint,
-  CONSTRAINT map_pkey PRIMARY KEY (id),
-  CONSTRAINT fk12d3c3d500412 FOREIGN KEY (category_id)
-      REFERENCES seismapuser (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT fk12d3cca3de52f FOREIGN KEY (style_id)
-      REFERENCES style (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT fk12d3cd8e24625 FOREIGN KEY (user_id)
-      REFERENCES seismapuser (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT fk12d3cfe26b7c5 FOREIGN KEY (category_id)
-      REFERENCES category (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+  CONSTRAINT map_pkey PRIMARY KEY (id)
 )
 WITH (
   OIDS=TRUE
@@ -226,6 +196,52 @@ ALTER TABLE map OWNER TO postgres;
 CREATE INDEX map_oid ON map (oid);
 
 SELECT AddGeometryColumn('map', 'center', 900913, 'POINT', 2);
+
+/* Foreign keys */
+
+ALTER TABLE application
+  ADD CONSTRAINT application_defaultmapstyle_fk FOREIGN KEY (defaultmapstyle_id)
+      REFERENCES style (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE;
+
+ALTER TABLE category
+  ADD CONSTRAINT catergory_application_id_fk FOREIGN KEY (application_id)
+      REFERENCES application (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE;
+
+ALTER TABLE magnitude
+  ADD CONSTRAINT magnitude_event_id_fk FOREIGN KEY (event_id)
+      REFERENCES event (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE magnitude
+  ADD CONSTRAINT magnitude_reportingagency_id_fk FOREIGN KEY (reportingagency_id)
+      REFERENCES agency (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE style
+  ADD CONSTRAINT style_application_id_fk FOREIGN KEY (application_id)
+      REFERENCES application (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE;
+
+ALTER TABLE stylevariable
+  ADD CONSTRAINT stylevariable_style_id_fk FOREIGN KEY (style_id)
+      REFERENCES style (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE map
+  ADD CONSTRAINT map_style_id_fk FOREIGN KEY (style_id)
+      REFERENCES style (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE map
+  ADD CONSTRAINT map_user_id_fk FOREIGN KEY (user_id)
+      REFERENCES seismapuser (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE map
+  ADD CONSTRAINT map_category_id_fk FOREIGN KEY (category_id)
+      REFERENCES category (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;      
+
+/* Views */
 
 CREATE VIEW eventandaveragemagnitudes_unmaterialized AS 
     SELECT
