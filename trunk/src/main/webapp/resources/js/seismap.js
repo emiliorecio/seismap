@@ -443,7 +443,7 @@ seismap.ui.loadEventLayers = function() {
   }
   this.eventLayer = this.createLayer(this.eventMap, null, 'id = ' + this.eventData.id, 'Sismo', false, null);
   this.eventAffectedLayer = this.createLayer(this.eventMap, null, 'id = ' + this.eventData.id, 'Area afectada', false, {
-    sld : 'seismap_affected-distance', 
+    sld : seismap.constants.affectedDistanceStyleName, 
     variables: {}
   });
   this.addLayer(this.eventLayer);
@@ -466,7 +466,7 @@ seismap.ui.loadDepthLayers = function(vertices) {
     cqlFilter += vertex.x + ' ' + vertex.y;
   }
   cqlFilter += ')))';
-  this.depthLayer = this.createLayer(this.depthMap, 'seismap:eventandaveragemagnitudes_depthlocation', cqlFilter, 'Sismos en profundidad', true, null);
+  this.depthLayer = this.createLayer(this.depthMap, seismap.constants.depthLayerName, cqlFilter, 'Sismos en profundidad', true, null);
   this.addLayer(this.depthLayer);
 };
 seismap.ui.registerControlHandles = function() {

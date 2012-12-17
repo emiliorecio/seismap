@@ -3,6 +3,8 @@ seismap.constants = {};
 seismap.constants.googleProjectionLimits = 20037508.34;
 seismap.constants.eventMapZoom = 7;
 seismap.constants.layerName = 'seismap:eventandaveragemagnitudes';
+seismap.constants.depthLayerName = 'seismapeventandaveragemagnitudes_depthlocation';
+seismap.constants.affectedDistanceStyleName = 'seismap_affected-distance';
 seismap.constants.dateUnits = [ {
   id : 'MINUTE',
   name : 'Minutos'
