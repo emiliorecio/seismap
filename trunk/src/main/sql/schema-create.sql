@@ -116,7 +116,6 @@ CREATE TABLE seismapuser
   id bigint NOT NULL,
   email character varying(255) NOT NULL,
   "name" character varying(255) NOT NULL,
-  "password" character varying(255) NOT NULL,
   passwordhash character varying(255),
   administrator boolean,
   CONSTRAINT seismapuser_pkey PRIMARY KEY (id)
@@ -255,12 +254,12 @@ CREATE VIEW eventandaveragemagnitudes_unmaterialized AS
         event.perceiveddistance,
         event.damageddistance,
         /* Magnitudes by type - aka: (ml, mb, ms, ...)magnitude */
-        avg(mlmagnitude.value) AS mlmagnitude,
-        avg(mbmagnitude.value) AS mbmagnitude,
-        avg(msmagnitude.value) AS msmagnitude,
-        avg(mwmagnitude.value) AS mwmagnitude,
-        avg(mblgmagnitude.value) AS mblgmagnitude,
-        avg(mcmagnitude.value) AS mcmagnitude,
+        avg(mlmagnitude.value)::real AS mlmagnitude,
+        avg(mbmagnitude.value)::real AS mbmagnitude,
+        avg(msmagnitude.value)::real AS msmagnitude,
+        avg(mwmagnitude.value)::real AS mwmagnitude,
+        avg(mblgmagnitude.value)::real AS mblgmagnitude,
+        avg(mcmagnitude.value)::real AS mcmagnitude,
         /* Max and min magnitude expected limits by type */
         mlmagnitudelimits.min AS minmlmagnitude, mlmagnitudelimits.max AS maxmlmagnitude,
         mbmagnitudelimits.min AS minmbmagnitude, mbmagnitudelimits.max AS maxmbmagnitude,
@@ -270,20 +269,20 @@ CREATE VIEW eventandaveragemagnitudes_unmaterialized AS
         mcmagnitudelimits.min AS minmcmagnitude, mcmagnitudelimits.max AS maxmcmagnitude,
         rankmagnitudelimits.min AS minrankmagnitude, rankmagnitudelimits.max AS maxrankmagnitude,
         /* Magnitudes by type normalized by expected limits (0 to 1 expected) - aka: (ml, mb, ms, ...)index */
-        (avg(mlmagnitude.value) - mlmagnitudelimits.min) / (mlmagnitudelimits.max - mlmagnitudelimits.min) as mlindex,
-        (avg(mbmagnitude.value) - mbmagnitudelimits.min) / (mbmagnitudelimits.max - mbmagnitudelimits.min) as mbindex,
-        (avg(msmagnitude.value) - msmagnitudelimits.min) / (msmagnitudelimits.max - msmagnitudelimits.min) as msindex,
-        (avg(mwmagnitude.value) - mwmagnitudelimits.min) / (mwmagnitudelimits.max - mwmagnitudelimits.min) as mwindex,
-        (avg(mblgmagnitude.value) - mblgmagnitudelimits.min) / (mblgmagnitudelimits.max - mblgmagnitudelimits.min) as mblgindex,
-        (avg(mcmagnitude.value) - mcmagnitudelimits.min) / (mcmagnitudelimits.max - mcmagnitudelimits.min) as mcindex,
+        (avg(mlmagnitude.value) - mlmagnitudelimits.min) / (mlmagnitudelimits.max - mlmagnitudelimits.min)::real as mlindex,
+        (avg(mbmagnitude.value) - mbmagnitudelimits.min) / (mbmagnitudelimits.max - mbmagnitudelimits.min)::real as mbindex,
+        (avg(msmagnitude.value) - msmagnitudelimits.min) / (msmagnitudelimits.max - msmagnitudelimits.min)::real as msindex,
+        (avg(mwmagnitude.value) - mwmagnitudelimits.min) / (mwmagnitudelimits.max - mwmagnitudelimits.min)::real as mwindex,
+        (avg(mblgmagnitude.value) - mblgmagnitudelimits.min) / (mblgmagnitudelimits.max - mblgmagnitudelimits.min)::real as mblgindex,
+        (avg(mcmagnitude.value) - mcmagnitudelimits.min) / (mcmagnitudelimits.max - mcmagnitudelimits.min)::real as mcindex,
         /* Greatest normalized magnitude multiplied by 10 (0 to 10 expected) - aka: rankmagnitude */
-        greatest(
+        (greatest(
           (avg(mlmagnitude.value) - mlmagnitudelimits.min) / (mlmagnitudelimits.max - mlmagnitudelimits.min),
           (avg(mbmagnitude.value) - mbmagnitudelimits.min) / (mbmagnitudelimits.max - mbmagnitudelimits.min),
           (avg(msmagnitude.value) - msmagnitudelimits.min) / (msmagnitudelimits.max - msmagnitudelimits.min),
           (avg(mwmagnitude.value) - mwmagnitudelimits.min) / (mwmagnitudelimits.max - mwmagnitudelimits.min),
           (avg(mblgmagnitude.value) - mblgmagnitudelimits.min) / (mblgmagnitudelimits.max - mblgmagnitudelimits.min),
-          (avg(mcmagnitude.value) - mcmagnitudelimits.min) / (mcmagnitudelimits.max - mcmagnitudelimits.min)) * 10 as rankmagnitude,
+          (avg(mcmagnitude.value) - mcmagnitudelimits.min) / (mcmagnitudelimits.max - mcmagnitudelimits.min)) * 10)::real as rankmagnitude,
         /* Greatest normalized magnitude (0 to 1 expected) - aka: rankindex */
         greatest(
           (avg(mlmagnitude.value) - mlmagnitudelimits.min) / (mlmagnitudelimits.max - mlmagnitudelimits.min),
@@ -291,7 +290,7 @@ CREATE VIEW eventandaveragemagnitudes_unmaterialized AS
           (avg(msmagnitude.value) - msmagnitudelimits.min) / (msmagnitudelimits.max - msmagnitudelimits.min),
           (avg(mwmagnitude.value) - mwmagnitudelimits.min) / (mwmagnitudelimits.max - mwmagnitudelimits.min),
           (avg(mblgmagnitude.value) - mblgmagnitudelimits.min) / (mblgmagnitudelimits.max - mblgmagnitudelimits.min),
-          (avg(mcmagnitude.value) - mcmagnitudelimits.min) / (mcmagnitudelimits.max - mcmagnitudelimits.min)) as rankindex,
+          (avg(mcmagnitude.value) - mcmagnitudelimits.min) / (mcmagnitudelimits.max - mcmagnitudelimits.min))::real as rankindex,
         /* Location */
         event.location,
         /* Depth location */
@@ -474,7 +473,7 @@ CREATE TRIGGER magnitudelimits_ct AFTER UPDATE OR DELETE OR INSERT ON magnitudel
 
 CREATE VIEW databounds AS 
   SELECT
-      1 AS id,
+      1::bigint AS id,
       min(depth) AS mindepth,
       max(depth) AS maxdepth,
       min(date) AS mindate,
@@ -483,17 +482,17 @@ CREATE VIEW databounds AS
 ALTER VIEW databounds OWNER TO postgres;
 
 CREATE VIEW magnitudedatabounds AS
-  SELECT 1 as databound_id, 'RANK'::CHARACTER VARYING(4) as magnitudetype, min(rankmagnitude) AS min, max(rankmagnitude) AS max FROM eventandaveragemagnitudes
+  SELECT 1::bigint as databound_id, 'RANK'::CHARACTER VARYING(4) as magnitudetype, min(rankmagnitude) AS min, max(rankmagnitude) AS max FROM eventandaveragemagnitudes
   UNION
-  SELECT 1 as databound_id, 'ML'::CHARACTER VARYING(4) as magnitudetype, min(mlmagnitude) AS min, max(mlmagnitude) AS max FROM eventandaveragemagnitudes
+  SELECT 1::bigint as databound_id, 'ML'::CHARACTER VARYING(4) as magnitudetype, min(mlmagnitude) AS min, max(mlmagnitude) AS max FROM eventandaveragemagnitudes
   UNION
-  SELECT 1 as databound_id, 'MB'::CHARACTER VARYING(4) as magnitudetype, min(mbmagnitude) AS min, max(mbmagnitude) AS max FROM eventandaveragemagnitudes
+  SELECT 1::bigint as databound_id, 'MB'::CHARACTER VARYING(4) as magnitudetype, min(mbmagnitude) AS min, max(mbmagnitude) AS max FROM eventandaveragemagnitudes
   UNION
-  SELECT 1 as databound_id, 'MS'::CHARACTER VARYING(4) as magnitudetype, min(msmagnitude) AS min, max(msmagnitude) AS max FROM eventandaveragemagnitudes
+  SELECT 1::bigint as databound_id, 'MS'::CHARACTER VARYING(4) as magnitudetype, min(msmagnitude) AS min, max(msmagnitude) AS max FROM eventandaveragemagnitudes
   UNION
-  SELECT 1 as databound_id, 'MW'::CHARACTER VARYING(4) as magnitudetype, min(mwmagnitude) AS min, max(mwmagnitude) AS max FROM eventandaveragemagnitudes
+  SELECT 1::bigint as databound_id, 'MW'::CHARACTER VARYING(4) as magnitudetype, min(mwmagnitude) AS min, max(mwmagnitude) AS max FROM eventandaveragemagnitudes
   UNION
-  SELECT 1 as databound_id, 'MBLG'::CHARACTER VARYING(4) as magnitudetype, min(mblgmagnitude) AS min, max(mblgmagnitude) AS max FROM eventandaveragemagnitudes
+  SELECT 1::bigint as databound_id, 'MBLG'::CHARACTER VARYING(4) as magnitudetype, min(mblgmagnitude) AS min, max(mblgmagnitude) AS max FROM eventandaveragemagnitudes
   UNION
-  SELECT 1 as databound_id, 'MC'::CHARACTER VARYING(4) as magnitudetype, min(mcmagnitude) AS min, max(mcmagnitude) AS max FROM eventandaveragemagnitudes;
+  SELECT 1::bigint as databound_id, 'MC'::CHARACTER VARYING(4) as magnitudetype, min(mcmagnitude) AS min, max(mcmagnitude) AS max FROM eventandaveragemagnitudes;
 ALTER VIEW magnitudedatabounds OWNER TO postgres;
