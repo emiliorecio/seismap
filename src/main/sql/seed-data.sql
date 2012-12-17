@@ -161,4 +161,9 @@ INSERT INTO magnitudelimits(magnitudetype, max, min)
 INSERT INTO magnitudelimits(magnitudetype, max, min)
     VALUES ('ML', 0, 10);
 
+/* Admin user */
+
+INSERT INTO seismapuser(id, email, name, passwordhash, administrator)
+    VALUES (1, 'admin@seismap.com', 'Admin', '', true);
+	
 COMMIT;

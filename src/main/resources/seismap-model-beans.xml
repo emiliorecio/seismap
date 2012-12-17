@@ -35,8 +35,13 @@
                 </prop>
         <prop key="hibernate.hbm2ddl.auto">
           to_be_replaced
-                </prop>
-        <prop key="hibernate.show_sql">true</prop>
+        </prop>
+        <prop key="hibernate.show_sql">
+          to_be_replaced
+        </prop>
+        <prop key="hibernate.id.new_generator_mappings">
+          true
+        </prop>
       </util:properties>
     </property>
     <property name="dataSource" ref="model_dataSource" />

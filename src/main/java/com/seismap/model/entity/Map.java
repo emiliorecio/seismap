@@ -8,6 +8,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,18 +27,16 @@ import com.vividsolutions.jts.geom.Point;
 public class Map implements Identifiable<Long> {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
 	private Long id;
 
 	@ManyToOne
 	private User user;
 
-	@SuppressWarnings("unused")
 	@Column(nullable = true, insertable = false, updatable = false)
 	private Integer inCategoryIndex = null;
 
-	@SuppressWarnings("unused")
 	@Column(nullable = true, insertable = false, updatable = false)
 	private Integer inUserIndex = null;
 

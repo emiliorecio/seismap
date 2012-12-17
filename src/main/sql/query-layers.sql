@@ -9,7 +9,11 @@ Attributes:
 - Identifier: id
 - Geometry: SRID 900913
 
-sql view:
+Native/Declared SRS: EPSG:900913
+Native Bounding Box: -20037508.34 -20037508.34 20037508.34 20037508.34
+Lat/Lon Bounding Box: -180 -85.05112877764509 180 85.05112877764509
+
+sql:
 */
 SELECT
     id as fid,
@@ -30,6 +34,10 @@ parameter:
 Attributes:
 - Identifier: id
 - Geometry: SRID 900913
+
+Native/Declared SRS: EPSG:900913
+Native Bounding Box: -20037508.34 -20037508.34 20037508.34 20037508.34
+Lat/Lon Bounding Box: -180 -85.05112877764509 180 85.05112877764509
 
 sql view:
 */
