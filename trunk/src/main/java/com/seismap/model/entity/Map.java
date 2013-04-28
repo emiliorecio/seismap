@@ -423,7 +423,9 @@ public class Map implements Identifiable<Long> {
 	public Style getStyle() {
 		return style;
 	}
-	
-	
+
+	public boolean isPublic() {
+		return inCategoryIndex != null;
+	}
 
 }

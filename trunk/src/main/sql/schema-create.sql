@@ -1,6 +1,6 @@
 CREATE TABLE agency
 (
-  id BIGINT NOT NULL,
+  id BIGSERIAL NOT NULL,
   code CHARACTER VARYING(3) NOT NULL,
   CONSTRAINT agency_pkey PRIMARY KEY (id),
   CONSTRAINT agency_code_key UNIQUE (code)
@@ -12,7 +12,13 @@ ALTER TABLE agency OWNER TO postgres;
 
 CREATE TABLE application
 (
-  id bigint NOT NULL,
+  id BIGSERIAL NOT NULL,
+  settingscacheexpiration bigint,
+  googlemapsapikey character varying(255),
+  eventmapzoom integer,
+  layername character varying(255),
+  depthlayername character varying(255),
+  affecteddistancestylename character varying(255),
   defaultmapanimationstepduration real,
   defaultmapanimationstepkeep real,
   defaultmapanimationsteps integer,
@@ -53,7 +59,7 @@ ALTER TABLE application OWNER TO postgres;
 
 CREATE TABLE category
 (
-  id bigint NOT NULL,
+  id BIGSERIAL NOT NULL,
   inapplicationindex integer NOT NULL,
   "name" character varying(255) NOT NULL,
   application_id bigint NOT NULL,
@@ -66,7 +72,7 @@ ALTER TABLE category OWNER TO postgres;
 
 CREATE TABLE event
 (
-  id bigint NOT NULL,
+  id BIGSERIAL NOT NULL,
   damageddistance integer,
   date timestamp without time zone NOT NULL,
   depth real NOT NULL,
@@ -87,7 +93,7 @@ SELECT AddGeometryColumn('event', 'location', 900913, 'POINT', 2);
 
 CREATE TABLE magnitude
 (
-  id bigint NOT NULL,
+  id BIGSERIAL NOT NULL,
   "type" character varying(255) NOT NULL,
   "value" real NOT NULL,
   reportingagency_id bigint NOT NULL,
@@ -102,8 +108,8 @@ ALTER TABLE magnitude OWNER TO postgres;
 CREATE TABLE magnitudelimits
 (
   magnitudetype character varying(255) NOT NULL,
-  max real NOT NULL,
   min real NOT NULL,
+  max real NOT NULL,
   CONSTRAINT magnitudelimits_pkey PRIMARY KEY (magnitudetype)
 )
 WITH (
@@ -113,7 +119,7 @@ ALTER TABLE magnitudelimits OWNER TO postgres;
 
 CREATE TABLE seismapuser
 (
-  id bigint NOT NULL,
+  id BIGSERIAL NOT NULL,
   email character varying(255) NOT NULL,
   "name" character varying(255) NOT NULL,
   passwordhash character varying(255),
@@ -127,7 +133,7 @@ ALTER TABLE seismapuser OWNER TO postgres;
 
 CREATE TABLE style
 (
-  id bigint NOT NULL,
+  id BIGSERIAL NOT NULL,
   "name" character varying(255) NOT NULL,
   sld character varying(255),
   inapplicationindex integer,
@@ -141,7 +147,7 @@ ALTER TABLE style OWNER TO postgres;
 
 CREATE TABLE stylevariable
 (
-  style_id bigint NOT NULL,
+  style_id BIGSERIAL NOT NULL,
   "value" character varying(255) NOT NULL,
   "name" character varying(255) NOT NULL,
   CONSTRAINT stylevariable_pkey PRIMARY KEY (style_id, name)
@@ -153,7 +159,7 @@ ALTER TABLE stylevariable OWNER TO postgres;
 
 CREATE TABLE map
 (
-  id bigint NOT NULL,
+  id BIGSERIAL NOT NULL,
   animationstepkeep real NOT NULL,
   animationsteps integer NOT NULL,
   animationtype character varying(255) NOT NULL,

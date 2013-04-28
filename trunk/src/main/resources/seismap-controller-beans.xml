@@ -14,11 +14,16 @@
   <bean id="controller_httpRequestFactory" class="org.springframework.http.client.SimpleClientHttpRequestFactory" />
 
   <bean id="controller_pageController" class="com.seismap.controller.PageController">
+    <constructor-arg ref="controller_applicationController" />
     <constructor-arg ref="controller_categoryController" />
     <constructor-arg ref="controller_mapController" />
     <constructor-arg ref="controller_eventController" />
     <constructor-arg ref="controller_styleController" />
     <constructor-arg ref="controller_httpRequestFactory" />
+  </bean>
+
+  <bean id="controller_applicationController" class="com.seismap.controller.ApplicationController">
+    <constructor-arg ref="service_applicationService" />
   </bean>
 
   <bean id="controller_categoryController" class="com.seismap.controller.CategoryController">

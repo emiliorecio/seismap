@@ -996,7 +996,6 @@
                                                 "name": "depthMinMode",
                                                 "fieldLabel": "Desde",
                                                 "hideLabel": "-ext-undefined-",
-                                                "labelSeparator": " ",
                                                 "id": "depthMinModeNoneRadio",
                                                 "inputValue": "none",
                                                 "anchor": "100%"

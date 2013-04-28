@@ -38,18 +38,16 @@ public class Application implements Identifiable<Long> {
 	private ListManager<Style> stylesManager = null;
 
 	@Embedded
-	private MapServiceSettings mapServiceSettings;
+	private ApplicationSettings applicationSettings;
 
 	protected Application() {
 	}
 
-	protected Application(Long id, List<Category> categories,
-			List<Style> styles, MapServiceSettings mapServiceSettings) {
-		super();
-		this.id = id;
+	protected Application(List<Category> categories,
+			List<Style> styles, ApplicationSettings applicationSettings) {
 		this.categories = categories;
 		this.styles = styles;
-		this.mapServiceSettings = mapServiceSettings;
+		this.applicationSettings = applicationSettings;
 	}
 
 	public Long getId() {
@@ -78,8 +76,8 @@ public class Application implements Identifiable<Long> {
 		return getStylesManager().getList();
 	}
 
-	public MapServiceSettings getMapServiceSettings() {
-		return mapServiceSettings;
+	public ApplicationSettings getApplicationSettings() {
+		return applicationSettings;
 	}
 
 }

@@ -55,7 +55,7 @@ public abstract class ResponseDto<T> implements Serializable {
 					+ exception.toString() + "]";
 		} else {
 			return getClass().getSimpleName() + "[value: "
-					+ exception.toString() + "]";
+					+ value + "]";
 		}
 	}
 }

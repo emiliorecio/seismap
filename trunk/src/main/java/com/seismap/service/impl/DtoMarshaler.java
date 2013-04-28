@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.seismap.model.entity.Agency;
+import com.seismap.model.entity.Application;
+import com.seismap.model.entity.ApplicationSettings;
 import com.seismap.model.entity.Category;
 import com.seismap.model.entity.DataBounds;
 import com.seismap.model.entity.Event;
@@ -15,6 +17,8 @@ import com.seismap.model.entity.MagnitudeLimits;
 import com.seismap.model.entity.Map;
 import com.seismap.model.entity.Style;
 import com.seismap.model.entity.User;
+import com.seismap.service.application.ApplicationDto;
+import com.seismap.service.application.ApplicationSettingsDto;
 import com.seismap.service.category.CategoryDto;
 import com.seismap.service.event.AgencyDto;
 import com.seismap.service.event.DataBoundsDto;
@@ -156,6 +160,57 @@ class DtoMarshaler {
 			mapDtos.add(unmarshallMap(map));
 		}
 		return mapDtos;
+	}
+
+	public static ApplicationDto unmarshallApplication(Application application) {
+		return new ApplicationDto(application.getId(),
+				unmarshallCategories(application.getCategories()),
+				unmarshallStyles(application.getStyles()),
+				unmarshallApplicationSettings(application
+						.getApplicationSettings()));
+
+	}
+
+	public static ApplicationSettingsDto unmarshallApplicationSettings(
+			ApplicationSettings applicationSettings) {
+		return new ApplicationSettingsDto(
+				applicationSettings.getSettingsCacheExpiration(),
+				applicationSettings.getLayerServerUri(),
+				applicationSettings.getGoogleMapsApiKey(),
+				applicationSettings.getEventMapZoom(),
+				applicationSettings.getLayerName(),
+				applicationSettings.getDepthLayerName(),
+				applicationSettings.getAffectedDistanceStyleName(),
+				applicationSettings.getDefaultMapName(),
+				applicationSettings.getDefaultMapDescription(),
+				applicationSettings.getDefaultMapCenterLongitude(),
+				applicationSettings.getDefaultMapCenterLatitude(),
+				applicationSettings.getDefaultMapZoom(),
+				applicationSettings.getDefaultMapMinDateType(),
+				applicationSettings.getDefaultMapMinDateRelativeAmount(),
+				applicationSettings.getDefaultMapMinDateRelativeUnits(),
+				applicationSettings.getDefaultMapMinDate(),
+				applicationSettings.getDefaultMapMaxDateType(),
+				applicationSettings.getDefaultMapMaxDateRelativeAmount(),
+				applicationSettings.getDefaultMapMaxDateRelativeUnits(),
+				applicationSettings.getDefaultMapMaxDate(),
+				applicationSettings.getDefaultMapMinDepthType(),
+				applicationSettings.getDefaultMapMinDepth(),
+				applicationSettings.getDefaultMapMaxDepthType(),
+				applicationSettings.getDefaultMapMaxDepth(),
+				applicationSettings.getDefaultMapMagnitudeType(),
+				applicationSettings.getDefaultMapMinMagnitudeType(),
+				applicationSettings.getDefaultMapMinMagnitude(),
+				applicationSettings.getDefaultMapMaxMagnitudeType(),
+				applicationSettings.getDefaultMapMaxMagnitude(),
+				applicationSettings.isDefaultMapListUnmeasured(),
+				applicationSettings.getDefaultMapAnimationType(),
+				applicationSettings.getDefaultMapAnimationStepKeep(),
+				applicationSettings.getDefaultMapAnimationSteps(),
+				applicationSettings.getDefaultMapAnimationStepDuration(),
+				applicationSettings.isDefaultMapReverseAnimation(),
+				applicationSettings.getDefaultMapStyle());
+
 	}
 
 	public static CategoryDto unmarshallCategory(Category category) {

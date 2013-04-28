@@ -18,20 +18,27 @@
     <constructor-arg value="256"/>
   </bean>
 
+  <bean id="service_applicationService" class="com.seismap.service.impl.ApplicationServiceImpl">
+    <constructor-arg ref="model_applicationRepository" />
+    <constructor-arg ref="model_userRepository" />
+  </bean>
+  
   <bean id="service_categoryService" class="com.seismap.service.impl.CategoryServiceImpl">
     <constructor-arg ref="model_applicationRepository" />
+    <constructor-arg ref="model_userRepository" />
     <constructor-arg ref="model_categoryRepository" />
   </bean>
 
   <bean id="service_eventService" class="com.seismap.service.impl.EventServiceImpl">
+    <constructor-arg ref="model_userRepository" />
     <constructor-arg ref="model_eventRepository" />
     <constructor-arg ref="model_eventAndAverageMagnitudesRepository" />
     <constructor-arg ref="model_dataBoundsRepository" />
     <constructor-arg ref="model_magnitudeLimitsRepository" />
-    <constructor-arg ref="model_userRepository" />
   </bean>
 
   <bean id="service_dataLoadService" class="com.seismap.service.impl.DataLoadServiceImpl">
+    <constructor-arg ref="model_userRepository" />
     <constructor-arg ref="model_eventRepository" />
     <constructor-arg ref="model_agencyRepository" />
     <constructor-arg ref="service_geometryFactory" />
@@ -39,16 +46,17 @@
   </bean>
 
   <bean id="service_mapService" class="com.seismap.service.impl.MapServiceImpl">
-    <constructor-arg ref="model_mapRepository" />
-    <constructor-arg ref="model_userRepository" />
-    <constructor-arg ref="model_dataBoundsRepository" />
     <constructor-arg ref="model_applicationRepository" />
+    <constructor-arg ref="model_userRepository" />
+    <constructor-arg ref="model_mapRepository" />
+    <constructor-arg ref="model_dataBoundsRepository" />
     <constructor-arg ref="model_styleRepository" />
     <constructor-arg ref="service_geometryFactory" />
   </bean>
 
   <bean id="service_styleService" class="com.seismap.service.impl.StyleServiceImpl">
     <constructor-arg ref="model_applicationRepository" />
+    <constructor-arg ref="model_userRepository" />
     <constructor-arg ref="model_styleRepository" />
   </bean>
 

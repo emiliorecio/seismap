@@ -7,13 +7,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.seismap.model.entity.Application;
+import com.seismap.model.entity.ApplicationSettings;
 import com.seismap.model.entity.DataBounds;
 import com.seismap.model.entity.Map;
-import com.seismap.model.entity.MapServiceSettings;
 import com.seismap.model.entity.Style;
 import com.seismap.model.entity.User;
 import com.seismap.model.repository.ApplicationRepository;
@@ -30,12 +29,13 @@ import com.seismap.service.map.CreateMapRequestDto;
 import com.seismap.service.map.CreateMapResponseDto;
 import com.seismap.service.map.DateLimitType;
 import com.seismap.service.map.DateUnits;
+import com.seismap.service.map.DeleteMapRequestDto;
+import com.seismap.service.map.DeleteMapResponseDto;
 import com.seismap.service.map.DepthLimitType;
 import com.seismap.service.map.GetDefaultMapRequestDto;
 import com.seismap.service.map.GetDefaultMapResponseDto;
-import com.seismap.service.map.GetLayerServerUriRequestDto;
-import com.seismap.service.map.GetLayerServerUriResponseDto;
 import com.seismap.service.map.GetLegendRequestDto;
+import com.seismap.service.map.GetLegendResponseDto;
 import com.seismap.service.map.GetMapRequestDto;
 import com.seismap.service.map.GetMapResponseDto;
 import com.seismap.service.map.ListUserMapsRequestDto;
@@ -52,7 +52,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
-public class MapServiceImpl implements MapService {
+public class MapServiceImpl extends AbstractServiceImpl implements MapService {
 
 	private ApplicationRepository applicationRepository;
 	private MapRepository mapRepository;
@@ -64,15 +64,15 @@ public class MapServiceImpl implements MapService {
 	protected MapServiceImpl() {
 	}
 
-	public MapServiceImpl(MapRepository mapRepository,
+	public MapServiceImpl(ApplicationRepository applicationRepository,
+			UserRepository userRepository, MapRepository mapRepository,
 			DataBoundsRepository dataBoundsRepository,
-			ApplicationRepository applicationRepository,
-			UserRepository userRepository, StyleRepository styleRepository,
-			GeometryFactory geometryFactory) {
-		this.mapRepository = mapRepository;
-		this.userRepository = userRepository;
-		this.dataBoundsRepository = dataBoundsRepository;
+			StyleRepository styleRepository, GeometryFactory geometryFactory) {
+		super(userRepository);
 		this.applicationRepository = applicationRepository;
+		this.userRepository = userRepository;
+		this.mapRepository = mapRepository;
+		this.dataBoundsRepository = dataBoundsRepository;
 		this.styleRepository = styleRepository;
 		this.geometryFactory = geometryFactory;
 	}
@@ -81,9 +81,15 @@ public class MapServiceImpl implements MapService {
 	public GetDefaultMapResponseDto getDefault(
 			ActorCredentialsDto actorCredentials,
 			GetDefaultMapRequestDto request) {
+		try {
+			validateUser(actorCredentials, Role.ANONYMOUS);
+		} catch (UnauthorizedException e) {
+			return new GetDefaultMapResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		DataBounds dataBounds = dataBoundsRepository.fetch();
-		Application application = applicationRepository.fetch();
-		MapServiceSettings settings = application.getMapServiceSettings();
+		Application application = applicationRepository.fetchSingleton();
+		ApplicationSettings settings = application.getApplicationSettings();
 		String name = settings.getDefaultMapName();
 		String description = settings.getDefaultMapDescription();
 		double centerLongitude = settings.getDefaultMapCenterLongitude();
@@ -183,6 +189,13 @@ public class MapServiceImpl implements MapService {
 	@Transactional
 	public CreateMapResponseDto create(ActorCredentialsDto actorCredentials,
 			CreateMapRequestDto request) {
+		User actor;
+		try {
+			actor = getValidatedUser(actorCredentials, Role.REGULAR);
+		} catch (UnauthorizedException e) {
+			return new CreateMapResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		String name = request.getMap().getName();
 		Long userId = request.getUserId();
 		User user = userRepository.get(userId);
@@ -194,7 +207,7 @@ public class MapServiceImpl implements MapService {
 					userId);
 			return exceptionResponse;
 		}
-		if (!userId.equals(actorCredentials.getUserId())) {
+		if (!actor.isAdministrator() && !userId.equals(actor.getId())) {
 			CreateMapResponseDto exceptionResponse = new CreateMapResponseDto(
 					ExceptionCause.UNAUTHORIZED, "El usuario " + userId
 							+ " no tiene permiso para realizar la operación.");
@@ -207,9 +220,9 @@ public class MapServiceImpl implements MapService {
 		if (existingMap != null) {
 			String userEmail = user.getEmail();
 			CreateMapResponseDto exceptionResponse = new CreateMapResponseDto(
-					ExceptionCause.DUPLICATE_MAP_NAME, "La usuario '"
-							+ userEmail + "' ya contiene un mapa llamado '"
-							+ name + "'.");
+					ExceptionCause.DUPLICATE_MAP_NAME, "El usuario '"
+							+ userEmail + "' ya posee un mapa llamado '" + name
+							+ "'.");
 			exceptionResponse.addExceptionParameter(
 					ExceptionParameter.USER_EMAIL, userEmail);
 			exceptionResponse.addExceptionParameter(ExceptionParameter.USER_ID,
@@ -262,6 +275,13 @@ public class MapServiceImpl implements MapService {
 	@Transactional
 	public GetMapResponseDto get(ActorCredentialsDto actorCredentials,
 			GetMapRequestDto request) {
+		User actor;
+		try {
+			actor = getValidatedUser(actorCredentials, Role.ANONYMOUS);
+		} catch (UnauthorizedException e) {
+			return new GetMapResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		Long id = request.getMapId();
 		Map map = mapRepository.get(id);
 		if (map == null) {
@@ -272,6 +292,14 @@ public class MapServiceImpl implements MapService {
 					id);
 			return exceptionResponse;
 		}
+		if (!(map.isPublic() || (actor != null && (!actor.isAdministrator() || actor != map
+				.getUser())))) {
+			GetMapResponseDto exceptionResponse = new GetMapResponseDto(
+					ExceptionCause.NO_MAP_WITH_GIVEN_ID, "El mapa " + id
+							+ " no es público.");
+			exceptionResponse.addExceptionParameter(ExceptionParameter.MAP_ID,
+					id);
+		}
 		MapDto mapDto = DtoMarshaler.unmarshallMap(map);
 		GetMapResponseDto response = new GetMapResponseDto(mapDto);
 		return response;
@@ -280,8 +308,15 @@ public class MapServiceImpl implements MapService {
 	@Transactional
 	public ListUserMapsResponseDto listByUser(
 			ActorCredentialsDto actorCredentials, ListUserMapsRequestDto request) {
+		User actor;
+		try {
+			actor = getValidatedUser(actorCredentials, Role.REGULAR);
+		} catch (UnauthorizedException e) {
+			return new ListUserMapsResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		Long userId = request.getUserId();
-		if (!userId.equals(actorCredentials.getUserId())) {
+		if (!actor.isAdministrator() && !userId.equals(actor.getId())) {
 			ListUserMapsResponseDto exceptionResponse = new ListUserMapsResponseDto(
 					ExceptionCause.UNAUTHORIZED, "El usuario " + userId
 							+ " no tiene permiso para realizar la operación.");
@@ -304,21 +339,15 @@ public class MapServiceImpl implements MapService {
 	}
 
 	@Transactional
-	public GetLayerServerUriResponseDto getLayerServerUri(
-			ActorCredentialsDto actorCredentials,
-			GetLayerServerUriRequestDto request) {
-		Application application = applicationRepository.fetch();
-		MapServiceSettings settings = application.getMapServiceSettings();
-
-		String layerServerUri = settings.getLayerServerUri();
-		GetLayerServerUriResponseDto response = new GetLayerServerUriResponseDto(
-				layerServerUri);
-		return response;
-	}
-
-	@Transactional
 	public ModifyMapResponseDto modify(ActorCredentialsDto actorCredentials,
 			ModifyMapRequestDto request) {
+		User actor;
+		try {
+			actor = getValidatedUser(actorCredentials, Role.REGULAR);
+		} catch (UnauthorizedException e) {
+			return new ModifyMapResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		Long mapId = request.getMapId();
 		Map map = mapRepository.get(mapId);
 		if (map == null) {
@@ -329,13 +358,15 @@ public class MapServiceImpl implements MapService {
 					mapId);
 			return exceptionResponse;
 		}
-		Long userId = actorCredentials.getUserId();
-		if (!map.getUser().getId().equals(actorCredentials.getUserId())) {
+		if (!actor.isAdministrator()
+				&& !map.getUser().getId().equals(actor.getId())) {
 			ModifyMapResponseDto exceptionResponse = new ModifyMapResponseDto(
-					ExceptionCause.UNAUTHORIZED, "El usuario " + userId
+					ExceptionCause.UNAUTHORIZED, "El usuario " + actor.getId()
 							+ " no tiene permiso para realizar la operación.");
 			exceptionResponse.addExceptionParameter(ExceptionParameter.USER_ID,
-					userId);
+					actor.getId());
+			exceptionResponse.addExceptionParameter(ExceptionParameter.MAP_ID,
+					map.getId());
 			return exceptionResponse;
 		}
 		ModifiableMapDataDto mapDataDto = request.getMap();
@@ -344,13 +375,13 @@ public class MapServiceImpl implements MapService {
 		if (existingMap != null && existingMap != map) {
 			String userEmail = map.getUser().getEmail();
 			ModifyMapResponseDto exceptionResponse = new ModifyMapResponseDto(
-					ExceptionCause.DUPLICATE_MAP_NAME, "La usuario '"
-							+ userEmail + "' ya contiene un mapa llamado '"
-							+ name + "'.");
+					ExceptionCause.DUPLICATE_MAP_NAME, "El usuario '"
+							+ userEmail + "' ya posee un mapa llamado '" + name
+							+ "'.");
 			exceptionResponse.addExceptionParameter(
 					ExceptionParameter.USER_EMAIL, userEmail);
 			exceptionResponse.addExceptionParameter(ExceptionParameter.USER_ID,
-					userId);
+					actor.getId());
 			exceptionResponse.addExceptionParameter(
 					ExceptionParameter.MAP_NAME, name);
 			return exceptionResponse;
@@ -407,6 +438,13 @@ public class MapServiceImpl implements MapService {
 	@Transactional
 	public RenameMapResponseDto rename(ActorCredentialsDto actorCredentials,
 			RenameMapRequestDto request) {
+		User actor;
+		try {
+			actor = getValidatedUser(actorCredentials, Role.REGULAR);
+		} catch (UnauthorizedException e) {
+			return new RenameMapResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		Long mapId = request.getMapId();
 		Map map = mapRepository.get(mapId);
 		if (map == null) {
@@ -417,14 +455,15 @@ public class MapServiceImpl implements MapService {
 					mapId);
 			return exceptionResponse;
 		}
-		Long userId = actorCredentials.getUserId();
 		User user = map.getUser();
-		if (!user.getId().equals(actorCredentials.getUserId())) {
+		if (!actor.isAdministrator() && !user.getId().equals(actor.getId())) {
 			RenameMapResponseDto exceptionResponse = new RenameMapResponseDto(
-					ExceptionCause.UNAUTHORIZED, "El usuario " + userId
+					ExceptionCause.UNAUTHORIZED, "El usuario " + actor.getId()
 							+ " no tiene permiso para realizar la operación.");
 			exceptionResponse.addExceptionParameter(ExceptionParameter.USER_ID,
-					userId);
+					actor.getId());
+			exceptionResponse.addExceptionParameter(ExceptionParameter.MAP_ID,
+					map.getId());
 			return exceptionResponse;
 		}
 		String name = request.getMapName();
@@ -432,13 +471,15 @@ public class MapServiceImpl implements MapService {
 		if (existingMap != null && existingMap != map) {
 			String userEmail = user.getEmail();
 			RenameMapResponseDto exceptionResponse = new RenameMapResponseDto(
-					ExceptionCause.DUPLICATE_MAP_NAME, "La usuario '"
-							+ userEmail + "' ya contiene un mapa llamado '"
-							+ name + "'.");
+					ExceptionCause.DUPLICATE_MAP_NAME, "El usuario '"
+							+ userEmail + "' ya posee un mapa llamado '" + name
+							+ "'.");
 			exceptionResponse.addExceptionParameter(
 					ExceptionParameter.USER_EMAIL, userEmail);
 			exceptionResponse.addExceptionParameter(ExceptionParameter.USER_ID,
-					userId);
+					actor.getId());
+			exceptionResponse.addExceptionParameter(ExceptionParameter.MAP_ID,
+					existingMap.getId());
 			exceptionResponse.addExceptionParameter(
 					ExceptionParameter.MAP_NAME, name);
 			return exceptionResponse;
@@ -450,12 +491,54 @@ public class MapServiceImpl implements MapService {
 	}
 
 	@Transactional
-	public Resource getLegend(ActorCredentialsDto actorCredentials,
+	public DeleteMapResponseDto delete(ActorCredentialsDto actorCredentials,
+			DeleteMapRequestDto request) {
+		User actor;
+		try {
+			actor = getValidatedUser(actorCredentials, Role.REGULAR);
+		} catch (UnauthorizedException e) {
+			return new DeleteMapResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
+		Long mapId = request.getMapId();
+		Map map = mapRepository.get(mapId);
+		if (map == null) {
+			DeleteMapResponseDto exceptionResponse = new DeleteMapResponseDto(
+					ExceptionCause.NO_MAP_WITH_GIVEN_ID, "El mapa " + mapId
+							+ " no existe.");
+			exceptionResponse.addExceptionParameter(ExceptionParameter.MAP_ID,
+					mapId);
+			return exceptionResponse;
+		}
+		User user = map.getUser();
+		if (!actor.isAdministrator() && !user.getId().equals(actor.getId())) {
+			DeleteMapResponseDto exceptionResponse = new DeleteMapResponseDto(
+					ExceptionCause.UNAUTHORIZED, "El usuario " + actor.getId()
+							+ " no tiene permiso para realizar la operación.");
+			exceptionResponse.addExceptionParameter(ExceptionParameter.USER_ID,
+					actor.getId());
+			exceptionResponse.addExceptionParameter(ExceptionParameter.MAP_ID,
+					map.getId());
+			return exceptionResponse;
+		}
+		MapDto mapDto = DtoMarshaler.unmarshallMap(map);
+		DeleteMapResponseDto response = new DeleteMapResponseDto(mapDto);
+		return response;
+	}
+
+	@Transactional
+	public GetLegendResponseDto getLegend(ActorCredentialsDto actorCredentials,
 			GetLegendRequestDto request) {
+		try {
+			validateUser(actorCredentials, Role.ANONYMOUS);
+		} catch (UnauthorizedException e) {
+			return new GetLegendResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		String sld = request.getSld();
 
-		Application application = applicationRepository.fetch();
-		MapServiceSettings settings = application.getMapServiceSettings();
+		Application application = applicationRepository.fetchSingleton();
+		ApplicationSettings settings = application.getApplicationSettings();
 
 		String legendsDirectory = settings.getLegendsDirectory();
 		File legendsDirectoryFile = new File(legendsDirectory);
@@ -464,12 +547,14 @@ public class MapServiceImpl implements MapService {
 			legendFile = new File(legendsDirectory, sld + ".png")
 					.getCanonicalFile();
 		} catch (IOException e) {
-			throw new RuntimeException("La leyenda no es válida: " + e, e);
+			return new GetLegendResponseDto(ExceptionCause.INVALID_LEGEND,
+					"La leyenda no es válida: " + e.getMessage());
 		}
 		if (!legendFile.exists()
 				|| !legendFile.getParentFile().equals(legendsDirectoryFile)) {
-			throw new RuntimeException("La leyenda no es válida.");
+			return new GetLegendResponseDto(ExceptionCause.INVALID_LEGEND,
+					"La leyenda no es válida.");
 		}
-		return new FileSystemResource(legendFile);
+		return new GetLegendResponseDto(new FileSystemResource(legendFile));
 	}
 }

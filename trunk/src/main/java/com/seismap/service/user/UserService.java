@@ -6,4 +6,6 @@ public interface UserService {
 
 	CreateUserResponseDto create(ActorCredentialsDto actorCredentials, CreateUserRequestDto request);
 
+	ValidateUserResponseDto validate(ActorCredentialsDto actorCredentials, ValidateUserRequestDto request);
+
 }

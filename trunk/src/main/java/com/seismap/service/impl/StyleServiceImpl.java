@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.seismap.model.entity.Style;
 import com.seismap.model.repository.ApplicationRepository;
 import com.seismap.model.repository.StyleRepository;
+import com.seismap.model.repository.UserRepository;
 import com.seismap.service.common.ActorCredentialsDto;
 import com.seismap.service.common.ExceptionCause;
 import com.seismap.service.common.ExceptionCause.ExceptionParameter;
@@ -17,7 +18,8 @@ import com.seismap.service.style.ListStylesResponseDto;
 import com.seismap.service.style.StyleDto;
 import com.seismap.service.style.StyleService;
 
-public class StyleServiceImpl implements StyleService {
+public class StyleServiceImpl extends AbstractServiceImpl implements
+		StyleService {
 
 	private ApplicationRepository applicationRepository;
 
@@ -27,7 +29,8 @@ public class StyleServiceImpl implements StyleService {
 	}
 
 	public StyleServiceImpl(ApplicationRepository applicationRepository,
-			StyleRepository styleRepository) {
+			UserRepository userRepository, StyleRepository styleRepository) {
+		super(userRepository);
 		this.applicationRepository = applicationRepository;
 		this.styleRepository = styleRepository;
 	}
@@ -35,14 +38,26 @@ public class StyleServiceImpl implements StyleService {
 	@Transactional
 	public ListStylesResponseDto list(ActorCredentialsDto actorCredentials,
 			ListStylesRequestDto request) {
+		try {
+			validateUser(actorCredentials, Role.ANONYMOUS);
+		} catch (UnauthorizedException e) {
+			return new ListStylesResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		return new ListStylesResponseDto(
-				DtoMarshaler.unmarshallStyles(applicationRepository.fetch()
-						.getStyles()));
+				DtoMarshaler.unmarshallStyles(applicationRepository
+						.fetchSingleton().getStyles()));
 	}
 
 	@Transactional
 	public CreateStyleResponseDto create(ActorCredentialsDto actorCredentials,
 			CreateStyleRequestDto request) {
+		try {
+			validateUser(actorCredentials, Role.ADMIN);
+		} catch (UnauthorizedException e) {
+			return new CreateStyleResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		String name = request.getStyleName();
 		Style existingStyle = styleRepository.getByName(name);
 		if (existingStyle != null) {
@@ -56,7 +71,7 @@ public class StyleServiceImpl implements StyleService {
 		String sld = request.getStyleSld();
 		Map<String, String> variables = request.getStyleVariables();
 		Style style = new Style(sld, name, variables);
-		applicationRepository.fetch().getStyles().add(style);
+		applicationRepository.fetchSingleton().getStyles().add(style);
 		styleRepository.put(style);
 		StyleDto styleDto = DtoMarshaler.unmarshallStyle(style);
 		CreateStyleResponseDto response = new CreateStyleResponseDto(styleDto);

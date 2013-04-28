@@ -20,6 +20,7 @@ import com.seismap.model.entity.Event;
 import com.seismap.model.entity.Magnitude;
 import com.seismap.model.repository.AgencyRepository;
 import com.seismap.model.repository.EventRepository;
+import com.seismap.model.repository.UserRepository;
 import com.seismap.service.dataload.DataLoadService;
 import com.seismap.service.impl.CoordinatesConverter.LatitudeLongitudePosition;
 import com.seismap.service.impl.CoordinatesConverter.SphericalMercatorPosition;
@@ -35,7 +36,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
-public class DataLoadServiceImpl implements DataLoadService {
+public class DataLoadServiceImpl extends AbstractServiceImpl implements
+		DataLoadService {
 
 	private AgencyRepository agencyRepository;
 	private EventRepository eventRepository;
@@ -45,9 +47,11 @@ public class DataLoadServiceImpl implements DataLoadService {
 	protected DataLoadServiceImpl() {
 	}
 
-	public DataLoadServiceImpl(AgencyRepository agencyRepository,
-			EventRepository eventRepository, GeometryFactory geometryFactory,
+	public DataLoadServiceImpl(UserRepository userRepository,
+			AgencyRepository agencyRepository, EventRepository eventRepository,
+			GeometryFactory geometryFactory,
 			CoordinatesConverter coordinatesConverter) {
+		super(userRepository);
 		this.agencyRepository = agencyRepository;
 		this.eventRepository = eventRepository;
 		this.geometryFactory = geometryFactory;
@@ -159,7 +163,12 @@ public class DataLoadServiceImpl implements DataLoadService {
 	@Transactional
 	public void load(String file) throws InvalidDataException,
 			DataProviderException, IOException {
-
+		// try {
+		// getValidatedUser(actorCredentials, Role.ADMIN);
+		// } catch (UnauthorizedException e) {
+		// return new ModifyEventResponseDto(ExceptionCause.UNAUTHORIZED,
+		// e.getMessage());
+		// }
 		Parser parser = new Parser();
 		InputStream inputStream = new FileInputStream(file);
 		DataInputStream in = new DataInputStream(inputStream);

@@ -544,7 +544,6 @@ SeismapViewportUi = Ext.extend(Ext.Viewport, {
                                         checked: true,
                                         name: 'depthMinMode',
                                         fieldLabel: 'Desde',
-                                        labelSeparator: ' ',
                                         inputValue: 'none',
                                         anchor: '100%',
                                         id: 'depthMinModeNoneRadio'
