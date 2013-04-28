@@ -256,7 +256,7 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 		return castList(list);
 	}
 
-	protected T getSingleton() {
+	public T getSingleton() {
 		List<T> list = list();
 		if (list.isEmpty()) {
 			return null;
@@ -269,12 +269,16 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 		}
 	}
 
-	protected T fetchSingleton() {
+	public T fetchSingleton() {
 		T element = getSingleton();
 		if (element == null) {
 			throw new IllegalArgumentException("No " + theClass.getSimpleName()
 					+ " as singleton");
 		}
 		return element;
+	}
+	
+	public void delete(T entity) {
+		getHibernateTemplate().delete(entity);
 	}
 }

@@ -297,7 +297,7 @@ seismap.ui.initEventWindowMap = function() {
   var center = new OpenLayers.LonLat(this.mapData.centerLongitude,
       this.mapData.centerLatitude);
 
-  var zoom = seismap.constants.eventMapZoom;
+  var zoom = seismap.constants.settings.eventMapZoom;
   this.eventMapPanel = new GeoExt.MapPanel({
     renderTo : "eventMapArea",
     stateId : "eventMapArea",
@@ -307,22 +307,22 @@ seismap.ui.initEventWindowMap = function() {
     zoom : zoom,
     map : this.eventMap
   });
+  var ghyb = new OpenLayers.Layer.Google("Google Hybrid", { // the default
+	    type : google.maps.MapTypeId.HYBRID,
+	    numZoomLevels : 20
+	  });
   var gphy = new OpenLayers.Layer.Google("Google Physical", {
     type : google.maps.MapTypeId.TERRAIN,
   });
-  var gmap = new OpenLayers.Layer.Google("Google Streets", // the default
+  var gmap = new OpenLayers.Layer.Google("Google Streets",
   {
-    numZoomLevels : 20
-  });
-  var ghyb = new OpenLayers.Layer.Google("Google Hybrid", {
-    type : google.maps.MapTypeId.HYBRID,
     numZoomLevels : 20
   });
   var gsat = new OpenLayers.Layer.Google("Google Satellite", {
     type : google.maps.MapTypeId.SATELLITE,
     numZoomLevels : 22
   });
-  this.eventMap.addLayers([ gphy, gmap, ghyb, gsat ]);
+  this.eventMap.addLayers([ ghyb, gphy, gmap, gsat ]);
   
   center = center.transform(this.eventMap.displayProjection, this.eventMap.getProjectionObject());
   this.eventMap.setCenter(center, zoom);
@@ -427,7 +427,7 @@ seismap.ui.showEventWindow = function(eventId, eventInformation) {
         self.loadEventLayers();
         var center = new OpenLayers.LonLat(event.longitude, event.latitude);
         //center = center.transform(self.eventMap.displayProjection, self.eventMap.getProjectionObject());
-        self.eventMap.setCenter(center, seismap.constants.eventMapZoom);
+        self.eventMap.setCenter(center, seismap.constants.settings.eventMapZoom);
         self.initEventParameters();
       }
     },
@@ -443,7 +443,7 @@ seismap.ui.loadEventLayers = function() {
   }
   this.eventLayer = this.createLayer(this.eventMap, null, 'id = ' + this.eventData.id, 'Sismo', false, null);
   this.eventAffectedLayer = this.createLayer(this.eventMap, null, 'id = ' + this.eventData.id, 'Area afectada', false, {
-    sld : seismap.constants.affectedDistanceStyleName, 
+    sld : seismap.constants.settings.affectedDistanceStyleName, 
     variables: {}
   });
   this.addLayer(this.eventLayer);
@@ -466,7 +466,7 @@ seismap.ui.loadDepthLayers = function(vertices) {
     cqlFilter += vertex.x + ' ' + vertex.y;
   }
   cqlFilter += ')))';
-  this.depthLayer = this.createLayer(this.depthMap, seismap.constants.depthLayerName, cqlFilter, 'Sismos en profundidad', true, null);
+  this.depthLayer = this.createLayer(this.depthMap, seismap.constants.settings.depthLayerName, cqlFilter, 'Sismos en profundidad', true, null);
   this.addLayer(this.depthLayer);
 };
 seismap.ui.registerControlHandles = function() {
@@ -1039,22 +1039,22 @@ seismap.ui.initMap = function() {
     map : this.map
   });
 
+  var ghyb = new OpenLayers.Layer.Google("Google Hybrid", { // the default
+	    type : google.maps.MapTypeId.HYBRID,
+	    numZoomLevels : 20
+	  });
   var gphy = new OpenLayers.Layer.Google("Google Physical", {
     type : google.maps.MapTypeId.TERRAIN,
   });
-  var gmap = new OpenLayers.Layer.Google("Google Streets", // the default
+  var gmap = new OpenLayers.Layer.Google("Google Streets",
   {
-    numZoomLevels : 20
-  });
-  var ghyb = new OpenLayers.Layer.Google("Google Hybrid", {
-    type : google.maps.MapTypeId.HYBRID,
     numZoomLevels : 20
   });
   var gsat = new OpenLayers.Layer.Google("Google Satellite", {
     type : google.maps.MapTypeId.SATELLITE,
     numZoomLevels : 22
   });
-  this.map.addLayers([ gphy, gmap, ghyb, gsat ]);
+  this.map.addLayers([ ghyb, gphy, gmap, gsat ]);
   
   center = center.transform(this.map.displayProjection, this.map.getProjectionObject());
   this.map.setCenter(center, zoom);
@@ -1270,11 +1270,11 @@ seismap.ui.createLayer = function(map, layerRef, cqlFilter, layerName, baseLayer
   }
   var layer = new OpenLayers.Layer.WMS(
       layerName,
-      seismap.constants.layerServerUri + '/wms' + params,
+      seismap.constants.layerServerUri + 'wms' + params,
       {
         width : '1679',
         srs : 'EPSG:900913',
-        layers : layerRef == null? seismap.constants.layerName : layerRef,
+        layers : layerRef == null? seismap.constants.settings.layerName : layerRef,
         height : '330',
         styles : style.sld,
         format : 'image/png',

@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <c:set var="baseUri" value="${pageContext.request.contextPath}" scope="request" />
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="${baseUri}/resources/css/seismap.css"
   type="text/css"></link>
 <script type="text/javascript"
-  src="http://maps.googleapis.com/maps/api/js?sensor=false&key=ABQIAAAAZGb76tUmuhDhmzTOt03vvRQt9cMzzFoKpLa_OvQBEImBmCSethSshEsXz5lvNUCN_Qu7yA8uRituCQ"
+  src="http://maps.googleapis.com/maps/api/js?sensor=false&key=${applicationSettings.googleMapsApiKey}"
   type="text/javascript">
 </script>
 <script type="text/javascript"
@@ -37,7 +37,8 @@
   seismap.constants.dataBounds = ${dataBounds_json};
   seismap.constants.dataBounds.minDate = seismap.constants.dataBounds.minDate == null ? null : new Date(seismap.constants.dataBounds.minDate);
   seismap.constants.dataBounds.maxDate = seismap.constants.dataBounds.maxDate == null ? null : new Date(seismap.constants.dataBounds.maxDate);
-  seismap.constants.layerServerUri = '${baseUri}/layerServer/' //'${layerServerUri}';
+  seismap.constants.layerServerUri= '${baseUri}/layerServer/';
+  seismap.constants.settings = ${applicationSettings_json};
   seismap.constants.magnitudeLimits = ${magnitudeLimits_json};
 </script>
 <script type="text/javascript" src="${baseUri}/resources/js/DateUnitsStore.js"></script>

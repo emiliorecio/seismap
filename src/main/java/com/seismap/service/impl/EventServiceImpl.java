@@ -26,9 +26,8 @@ import com.seismap.service.event.ModifiableEventDataDto;
 import com.seismap.service.event.ModifyEventRequestDto;
 import com.seismap.service.event.ModifyEventResponseDto;
 
-public class EventServiceImpl implements EventService {
-
-	private UserRepository userRepository;
+public class EventServiceImpl extends AbstractServiceImpl implements
+		EventService {
 
 	private EventRepository eventRepository;
 
@@ -42,21 +41,27 @@ public class EventServiceImpl implements EventService {
 	}
 
 	public EventServiceImpl(
+			UserRepository userRepository,
 			EventRepository eventRepository,
 			EventAndAverageMagnitudesRepository eventAndAverageMagnitudesRepository,
 			DataBoundsRepository dataBoundsRepository,
-			MagnitudeLimitsRepository magnitudeLimitsRepository,
-			UserRepository userRepository) {
+			MagnitudeLimitsRepository magnitudeLimitsRepository) {
+		super(userRepository);
 		this.eventRepository = eventRepository;
 		this.eventAndAverageMagnitudesRepository = eventAndAverageMagnitudesRepository;
 		this.dataBoundsRepository = dataBoundsRepository;
 		this.magnitudeLimitsRepository = magnitudeLimitsRepository;
-		this.userRepository = userRepository;
 	}
 
 	@Transactional
 	public GetEventResponseDto get(ActorCredentialsDto actorCredentials,
 			GetEventRequestDto request) {
+		try {
+			validateUser(actorCredentials, Role.ANONYMOUS);
+		} catch (UnauthorizedException e) {
+			return new GetEventResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		Long eventId = request.getEventId();
 		Event event = eventRepository.get(eventId);
 		EventAndAverageMagnitudes eventAndAverageMagnitudes = eventAndAverageMagnitudesRepository
@@ -69,6 +74,12 @@ public class EventServiceImpl implements EventService {
 	public FindEventsAndAverageMagnitudesResponseDto find(
 			ActorCredentialsDto actorCredentials,
 			FindEventsAndAverageMagnitudesRequestDto request) {
+		try {
+			validateUser(actorCredentials, Role.ANONYMOUS);
+		} catch (UnauthorizedException e) {
+			return new FindEventsAndAverageMagnitudesResponseDto(
+					ExceptionCause.UNAUTHORIZED, e.getMessage());
+		}
 		return new FindEventsAndAverageMagnitudesResponseDto(
 				DtoMarshaler
 						.unmarshallEventsAndAverageMagnitudes(eventAndAverageMagnitudesRepository
@@ -85,6 +96,12 @@ public class EventServiceImpl implements EventService {
 	public GetDataBoundsResponseDto getDataBounds(
 			ActorCredentialsDto actorCredentials,
 			GetDataBoundsRequestDto request) {
+		try {
+			validateUser(actorCredentials, Role.ANONYMOUS);
+		} catch (UnauthorizedException e) {
+			return new GetDataBoundsResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		return new GetDataBoundsResponseDto(
 				DtoMarshaler.unmarshallDataBounds(dataBoundsRepository.fetch()));
 	}
@@ -93,6 +110,12 @@ public class EventServiceImpl implements EventService {
 	public GetMagnitudeLimitsResponseDto getMagnitudeLimits(
 			ActorCredentialsDto actorCredentials,
 			GetMagnitudeLimitsRequestDto request) {
+		try {
+			validateUser(actorCredentials, Role.ANONYMOUS);
+		} catch (UnauthorizedException e) {
+			return new GetMagnitudeLimitsResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		return new GetMagnitudeLimitsResponseDto(
 				DtoMarshaler
 						.unmarshallMagnitudeLimits(magnitudeLimitsRepository
@@ -102,6 +125,13 @@ public class EventServiceImpl implements EventService {
 	@Transactional
 	public ModifyEventResponseDto modify(ActorCredentialsDto actorCredentials,
 			ModifyEventRequestDto request) {
+		User actor;
+		try {
+			actor = getValidatedUser(actorCredentials, Role.ADMIN);
+		} catch (UnauthorizedException e) {
+			return new ModifyEventResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		Long eventId = request.getEventId();
 		Event event = eventRepository.get(eventId);
 		if (event == null) {
@@ -112,14 +142,14 @@ public class EventServiceImpl implements EventService {
 					ExceptionParameter.EVENT_ID, eventId);
 			return exceptionResponse;
 		}
-		Long userId = actorCredentials.getUserId();
-		User user = userRepository.get(userId);
-		if (!user.isAdministrator()) {
+		if (!actor.isAdministrator()) {
 			ModifyEventResponseDto exceptionResponse = new ModifyEventResponseDto(
-					ExceptionCause.UNAUTHORIZED, "El usuario " + userId
+					ExceptionCause.UNAUTHORIZED, "El usuario " + actor.getId()
 							+ " no tiene permiso para realizar la operación.");
 			exceptionResponse.addExceptionParameter(ExceptionParameter.USER_ID,
-					userId);
+					actor.getId());
+			exceptionResponse.addExceptionParameter(ExceptionParameter.EVENT_ID,
+					event.getId());
 			return exceptionResponse;
 		}
 		ModifiableEventDataDto eventDataDto = request.getEvent();

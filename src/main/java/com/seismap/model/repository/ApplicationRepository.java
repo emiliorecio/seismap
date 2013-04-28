@@ -5,5 +5,5 @@ import com.seismap.model.entity.Application;
 public interface ApplicationRepository extends
 		ReadOnlyRepository<Application, Long> {
 
-	Application fetch();
+	Application fetchSingleton();
 }

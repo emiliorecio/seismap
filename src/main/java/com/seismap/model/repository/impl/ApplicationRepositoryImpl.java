@@ -9,8 +9,5 @@ public class ApplicationRepositoryImpl extends
 	public ApplicationRepositoryImpl() {
 		super(Application.class);
 	}
-
-	public Application fetch() {
-		return fetchSingleton();
-	}
+	
 }

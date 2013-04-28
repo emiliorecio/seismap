@@ -3,11 +3,17 @@ SET CONSTRAINTS ALL DEFERRED;
 
 /* Application */
 set @application_id =                                  1;
-set @application_layerserveruri =                      'http://localhost@12345/geoserver';
+set @application_settingsCacheExpiration =             5000;
+set @application_layerserveruri =                      'http://localhost:8080/geoserver';
 set @application_legendsdirectory =                    'C:/workspace/seismap/src/main/sld/';
-
+set @application_googleMapsApiKey =                    '';
+set @application_eventMapZoom =                        7;
+set @application_layerName =                           'eventandaveragemagnitudes';
+set @application_depthLayerName =                      'eventandaveragemagnitudes_depthlocation';
+set @application_affectedDistanceStyleName =           'seismap_affected-distance';
+	
 /* Map */
-set @application_defaultmapname =                      'New map';
+set @application_defaultmapname =                      'Nuevo mapa';
 set @application_defaultmapdescription =               '';
 set @application_defaultmapcenterlatitude =            -31.534167;
 set @application_defaultmapcenterlongitude =           -68.526111;
@@ -21,7 +27,7 @@ set @application_defaultmapmindaterelativeamount =     1;
 set @application_defaultmapmindaterelativeunits =      'DAY';
 
 /* Max date */
-set @application_defaultmapmaxdatetype =               'RELATIVE';
+set @application_defaultmapmaxdatetype =               'NONE';
 set @application_defaultmapmaxdate =                   'null';
 set @application_defaultmapmaxdaterelativeamount =     0;
 set @application_defaultmapmaxdaterelativeunits =      'HOUR';
@@ -39,15 +45,15 @@ set @application_defaultmapmagnitudetype =             'ML';
 set @application_defaultmaplistunmeasured =            'true';
 
 /* Min magnitude */
-set @application_defaultmapminmagnitudetype =          'ABSOLUTE';
-set @application_defaultmapminmagnitude =              0.1;
+set @application_defaultmapminmagnitudetype =          'NONE';
+set @application_defaultmapminmagnitude =              0;
 
 /* Max magnitude */
-set @application_defaultmapmaxmagnitudetype =          'ABSOLUTE';
-set @application_defaultmapmaxmagnitude =              0;
+set @application_defaultmapmaxmagnitudetype =          'NONE';
+set @application_defaultmapmaxmagnitude =              10;
 
 /* Animation */
-set @application_defaultmapanimationtype =             'DATE';
+set @application_defaultmapanimationtype =             'NONE';
 set @application_defaultmapanimationstepduration =     5;
 set @application_defaultmapanimationstepkeep =         0;
 set @application_defaultmapanimationsteps =            10;
@@ -55,6 +61,12 @@ set @application_defaultmapreverseanimation =          'false';
 
 INSERT INTO application(
 	id,
+	settingscacheexpiration,
+	googlemapsapikey,
+    eventmapzoom,
+    layername,
+    depthlayername,
+    affecteddistancestylename,
 	defaultmapanimationstepduration,
 	defaultmapanimationstepkeep, 
 	defaultmapanimationsteps,
@@ -87,6 +99,12 @@ INSERT INTO application(
 	legendsdirectory)
   VALUES (
 	@application_id,
+	@application_settingsCacheExpiration,
+	'@application_googleMapsApiKey',
+    @application_eventMapZoom,
+    '@application_layerName',
+    '@application_depthLayerName',
+    '@application_affectedDistanceStyleName',
 	@application_defaultmapanimationstepduration,
 	@application_defaultmapanimationstepkeep, 
 	@application_defaultmapanimationsteps,
@@ -143,23 +161,23 @@ INSERT INTO style(id, name, sld, inapplicationindex, application_id)
 
 /* Magnitude limits */
   
-INSERT INTO magnitudelimits(magnitudetype, max, min)
-    VALUES ('MB', 0, 10);
+INSERT INTO magnitudelimits(magnitudetype, min, max)
+    VALUES ('MB', 0, 6.5);
 
-INSERT INTO magnitudelimits(magnitudetype, max, min)
-    VALUES ('MS', 0, 10);
+INSERT INTO magnitudelimits(magnitudetype, min, max)
+    VALUES ('MS', 1, 10);
 
-	INSERT INTO magnitudelimits(magnitudetype, max, min)
-    VALUES ('MW', 0, 10);
+	INSERT INTO magnitudelimits(magnitudetype, min, max)
+    VALUES ('MW', 2, 10);
 
-INSERT INTO magnitudelimits(magnitudetype, max, min)
+INSERT INTO magnitudelimits(magnitudetype, min, max)
     VALUES ('MBLG', 0, 10);
 
-	INSERT INTO magnitudelimits(magnitudetype, max, min)
-    VALUES ('MC', 0, 10);
+	INSERT INTO magnitudelimits(magnitudetype, min, max)
+    VALUES ('MC', 1, 12);
 
-INSERT INTO magnitudelimits(magnitudetype, max, min)
-    VALUES ('ML', 0, 10);
+INSERT INTO magnitudelimits(magnitudetype, min, max)
+    VALUES ('ML', 2, 10);
 
 /* Admin user */
 

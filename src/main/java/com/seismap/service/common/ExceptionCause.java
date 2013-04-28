@@ -16,7 +16,9 @@ public enum ExceptionCause {
 	
 	NO_USER_WITH_GIVEN_ID,
 	
-	UNAUTHORIZED;
+	UNAUTHORIZED,
+	
+	INVALID_LEGEND;
 
 	public static enum ExceptionParameter {
 		CATEGORY_ID,

@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.seismap.service.application.GetApplicationSettingsRequestDto;
+import com.seismap.service.application.GetApplicationSettingsResponseDto;
 import com.seismap.service.category.ListCategoriesRequestDto;
 import com.seismap.service.category.ListCategoriesResponseDto;
 import com.seismap.service.event.GetDataBoundsRequestDto;
@@ -37,8 +39,6 @@ import com.seismap.service.event.GetMagnitudeLimitsRequestDto;
 import com.seismap.service.event.GetMagnitudeLimitsResponseDto;
 import com.seismap.service.map.GetDefaultMapRequestDto;
 import com.seismap.service.map.GetDefaultMapResponseDto;
-import com.seismap.service.map.GetLayerServerUriRequestDto;
-import com.seismap.service.map.GetLayerServerUriResponseDto;
 import com.seismap.service.map.GetLegendRequestDto;
 import com.seismap.service.map.ListUserMapsRequestDto;
 import com.seismap.service.map.ListUserMapsResponseDto;
@@ -48,6 +48,8 @@ import com.seismap.service.style.ListStylesResponseDto;
 @Controller
 @RequestMapping("")
 public class PageController extends SeismapController {
+
+	private ApplicationController applicationController;
 
 	private CategoryController categoryController;
 
@@ -59,10 +61,11 @@ public class PageController extends SeismapController {
 
 	private ClientHttpRequestFactory httpRequestFactory;
 
-	public PageController(CategoryController categoryController,
-			MapController mapController, EventController eventController,
-			StyleController styleController,
+	public PageController(ApplicationController applicationController,
+			CategoryController categoryController, MapController mapController,
+			EventController eventController, StyleController styleController,
 			ClientHttpRequestFactory httpRequestFactory) {
+		this.applicationController = applicationController;
 		this.categoryController = categoryController;
 		this.mapController = mapController;
 		this.eventController = eventController;
@@ -87,12 +90,24 @@ public class PageController extends SeismapController {
 	}
 
 	private void loadGeneralData(Model model) {
+		GetApplicationSettingsResponseDto applicationSettingsResponse = applicationController
+				.getSettings(new GetApplicationSettingsRequestDto());
+		if (applicationSettingsResponse.isException()) {
+			throw new IllegalStateException(
+					applicationSettingsResponse.toString());
+		}
+		model.addAttribute("applicationSettings",
+				applicationSettingsResponse.getValue());
+		model.addAttribute("applicationSettings_json",
+				toJson(applicationSettingsResponse.getValue()));
+
 		ListCategoriesResponseDto categoriesResponse = categoryController
 				.list(new ListCategoriesRequestDto());
 		if (categoriesResponse.isException()) {
 			throw new IllegalStateException(categoriesResponse.toString());
 		}
 		model.addAttribute("categories", categoriesResponse.getValue());
+
 		ListUserMapsResponseDto mapsResponse = mapController
 				.listByUser(new ListUserMapsRequestDto(getActorCredentials()
 						.getUserId()));
@@ -140,25 +155,25 @@ public class PageController extends SeismapController {
 		model.addAttribute("dataBounds_json",
 				toJson(dataBoundsResponse.getValue()));
 
-		GetLayerServerUriResponseDto layerServerUriResponse = mapController
-				.getLayerServerUri(new GetLayerServerUriRequestDto());
-		if (layerServerUriResponse.isException()) {
-			throw new IllegalStateException(layerServerUriResponse.toString());
-		}
-		model.addAttribute("layerServerUri", layerServerUriResponse.getValue());
 		return "map";
 	}
 
+	/*
+	 * This circumvents the same origin restriction, in a production environment
+	 * this should be done by the http server itself (possibly Apache)
+	 */
 	@RequestMapping("layerServer/*")
 	public void layerServer(HttpServletRequest request,
 			HttpServletResponse response) throws URISyntaxException,
 			IOException {
-		GetLayerServerUriResponseDto layerServerUriResponse = mapController
-				.getLayerServerUri(new GetLayerServerUriRequestDto());
-		if (layerServerUriResponse.isException()) {
-			throw new IllegalStateException(layerServerUriResponse.toString());
+		GetApplicationSettingsResponseDto applicationSettingsResponse = applicationController
+				.getSettings(new GetApplicationSettingsRequestDto());
+		if (applicationSettingsResponse.isException()) {
+			throw new IllegalStateException(
+					applicationSettingsResponse.toString());
 		}
-		String hostAndPort = layerServerUriResponse.getValue();
+		String hostAndPort = applicationSettingsResponse.getValue()
+				.getLayerServerUri();
 		String path = request.getRequestURI();
 		path = path.substring(path.indexOf("layerServer/")
 				+ "layerServer/".length());

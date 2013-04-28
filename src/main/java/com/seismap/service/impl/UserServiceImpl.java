@@ -11,8 +11,10 @@ import com.seismap.service.user.CreateUserRequestDto;
 import com.seismap.service.user.CreateUserResponseDto;
 import com.seismap.service.user.UserDto;
 import com.seismap.service.user.UserService;
+import com.seismap.service.user.ValidateUserRequestDto;
+import com.seismap.service.user.ValidateUserResponseDto;
 
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends AbstractServiceImpl implements UserService {
 
 	private UserRepository userRepository;
 
@@ -20,11 +22,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public UserServiceImpl(UserRepository userRepository) {
+		super(userRepository);
 		this.userRepository = userRepository;
 	}
 
 	@Transactional
-	public CreateUserResponseDto create(ActorCredentialsDto actorCredentials, CreateUserRequestDto request) {
+	public CreateUserResponseDto create(ActorCredentialsDto actorCredentials,
+			CreateUserRequestDto request) {
+		try {
+			validateUser(actorCredentials, Role.ANONYMOUS);
+		} catch (UnauthorizedException e) {
+			return new CreateUserResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
 		String email = request.getUserEmail();
 		User existingUser = userRepository.getByEmail(email);
 		if (existingUser != null) {
@@ -43,17 +53,17 @@ public class UserServiceImpl implements UserService {
 		return response;
 	}
 
-	// @Transactional
-	// public EventsAndAverageMagnitudesFindResponseDto
-	// get(EventsAndAverageMagnitudesFindRequestDto request) {
-	// return new
-	// EventsAndAverageMagnitudesFindResponseDto(DtoMarshaler.unmarshall(mapRepository
-	// .get(DtoMarshaler.marshall(request.getDateRange()),
-	// DtoMarshaler.marshall(request.getLatitudeRange()),
-	// DtoMarshaler.marshall(request.getLongitudeRange()),
-	// DtoMarshaler.marshall(request.getDepthRange()),
-	// DtoMarshaler.marshallMagnitudeRange(request
-	// .getMagnitudeRanges()))));
-	// }
+	@Transactional
+	public ValidateUserResponseDto validate(
+			ActorCredentialsDto actorCredentials, ValidateUserRequestDto request) {
+		try {
+			User user = getValidatedUser(actorCredentials, Role.REGULAR);
+			return new ValidateUserResponseDto(
+					DtoMarshaler.unmarshallUser(user));
+		} catch (UnauthorizedException e) {
+			return new ValidateUserResponseDto(ExceptionCause.UNAUTHORIZED,
+					e.getMessage());
+		}
+	}
 
 }
