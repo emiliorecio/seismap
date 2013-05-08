@@ -9,7 +9,7 @@ seismap.constants.dateUnits = [ {
   name : 'Horas'
 }, {
   id : 'DAY',
-  name : 'Días'
+  name : 'Dias'
 }, {
   id : 'WEEK',
   name : 'Semanas'
@@ -18,7 +18,7 @@ seismap.constants.dateUnits = [ {
   name : 'Meses'
 }, {
   id : 'YEAR',
-  name : 'Años'
+  name : 'A�os'
 } ];
 
 seismap.constants.magnitudeTypes = [ {
