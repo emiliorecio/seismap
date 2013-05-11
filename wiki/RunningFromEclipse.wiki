@@ -17,8 +17,8 @@ jetty:run
 
 MAVEN_OPTS=-Dseismap.base.dir=${project_loc:seismap} -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=4000,server=y,suspend=n
 
-PATH=${env_var:PATH};C:\workspaces\seismap\trunk\src\main\mapserver\dll
-
+PATH=${env_var:PATH}(*)
+(*) No need it? ;C:\workspaces\seismap\trunk\src\main\mapserver\dlll
 
 
 
