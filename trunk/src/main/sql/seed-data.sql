@@ -141,22 +141,22 @@ INSERT INTO application(
 /* Styles */
 
 INSERT INTO style(id, name, sld, inapplicationindex, application_id)
-  VALUES (1, 'Círculos - Color según magnitud', 'seismap_circles-color-by-magnitude', 0, 1);
+  VALUES (1, 'Circulos - Color segun magnitud', 'seismap_circles-color-by-magnitude', 0, 1);
 
 INSERT INTO style(id, name, sld, inapplicationindex, application_id)
-  VALUES (2, 'Círculos - Color según antiguedad', 'seismap_circles-color-by-age', 1, 1);
+  VALUES (2, 'Circulos - Color segun antiguedad', 'seismap_circles-color-by-age', 1, 1);
 
 INSERT INTO style(id, name, sld, inapplicationindex, application_id)
-  VALUES (3, 'Círculos - Color según profundidad', 'seismap_circles-color-by-depth', 2, 1);
+  VALUES (3, 'Circulos - Color segun profundidad', 'seismap_circles-color-by-depth', 2, 1);
 
 INSERT INTO style(id, name, sld, inapplicationindex, application_id)
-  VALUES (4, 'Puntos - Color según magnitud', 'seismap_dots-color-by-magnitude', 3, 1);
+  VALUES (4, 'Puntos - Color segun magnitud', 'seismap_dots-color-by-magnitude', 3, 1);
 
 INSERT INTO style(id, name, sld, inapplicationindex, application_id)
-  VALUES (5, 'Puntos - Color según antiguedad', 'seismap_dots-color-by-age', 4, 1);
+  VALUES (5, 'Puntos - Color segun antiguedad', 'seismap_dots-color-by-age', 4, 1);
 
 INSERT INTO style(id, name, sld, inapplicationindex, application_id)
-  VALUES (6, 'Puntos  - Color según profundidad', 'seismap_dots-color-by-depth', 5, 1);
+  VALUES (6, 'Puntos  - Color segun profundidad', 'seismap_dots-color-by-depth', 5, 1);
 
 
 /* Magnitude limits */
