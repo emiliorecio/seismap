@@ -15,13 +15,13 @@ import com.seismap.service.parser.annotation.Whitespace;
 public class TypeFEntry extends AbstractEntry {
 
 	@FloatField(position = 1, digits = 10, decimals = 0)
-	private float strike;
+	private Float strike;
 
 	@FloatField(position = 11, digits = 10, decimals = 0)
-	private float dip;
+	private Float dip;
 
 	@FloatField(position = 21, digits = 10, decimals = 0)
-	private float rake;
+	private Float rake;
 
 	@IntegerField(position = 31, digits = 6)
 	private Integer badPolarities;

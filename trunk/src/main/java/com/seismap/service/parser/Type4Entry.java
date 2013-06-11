@@ -70,7 +70,7 @@ public class Type4Entry extends AbstractEntry {
 			@EnumerationMapping(value = "AMSG", mapsTo = "AMSG"),
 			@EnumerationMapping(value = "AMPG", mapsTo = "AMPG"),
 			@EnumerationMapping(value = "IAmb", mapsTo = "IAMB"),
-			@EnumerationMapping(value = "SG  ", mapsTo = "SG") })
+			@EnumerationMapping(value = { "SG  ", "Sg  " }, mapsTo = "SG") })
 	private Phase phase;
 
 	@EnumeratedField(position = 15, length = 1, mappings = {
@@ -99,7 +99,7 @@ public class Type4Entry extends AbstractEntry {
 	private int minutes;
 
 	@FloatField(position = 23, digits = 6, decimals = 0)
-	private float seconds;
+	private Float seconds;
 
 	@IntegerField(position = 30, digits = 4)
 	private Integer duration;

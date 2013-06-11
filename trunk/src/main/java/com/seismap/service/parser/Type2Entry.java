@@ -86,8 +86,8 @@ public class Type2Entry extends AbstractEntry {
 	@FloatField(position = 34, digits = 6, decimals = 2, nullAlias = "******")
 	private Float macroseismicLatitude;
 
-	@FloatField(position = 41, digits = 7, decimals = 2)
-	private float macroseismicLongitude;
+	@FloatField(position = 41, digits = 7, decimals = 2, nullAlias = "*******")
+	private Float macroseismicLongitude;
 
 	@FloatField(position = 49, digits = 3, decimals = 1)
 	private Float macroseismicMagnitude;

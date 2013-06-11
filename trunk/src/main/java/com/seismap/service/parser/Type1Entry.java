@@ -39,7 +39,7 @@ public class Type1Entry extends AbstractEntry {
 	private int minutes;
 
 	@FloatField(position = 17, digits = 4, decimals = 1)
-	private float seconds;
+	private Float seconds;
 
 	@CharacterField(position = 21)
 	private char locationModelIndicator;
