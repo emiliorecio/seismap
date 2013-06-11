@@ -21,16 +21,16 @@ public class TypeEEntry extends AbstractEntry {
 	private int gap;
 
 	@FloatField(position = 15, digits = 6, decimals = 2)
-	private float originTimeError;
+	private Float originTimeError;
 
 	@FloatField(position = 25, digits = 6, decimals = 1)
-	private float latitudeError;
+	private Float latitudeError;
 
 	@FloatField(position = 33, digits = 6, decimals = 1)
-	private float longitudeError;
+	private Float longitudeError;
 
 	@FloatField(position = 39, digits = 5, decimals = 1)
-	private float depthError;
+	private Float depthError;
 
 	@ScientificNotationField(position = 44, digits = 12, exponentDigits = 4)
 	private float xyCovariance;
