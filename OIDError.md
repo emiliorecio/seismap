@@ -1,0 +1,1 @@
+[OID ERROR](http://camaronbitmap.blogspot.com/2008/08/mapserver-postgis-y-los-oid.html)

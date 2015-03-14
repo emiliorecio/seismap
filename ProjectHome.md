@@ -1,0 +1,1 @@
+Solve the problem of geo-information manipulation and visualization of seismic activity.

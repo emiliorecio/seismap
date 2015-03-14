@@ -1,0 +1,38 @@
+# Zoom Based Scale Filter #
+
+Zmin=0  (Zoom minimo de cercania definido por la API de Google)
+
+Zcut=valor del zoom a partir del cual un zoom menor provee exactamente los mismos resultados
+
+Zmax=21 (Zoom maximo de cercania definido por la API de Google)
+
+Si Z es menor a Zcut :
+
+Zefectivo = Zcut
+
+Si Z es mayor o igual a Zcut :
+
+Zefectivo = Z
+
+Znormalizado = (Zmax - Zefectivo)/(Zmax-Zcut)
+
+Zmin<=Z=<Zmax
+
+Zmin<=Zefectivo<=Zcut
+
+0<=Znormalizado <=1
+
+Siendo Z el zoom actual del mapa.
+
+
+Smax= Maximo de la escala sismica (ej: Mercalli = 12)
+
+Scut=valor a partir del cual cualquier sismo es visible siempre
+
+Smin= Minimo de la escala sismica (ej: Mercalli = 1)
+
+
+S = (Scut - Smin)`*` Zn + Smin (S = valor de escala minima que requieren los sismos para ser mostrados con el nivel de zoom actual)
+
+
+Smin<=S<=Smax
