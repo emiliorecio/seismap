@@ -1,16 +1,11 @@
 package com.seismap.service.parser;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
+import com.seismap.service.parser.Parser.LogEventConsumer;
+import com.seismap.service.parser.Parser.LogLineProvider;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.seismap.service.parser.Parser.LogEventConsumer;
-import com.seismap.service.parser.Parser.LogLineProvider;
+import java.io.*;
 
 public class ParserTest {
 

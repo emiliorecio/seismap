@@ -5,7 +5,7 @@ SET CONSTRAINTS ALL DEFERRED;
 set @application_id =                                  1;
 set @application_settingsCacheExpiration =             5000;
 set @application_layerserveruri =                      'http://localhost:8080/geoserver';
-set @application_legendsdirectory =                    'C:/workspace/seismap/src/main/sld/';
+set @application_legendsdirectory =                    'C:/user/workspace/seismap/src/main/sld/';
 set @application_googleMapsApiKey =                    '';
 set @application_eventMapZoom =                        7;
 set @application_layerName =                           'eventandaveragemagnitudes';
