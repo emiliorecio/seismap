@@ -32,7 +32,7 @@ public class Map implements Identifiable<Long> {
 	private String description;
 
 	@Column(nullable = false)
-	@Type(type = "org.hibernatespatial.GeometryUserType")
+	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Point center;
 
 	@Column(nullable = false)
