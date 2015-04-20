@@ -1,27 +1,12 @@
 package com.seismap.model.entity;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
+import com.seismap.service.event.ExtendedMagnitudeType;
+import com.seismap.service.map.*;
+import com.vividsolutions.jts.geom.Point;
 import org.hibernate.annotations.Type;
 
-import com.seismap.service.event.ExtendedMagnitudeType;
-import com.seismap.service.map.AnimationType;
-import com.seismap.service.map.DateLimitType;
-import com.seismap.service.map.DateUnits;
-import com.seismap.service.map.DepthLimitType;
-import com.seismap.service.map.MagnitudeLimitType;
-import com.vividsolutions.jts.geom.Point;
+import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 public class Map implements Identifiable<Long> {
@@ -120,7 +105,7 @@ public class Map implements Identifiable<Long> {
 	private AnimationType animationType;
 
 	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
+	//@Enumerated(EnumType.STRING)
 	private float animationStepKeep;
 
 	@Column(nullable = false)

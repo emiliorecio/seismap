@@ -27,7 +27,7 @@
   </bean>
 
   <bean id="model_sessionFactory"
-    class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+    class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
     <property name="hibernateProperties">
       <util:properties>
         <prop key="hibernate.dialect">
@@ -63,54 +63,54 @@
     </property>
   </bean>
 
-  <bean id="model_transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+  <bean id="model_transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
     <property name="sessionFactory" ref="model_sessionFactory" />
   </bean>
 
-  <bean id="model_hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
-    <constructor-arg ref="model_sessionFactory" />
-    <property name="allowCreate" value="false" />
-  </bean>
+  <!--<bean id="model_hibernateTemplate" class="org.springframework.orm.hibernate4.HibernateTemplate">-->
+    <!--<constructor-arg ref="model_sessionFactory" />-->
+    <!--<property name="allowCreate" value="false" />-->
+  <!--</bean>-->
 
   <bean id="model_agencyRepository" class="com.seismap.model.repository.impl.AgencyRepositoryImpl">
-    <property name="hibernateTemplate" ref="model_hibernateTemplate" />
+    <property name="sessionFactory" ref="model_sessionFactory" />
   </bean>
 
   <bean id="model_applicationRepository" class="com.seismap.model.repository.impl.ApplicationRepositoryImpl">
-    <property name="hibernateTemplate" ref="model_hibernateTemplate" />
+    <property name="sessionFactory" ref="model_sessionFactory" />
   </bean>
 
   <bean id="model_categoryRepository" class="com.seismap.model.repository.impl.CategoryRepositoryImpl">
-    <property name="hibernateTemplate" ref="model_hibernateTemplate" />
+    <property name="sessionFactory" ref="model_sessionFactory" />
   </bean>
 
   <bean id="model_dataBoundsRepository" class="com.seismap.model.repository.impl.DataBoundsRepositoryImpl">
-    <property name="hibernateTemplate" ref="model_hibernateTemplate" />
+    <property name="sessionFactory" ref="model_sessionFactory" />
   </bean>
 
   <bean id="model_eventRepository" class="com.seismap.model.repository.impl.EventRepositoryImpl">
-    <property name="hibernateTemplate" ref="model_hibernateTemplate" />
+    <property name="sessionFactory" ref="model_sessionFactory" />
   </bean>
 
   <bean id="model_eventAndAverageMagnitudesRepository"
     class="com.seismap.model.repository.impl.EventAndAverageMagnitudesRepositoryImpl">
-    <property name="hibernateTemplate" ref="model_hibernateTemplate" />
+    <property name="sessionFactory" ref="model_sessionFactory" />
   </bean>
 
   <bean id="model_magnitudeLimitsRepository"
     class="com.seismap.model.repository.impl.MagnitudeLimitsRepositoryImpl">
-    <property name="hibernateTemplate" ref="model_hibernateTemplate" />
+    <property name="sessionFactory" ref="model_sessionFactory" />
   </bean>
 
   <bean id="model_mapRepository" class="com.seismap.model.repository.impl.MapRepositoryImpl">
-    <property name="hibernateTemplate" ref="model_hibernateTemplate" />
+    <property name="sessionFactory" ref="model_sessionFactory" />
   </bean>
 
   <bean id="model_styleRepository" class="com.seismap.model.repository.impl.StyleRepositoryImpl">
-    <property name="hibernateTemplate" ref="model_hibernateTemplate" />
+    <property name="sessionFactory" ref="model_sessionFactory" />
   </bean>
 
   <bean id="model_userRepository" class="com.seismap.model.repository.impl.UserRepositoryImpl">
-    <property name="hibernateTemplate" ref="model_hibernateTemplate" />
+    <property name="sessionFactory" ref="model_sessionFactory" />
   </bean>
 </beans>
