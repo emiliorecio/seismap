@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 
 @Entity
+@Table(name = "style")
 public class Style {
 
 	@Id
@@ -19,7 +20,7 @@ public class Style {
 	private String name;
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	@JoinTable(name = "StyleVariable", joinColumns = @JoinColumn(name = "style_id"))
+	@JoinTable(name = "stylevariable", joinColumns = @JoinColumn(name = "style_id"))
 	@MapKeyColumn(name = "name")
 	@Column(name = "value", nullable = false)
 	private java.util.Map<String, String> variables = new LinkedHashMap<String, String>();

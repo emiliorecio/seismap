@@ -1,12 +1,11 @@
 package com.seismap.service.application;
 
-import java.io.Serializable;
-import java.util.List;
-
-import org.codehaus.jackson.annotate.JsonProperty;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seismap.service.category.CategoryDto;
 import com.seismap.service.style.StyleDto;
+
+import java.io.Serializable;
+import java.util.List;
 
 public class ApplicationDto implements Serializable {
 

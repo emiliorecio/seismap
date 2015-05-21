@@ -1,24 +1,15 @@
 package com.seismap.model.entity;
 
+import com.seismap.service.event.ExtendedMagnitudeType;
+
+import javax.persistence.*;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-
-import com.seismap.service.event.ExtendedMagnitudeType;
-
 @Entity
+@Table(name = "databounds")
 public class DataBounds implements Identifiable<Long> {
 
 	@Id

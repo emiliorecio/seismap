@@ -1,18 +1,11 @@
 package com.seismap.model.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import com.seismap.service.event.MagnitudeType;
 
+import javax.persistence.*;
+
 @Entity
+@Table(name = "magnitude")
 public class Magnitude implements Identifiable<Long> {
 
 	@Id

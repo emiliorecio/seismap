@@ -1,8 +1,8 @@
 package com.seismap.service.event;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import java.io.Serializable;
 
 public class AgencyDto implements Serializable {
 

@@ -1,11 +1,10 @@
 package com.seismap.service.common;
 
-import java.io.Serializable;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seismap.service.common.ExceptionCause.ExceptionParameter;
+
+import java.io.Serializable;
 
 public abstract class ResponseDto<T> implements Serializable {
 

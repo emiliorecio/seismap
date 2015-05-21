@@ -1,27 +1,18 @@
 package com.seismap.model.entity;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.IndexColumn;
-
 @Entity
+@Table(name = "application")
 public class Application implements Identifiable<Long> {
 
 	@Id
 	@Column(nullable = false)
 	private Long id;
 
-	@IndexColumn(name = "inApplicationIndex")
+	@OrderColumn(name = "inApplicationIndex")
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "application_id", nullable = false)
 	private List<Category> categories = new ArrayList<Category>();
@@ -29,7 +20,7 @@ public class Application implements Identifiable<Long> {
 	@Transient
 	private ListManager<Category> categoriesManager = null;
 
-	@IndexColumn(name = "inApplicationIndex")
+	@OrderColumn(name = "inApplicationIndex")
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "application_id", nullable = false)
 	private List<Style> styles = new ArrayList<Style>();

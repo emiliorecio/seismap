@@ -1,6 +1,6 @@
 package com.seismap.service.event;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.seismap.service.common.RequestDto;
 

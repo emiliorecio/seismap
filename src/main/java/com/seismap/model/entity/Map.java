@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(name = "map")
 public class Map implements Identifiable<Long> {
 
 	@Id

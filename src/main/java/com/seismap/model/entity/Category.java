@@ -1,22 +1,11 @@
 package com.seismap.model.entity;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.IndexColumn;
-
 @Entity
+@Table(name = "category")
 public class Category implements Identifiable<Long> {
 
 	@Id
@@ -27,7 +16,7 @@ public class Category implements Identifiable<Long> {
 	@Column(nullable = false)
 	private String name;
 
-	@IndexColumn(name = "inCategoryIndex")
+	@OrderColumn(name = "inCategoryIndex")
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "category_id", nullable = true)
 	private List<Map> maps = new ArrayList<Map>();

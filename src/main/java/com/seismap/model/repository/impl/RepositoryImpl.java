@@ -1,19 +1,14 @@
 package com.seismap.model.repository.impl;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.seismap.model.entity.Identifiable;
+import com.seismap.model.repository.Repository;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
-import com.seismap.model.entity.Identifiable;
-import com.seismap.model.repository.Repository;
+import java.io.Serializable;
+import java.util.*;
 
 public abstract class RepositoryImpl<T, K extends Serializable> extends
 		HibernateDaoSupport implements Repository<T, K> {
@@ -181,12 +176,14 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 		List<T> list = getListByCriteria(criteria, distinctRoot);
 		if (list.isEmpty()) {
 			return null;
-		} else if (list.size() >= 1) {
-			Object element = list.get(0);
-			return theClass.cast(element);
 		} else {
-			throw new IllegalArgumentException(list.size() + " "
-					+ theClass.getSimpleName() + " with criteria: " + criteria);
+			if (list.size() >= 1) {
+				Object element = list.get(0);
+				return theClass.cast(element);
+			} else {
+				throw new IllegalArgumentException(list.size() + " "
+						+ theClass.getSimpleName() + " with criteria: " + criteria);
+			}
 		}
 	}
 

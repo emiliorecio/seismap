@@ -1,14 +1,15 @@
 package com.seismap.model.entity;
 
-import java.util.Date;
+import com.vividsolutions.jts.geom.Point;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-
-import com.vividsolutions.jts.geom.Point;
+import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
+@Table(name = "eventandaveragemagnitudes")
 public class EventAndAverageMagnitudes extends EventInfo {
 
 	@Id

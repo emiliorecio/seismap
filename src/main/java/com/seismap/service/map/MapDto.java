@@ -1,10 +1,9 @@
 package com.seismap.service.map;
 
-import java.util.Date;
-
-import org.codehaus.jackson.annotate.JsonProperty;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seismap.service.event.ExtendedMagnitudeType;
+
+import java.util.Date;
 
 public class MapDto extends ModifiableMapDataDto {
 

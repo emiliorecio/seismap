@@ -1,10 +1,9 @@
 package com.seismap.service.style;
 
-import java.util.Map;
-
-import org.codehaus.jackson.annotate.JsonProperty;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seismap.service.common.RequestDto;
+
+import java.util.Map;
 
 public class CreateStyleRequestDto extends RequestDto {
 
