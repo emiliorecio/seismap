@@ -1,9 +1,8 @@
 package com.seismap.controller;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-
+import com.seismap.service.dataload.DataLoadService;
+import com.seismap.service.parser.DataProviderException;
+import com.seismap.service.parser.InvalidDataException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -11,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.seismap.service.dataload.DataLoadService;
-import com.seismap.service.parser.DataProviderException;
-import com.seismap.service.parser.InvalidDataException;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("admin")
@@ -27,7 +26,7 @@ public class AdminConsoleController extends SeismapController implements
 	}
 
 	private File dataFilesDirectory = new File(
-			"C:/workspaces/seismap/trunk/src/test/resources/datafiles");
+			"C:/user/workspace/seismap/src/test/resources/datafiles");
 
 	public File getDataFilesDirectory() {
 		return dataFilesDirectory;

@@ -1,22 +1,34 @@
 package com.seismap.model.repository.impl;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.hibernate.Criteria;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-
 import com.seismap.model.entity.Identifiable;
 import com.seismap.model.repository.Repository;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-public abstract class RepositoryImpl<T, K extends Serializable> extends
-		HibernateDaoSupport implements Repository<T, K> {
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.util.*;
+
+@org.springframework.stereotype.Repository
+@Transactional
+public abstract class RepositoryImpl<T, K extends Serializable> implements Repository<T, K> {
+
+	@Autowired
+	@Resource(name = "model_sessionFactory")
+	private SessionFactory sessionFactory;
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	protected Session getCurrentSession(){
+		return sessionFactory.getCurrentSession();
+	}
 
 	protected static class FieldValue {
 		private String name;
@@ -81,7 +93,7 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 	}
 
 	public T get(K id) {
-		Object object = getHibernateTemplate().get(theClass, id);
+		Object object = (sessionFactory.getCurrentSession()).get(theClass, id);
 		T casted = theClass.cast(object);
 		return casted;
 	}
@@ -137,7 +149,7 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 			Object value = fieldValue.getValue();
 			criteria.add(Restrictions.eq(nameAlias, value));
 		}
-		List<?> list = getHibernateTemplate().findByCriteria(criteria);
+		List<?> list = criteria.getExecutableCriteria(getCurrentSession()).list();
 		return castList(list);
 	}
 
@@ -160,7 +172,7 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 	}
 
 	public void put(T object) {
-		getHibernateTemplate().save(object);
+		getCurrentSession().save(object);
 	}
 
 	protected DetachedCriteria getCriteria() {
@@ -172,12 +184,12 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 		if (distinctRoot) {
 			criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		}
-		List<?> list = this.getHibernateTemplate().findByCriteria(criteria);
+		List<?> list = criteria.getExecutableCriteria(getCurrentSession()).list();
 		return castList(list);
 	}
 
 	protected T getByCriteria(final DetachedCriteria criteria,
-			boolean distinctRoot) {
+							  boolean distinctRoot) {
 		List<T> list = getListByCriteria(criteria, distinctRoot);
 		if (list.isEmpty()) {
 			return null;
@@ -191,7 +203,7 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 	}
 
 	protected T fetchByCriteria(final DetachedCriteria criteria,
-			boolean distinctRoot) {
+								boolean distinctRoot) {
 		T element = getByCriteria(criteria, distinctRoot);
 		if (element == null) {
 			throw new IllegalArgumentException("No " + theClass.getSimpleName()
@@ -201,7 +213,7 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 	}
 
 	public List<T> getAll() {
-		List<?> list = this.getHibernateTemplate().loadAll(this.theClass);
+		List<?> list = this.getCurrentSession().createCriteria(this.theClass).list();
 		return castList(list);
 	}
 
@@ -213,8 +225,10 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 			parameterNames[i] = parameters[i].getName();
 			parameterValues[i] = parameters[i].getValue();
 		}
-		List<?> list = this.getHibernateTemplate().findByNamedParam(hql,
-				parameterNames, parameterValues);
+		List<?> list = null;
+		//TODO MILO
+//		this.getCurrentSession().findByNamedParam(hql,
+//				parameterNames, parameterValues);
 		return castList(list);
 	}
 
@@ -252,7 +266,7 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 	}
 
 	public List<T> list() {
-		List<?> list = getHibernateTemplate().loadAll(theClass);
+		List<?> list = getCurrentSession().createCriteria(theClass).list();
 		return castList(list);
 	}
 
@@ -279,6 +293,6 @@ public abstract class RepositoryImpl<T, K extends Serializable> extends
 	}
 	
 	public void delete(T entity) {
-		getHibernateTemplate().delete(entity);
+		getCurrentSession().delete(entity);
 	}
 }

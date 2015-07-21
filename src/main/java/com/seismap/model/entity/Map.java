@@ -1,29 +1,15 @@
 package com.seismap.model.entity;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
+import com.seismap.service.event.ExtendedMagnitudeType;
+import com.seismap.service.map.*;
+import com.vividsolutions.jts.geom.Point;
 import org.hibernate.annotations.Type;
 
-import com.seismap.service.event.ExtendedMagnitudeType;
-import com.seismap.service.map.AnimationType;
-import com.seismap.service.map.DateLimitType;
-import com.seismap.service.map.DateUnits;
-import com.seismap.service.map.DepthLimitType;
-import com.seismap.service.map.MagnitudeLimitType;
-import com.vividsolutions.jts.geom.Point;
+import javax.persistence.*;
+import java.util.Date;
 
 @Entity
+@Table(name = "map")
 public class Map implements Identifiable<Long> {
 
 	@Id
@@ -47,7 +33,7 @@ public class Map implements Identifiable<Long> {
 	private String description;
 
 	@Column(nullable = false)
-	@Type(type = "org.hibernatespatial.GeometryUserType")
+	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Point center;
 
 	@Column(nullable = false)
@@ -120,8 +106,8 @@ public class Map implements Identifiable<Long> {
 	private AnimationType animationType;
 
 	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private float animationStepKeep;
+	//@Enumerated(EnumType.STRING)
+	private Float animationStepKeep;
 
 	@Column(nullable = false)
 	private int animationSteps;
@@ -384,11 +370,11 @@ public class Map implements Identifiable<Long> {
 		this.animationType = animationType;
 	}
 
-	public float getAnimationStepKeep() {
+	public Float getAnimationStepKeep() {
 		return animationStepKeep;
 	}
 
-	public void setAnimationStepKeep(float animationStepKeep) {
+	public void setAnimationStepKeep(Float animationStepKeep) {
 		this.animationStepKeep = animationStepKeep;
 	}
 

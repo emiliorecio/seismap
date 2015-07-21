@@ -6,6 +6,7 @@
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+  <import resource="classpath:seismap-model-beans.xml"/>
 
   <bean id="service_geometryFactory" class="com.vividsolutions.jts.geom.GeometryFactory">
     <constructor-arg>
@@ -22,7 +23,7 @@
     <constructor-arg ref="model_applicationRepository" />
     <constructor-arg ref="model_userRepository" />
   </bean>
-  
+
   <bean id="service_categoryService" class="com.seismap.service.impl.CategoryServiceImpl">
     <constructor-arg ref="model_applicationRepository" />
     <constructor-arg ref="model_userRepository" />

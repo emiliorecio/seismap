@@ -1,19 +1,17 @@
 package com.seismap.model.entity;
 
-import java.util.Date;
+import com.vividsolutions.jts.geom.Point;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-
-import org.hibernate.annotations.Type;
-
-import com.vividsolutions.jts.geom.Point;
+import java.util.Date;
 
 @MappedSuperclass
 public abstract class EventInfo implements Identifiable<Long> {
 
 	@Column(nullable = false)
-	@Type(type = "org.hibernatespatial.GeometryUserType")
+	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Point location;
 
 	@Column(nullable = false)
