@@ -1,56 +1,23 @@
 package com.seismap.service.impl;
 
+import com.seismap.model.entity.*;
+import com.seismap.model.repository.*;
+import com.seismap.service.common.ActorCredentialsDto;
+import com.seismap.service.common.ExceptionCause;
+import com.seismap.service.common.ExceptionCause.ExceptionParameter;
+import com.seismap.service.event.ExtendedMagnitudeType;
+import com.seismap.service.map.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.seismap.model.entity.Application;
-import com.seismap.model.entity.ApplicationSettings;
-import com.seismap.model.entity.DataBounds;
-import com.seismap.model.entity.Map;
-import com.seismap.model.entity.Style;
-import com.seismap.model.entity.User;
-import com.seismap.model.repository.ApplicationRepository;
-import com.seismap.model.repository.DataBoundsRepository;
-import com.seismap.model.repository.MapRepository;
-import com.seismap.model.repository.StyleRepository;
-import com.seismap.model.repository.UserRepository;
-import com.seismap.service.common.ActorCredentialsDto;
-import com.seismap.service.common.ExceptionCause;
-import com.seismap.service.common.ExceptionCause.ExceptionParameter;
-import com.seismap.service.event.ExtendedMagnitudeType;
-import com.seismap.service.map.AnimationType;
-import com.seismap.service.map.CreateMapRequestDto;
-import com.seismap.service.map.CreateMapResponseDto;
-import com.seismap.service.map.DateLimitType;
-import com.seismap.service.map.DateUnits;
-import com.seismap.service.map.DeleteMapRequestDto;
-import com.seismap.service.map.DeleteMapResponseDto;
-import com.seismap.service.map.DepthLimitType;
-import com.seismap.service.map.GetDefaultMapRequestDto;
-import com.seismap.service.map.GetDefaultMapResponseDto;
-import com.seismap.service.map.GetLegendRequestDto;
-import com.seismap.service.map.GetLegendResponseDto;
-import com.seismap.service.map.GetMapRequestDto;
-import com.seismap.service.map.GetMapResponseDto;
-import com.seismap.service.map.ListUserMapsRequestDto;
-import com.seismap.service.map.ListUserMapsResponseDto;
-import com.seismap.service.map.MagnitudeLimitType;
-import com.seismap.service.map.MapDto;
-import com.seismap.service.map.MapService;
-import com.seismap.service.map.ModifiableMapDataDto;
-import com.seismap.service.map.ModifyMapRequestDto;
-import com.seismap.service.map.ModifyMapResponseDto;
-import com.seismap.service.map.RenameMapRequestDto;
-import com.seismap.service.map.RenameMapResponseDto;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 
 public class MapServiceImpl extends AbstractServiceImpl implements MapService {
 
