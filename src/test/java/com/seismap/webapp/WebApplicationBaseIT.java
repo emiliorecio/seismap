@@ -1,7 +1,12 @@
 package com.seismap.webapp;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+
+import java.io.InputStream;
+
 
 public abstract class WebApplicationBaseIT {
 
@@ -21,6 +26,7 @@ public abstract class WebApplicationBaseIT {
 		}
 
 		public int getCode() {
+
 			return code;
 		}
 
@@ -50,12 +56,12 @@ public abstract class WebApplicationBaseIT {
 	}
 
 	protected Response executeGet(String uri) throws Exception {
-		HttpClient client = new HttpClient();
-		String absoluteUri = getAbsoluteUri(uri);
-		GetMethod method = new GetMethod(absoluteUri);
-		int code = client.executeMethod(method);
-		String body = method.getResponseBodyAsString();
-		return new Response(code, body);
+		HttpClient client = HttpClientBuilder.create().build();
+		HttpGet method = new HttpGet(uri);
+		HttpResponse httpResponse = client.execute(method);
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		InputStream body = httpResponse.getEntity().getContent();
+		return new Response(statusCode, body.toString());
 	}
 
 	protected int getPort() {

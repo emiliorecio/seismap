@@ -1,11 +1,10 @@
 package com.seismap.service.map;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.seismap.service.event.ExtendedMagnitudeType;
+
 import java.io.Serializable;
 import java.util.Date;
-
-import org.codehaus.jackson.annotate.JsonProperty;
-
-import com.seismap.service.event.ExtendedMagnitudeType;
 
 public class ModifiableMapDataDto implements Serializable {
 

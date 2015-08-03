@@ -2,7 +2,7 @@ package com.seismap.service.user;
 
 import java.io.Serializable;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserDto implements Serializable {
 

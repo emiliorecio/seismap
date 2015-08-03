@@ -1,13 +1,12 @@
 package com.seismap.service.common;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.seismap.service.common.ExceptionCause.ExceptionParameter;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.codehaus.jackson.annotate.JsonProperty;
-
-import com.seismap.service.common.ExceptionCause.ExceptionParameter;
 
 public class ExceptionDto implements Serializable {
 

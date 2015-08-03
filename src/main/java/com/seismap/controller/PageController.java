@@ -1,21 +1,20 @@
 package com.seismap.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seismap.service.application.GetApplicationSettingsRequestDto;
+import com.seismap.service.application.GetApplicationSettingsResponseDto;
+import com.seismap.service.category.ListCategoriesRequestDto;
+import com.seismap.service.category.ListCategoriesResponseDto;
+import com.seismap.service.event.GetDataBoundsRequestDto;
+import com.seismap.service.event.GetDataBoundsResponseDto;
+import com.seismap.service.event.GetMagnitudeLimitsRequestDto;
+import com.seismap.service.event.GetMagnitudeLimitsResponseDto;
+import com.seismap.service.map.*;
+import com.seismap.service.style.ListStylesRequestDto;
+import com.seismap.service.style.ListStylesResponseDto;
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,21 +28,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.seismap.service.application.GetApplicationSettingsRequestDto;
-import com.seismap.service.application.GetApplicationSettingsResponseDto;
-import com.seismap.service.category.ListCategoriesRequestDto;
-import com.seismap.service.category.ListCategoriesResponseDto;
-import com.seismap.service.event.GetDataBoundsRequestDto;
-import com.seismap.service.event.GetDataBoundsResponseDto;
-import com.seismap.service.event.GetMagnitudeLimitsRequestDto;
-import com.seismap.service.event.GetMagnitudeLimitsResponseDto;
-import com.seismap.service.map.GetDefaultMapRequestDto;
-import com.seismap.service.map.GetDefaultMapResponseDto;
-import com.seismap.service.map.GetLegendRequestDto;
-import com.seismap.service.map.ListUserMapsRequestDto;
-import com.seismap.service.map.ListUserMapsResponseDto;
-import com.seismap.service.style.ListStylesRequestDto;
-import com.seismap.service.style.ListStylesResponseDto;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map.Entry;
 
 @Controller
 @RequestMapping("")

@@ -1,9 +1,9 @@
 package com.seismap.service.style;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.Map;
-
-import org.codehaus.jackson.annotate.JsonProperty;
 
 public class StyleDto implements Serializable {
 

@@ -1,11 +1,10 @@
 package com.seismap.service.category;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.seismap.service.map.MapDto;
+
 import java.io.Serializable;
 import java.util.List;
-
-import org.codehaus.jackson.annotate.JsonProperty;
-
-import com.seismap.service.map.MapDto;
 
 public class CategoryDto implements Serializable {
 

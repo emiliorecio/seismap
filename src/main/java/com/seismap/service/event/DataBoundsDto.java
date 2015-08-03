@@ -1,11 +1,11 @@
 package com.seismap.service.event;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.codehaus.jackson.annotate.JsonProperty;
 
 public class DataBoundsDto implements Serializable {
 

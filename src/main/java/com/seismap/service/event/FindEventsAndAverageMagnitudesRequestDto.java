@@ -1,11 +1,10 @@
 package com.seismap.service.event;
 
-import java.util.Date;
-
-import org.codehaus.jackson.annotate.JsonProperty;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seismap.service.common.RangeDto;
 import com.seismap.service.common.RequestDto;
+
+import java.util.Date;
 
 public class FindEventsAndAverageMagnitudesRequestDto extends RequestDto {
 

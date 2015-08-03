@@ -1,17 +1,12 @@
 package com.seismap.service.application;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import org.codehaus.jackson.annotate.JsonProperty;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seismap.model.entity.Style;
 import com.seismap.service.event.ExtendedMagnitudeType;
-import com.seismap.service.map.AnimationType;
-import com.seismap.service.map.DateLimitType;
-import com.seismap.service.map.DateUnits;
-import com.seismap.service.map.DepthLimitType;
-import com.seismap.service.map.MagnitudeLimitType;
+import com.seismap.service.map.*;
+
+import java.io.Serializable;
+import java.util.Date;
 
 public class ApplicationSettingsDto implements Serializable {
 

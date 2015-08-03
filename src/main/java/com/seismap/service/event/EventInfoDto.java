@@ -1,8 +1,8 @@
 package com.seismap.service.event;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import java.util.Date;
 
 public class EventInfoDto extends ModifiableEventDataDto {
 
