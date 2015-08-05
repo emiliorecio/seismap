@@ -20,7 +20,7 @@
   type="text/javascript">
 </script>
 <script type="text/javascript"
-  src="${baseUri}/resources/js/lib/openlayers/OpenLayers-debug.js"></script>
+  src="${baseUri}/resources/js/lib/openlayers/ol-debug.js"></script>
 <link rel="stylesheet" type="text/css"
   href="${baseUri}/resources/css/lib/extjs/css/ext-all.css" />
 <script type="text/javascript"
