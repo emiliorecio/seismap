@@ -5,11 +5,10 @@ import com.vividsolutions.jts.geom.Point;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "eventandaveragemagnitudes")
+//@Table(name = "eventandaveragemagnitudes")
 public class EventAndAverageMagnitudes extends EventInfo {
 
 	@Id
