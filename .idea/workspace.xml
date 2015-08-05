@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="884595fd-69db-47fe-8fb9-41a21ee98042" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/jsp/map.jsp" afterPath="$PROJECT_DIR$/src/main/webapp/jsp/map.jsp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="884595fd-69db-47fe-8fb9-41a21ee98042" name="Default" comment="" />
     <ignored path="seismap.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -1113,12 +1110,12 @@
       <workItem from="1438711584629" duration="1944000" />
       <workItem from="1438721173049" duration="5378000" />
       <workItem from="1438730236206" duration="6831000" />
-      <workItem from="1438788484253" duration="2444000" />
+      <workItem from="1438788484253" duration="2465000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="270806000" />
+    <option name="totallyTimeSpent" value="270827000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1130,7 +1127,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="22" width="1616" height="886" extended-state="1" />
+    <frame x="-8" y="22" width="1616" height="886" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
