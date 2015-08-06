@@ -19,16 +19,19 @@
   src="http://maps.googleapis.com/maps/api/js?sensor=false&key=${applicationSettings.googleMapsApiKey}"
   type="text/javascript">
 </script>
-<script type="text/javascript"
+
+
+    <script type="text/javascript"
   src="${baseUri}/resources/js/lib/openlayers/ol-debug.js"></script>
 <link rel="stylesheet" type="text/css"
   href="${baseUri}/resources/css/lib/extjs/css/ext-all.css" />
-<script type="text/javascript"
-  src="${baseUri}/resources/js/lib/extjs/ext-base-debug.js"></script>
+<%--<script type="text/javascript"--%>
+  <%--src="${baseUri}/resources/js/lib/extjs/ext-debug-all.js"></script>--%>
 <script type="text/javascript"
   src="${baseUri}/resources/js/lib/extjs/ext-all-debug.js"></script>
-<script type="text/javascript"
-  src="${baseUri}/resources/js/lib/geoext/GeoExt-debug.js"></script>
+<%--<script type="text/javascript"--%>
+  <%--src="${baseUri}/resources/js/lib/geoext/GeoExt-debug.js"></script>--%>
+  <script type="text/javascript" src="/resources/js/loader.js"></script>
 <script type="text/javascript" src="${baseUri}/resources/js/constants.js"></script>
 <script type="text/javascript">
   seismap.constants.user = {id: 1, name: 'UnUsuario', administrator: true};

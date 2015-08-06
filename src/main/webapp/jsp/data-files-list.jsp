@@ -11,9 +11,9 @@
 <link rel="stylesheet" type="text/css"
   href="${baseUri}/resources/css/lib/extjs/css/ext-all.css" />
 <script type="text/javascript"
-  src="${baseUri}/resources/js/lib/extjs/ext-base-debug.js"></script>
-<script type="text/javascript"
   src="${baseUri}/resources/js/lib/extjs/ext-all-debug.js"></script>
+<%--<script type="text/javascript"
+  src="${baseUri}/resources/js/lib/extjs/ext-all-debug.js"></script>--%>
 <script type="text/javascript" src="${baseUri}/resources/js/constants.js"></script>
 <script type="text/javascript">
 //<![CDATA[
