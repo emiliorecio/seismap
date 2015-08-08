@@ -96,7 +96,7 @@ seismap.ui.initUi = function(viewport) {
       }
     });
   }
-  function initAnimationPanel() {
+ /* function initAnimationPanel() {
     // Make selection of animation "by" to enable/disable the animation
     // configuration
     var fields = [];
@@ -117,10 +117,10 @@ seismap.ui.initUi = function(viewport) {
         }
       }
     });
-  }
+  }*/
   this.legendWindow = Ext.WindowMgr.get('legendWindow');
   initRadioCompositeFields();
-  initAnimationPanel();
+  //initAnimationPanel();
   this.initMap();
   this.initLocationEventsWindow();
   this.initEventWindow();
@@ -169,7 +169,7 @@ seismap.ui.initEventWindow = function() {
   // End of fix.
   
   var closeButton = Ext.getCmp('eventCloseButton');
-  var eventSaveButton = Ext.getCmp('eventSaveButton');
+  //var eventSaveButton = Ext.getCmp('eventSaveButton');
   var eventPanel = Ext.getCmp('eventPanel');
   
   var nameControl = Ext.getCmp('eventNameField');
@@ -179,7 +179,7 @@ seismap.ui.initEventWindow = function() {
   var damagedDistanceControl = Ext.getCmp('eventDamagedDistanceField');
   
   if (!seismap.constants.user.administrator) {
-    eventSaveButton.hide();
+    //eventSaveButton.hide();
     nameControl.setReadOnly(true);
     referenceControl.setReadOnly(true);
     notesControl.setReadOnly(true);
@@ -193,7 +193,7 @@ seismap.ui.initEventWindow = function() {
   
 
   var allFields = eventPanel.findByType(Ext.form.Field);
-  eventSaveButton.on('click', function() {
+  /*eventSaveButton.on('click', function() {
     var errors = false;
     Ext.each(allFields, function(field) {
       errors = errors || !field.isValid();
@@ -235,7 +235,7 @@ seismap.ui.initEventWindow = function() {
         Ext.Msg.alert('Guardar', 'Uy.. hubo un error!');
       }
     });
-  });
+  });*/
   
 };
 seismap.ui.initDepthWindow = function() {
@@ -518,7 +518,7 @@ seismap.ui.registerControlHandles = function() {
   var listUnmeasuredControl = Ext
       .getCmp('magnitudeUnmeasuredVisibilityCheckbox');
 
-  var animationTypeNoneControl = Ext.getCmp('animationByNoneRadio');
+  /*var animationTypeNoneControl = Ext.getCmp('animationByNoneRadio');
   var animationTypeDateControl = Ext.getCmp('animationByDateRadio');
   var animationTypeDepthControl = Ext.getCmp('animationByDepthRadio');
   var animationTypeMagnitudeControl = Ext.getCmp('animationByMagnitudeRadio');
@@ -526,7 +526,7 @@ seismap.ui.registerControlHandles = function() {
   var animationStepDurationControl = Ext.getCmp('animationDurationField');
   var animationStepKeepControl = Ext.getCmp('animationKeepPreviousAmountField');
   var reverseAnimationControl = Ext.getCmp('reverseAnimationCheckbox');
-
+*/
   var showInitialViewLink = Ext.getCmp('showInitialViewLink');
   var useCurrentViewLink = Ext.getCmp('useCurrentViewLink');
 
@@ -552,15 +552,15 @@ seismap.ui.registerControlHandles = function() {
   var mapViewPanel = Ext.getCmp('mapViewPanel');
   var parametersPanel = Ext.getCmp('parametersPanel');
   var applyButton = Ext.getCmp('applyButton');
-  var saveChangesButton = Ext.getCmp('saveChangesButton');
-  var discardChangesButton = Ext.getCmp('discardChangesButton');
-  var saveMapAsButton = Ext.getCmp('saveMapAsButton');
-  var deleteMapButton = Ext.getCmp('deleteMapButton');
+  //var saveChangesButton = Ext.getCmp('saveChangesButton');
+ // var discardChangesButton = Ext.getCmp('discardChangesButton');
+  //var saveMapAsButton = Ext.getCmp('saveMapAsButton');
+  //var deleteMapButton = Ext.getCmp('deleteMapButton');
   var depthMapButton = Ext.getCmp('depthMapButton');
   
   if (this.mapData.id) {
-    saveChangesButton.enable();
-    deleteMapButton.enable();
+    //saveChangesButton.enable();
+    //deleteMapButton.enable();
   }
 
   depthMapButton.on('toggle', function(control, status) {
@@ -646,7 +646,7 @@ seismap.ui.registerControlHandles = function() {
 
     self.mapData.minMagnitude = minMagnitudeControl.getValue();
     self.mapData.listUnmeasured = listUnmeasuredControl.getValue();
-    if (animationTypeNoneControl.getValue()) {
+ /*   if (animationTypeNoneControl.getValue()) {
       self.mapData.animationType = 'NONE';
     } else if (animationTypeDateControl.getValue()) {
       self.mapData.animationType = 'DATE';
@@ -660,17 +660,17 @@ seismap.ui.registerControlHandles = function() {
         .getValue();
     self.mapData.animationStepKeep = animationStepKeepControl.getValue();
     self.mapData.reverseAnimation = reverseAnimationControl.getValue();
-
+*/
     self.modified = true;
-    if (self.mapData.id) {
+    /*if (self.mapData.id) {
       saveChangesButton.enable();
     }
-    discardChangesButton.enable();
+    discardChangesButton.enable();*/
     self.loadLayers();
   });
   mapViewPanel.setTitle('Mapa: ' + self.mapData.name);
 
-  saveChangesButton.on('click', function() {
+  /*saveChangesButton.on('click', function() {
     var mapData = self.clone(self.mapData);
     delete mapData['id'];
     var request = {
@@ -696,17 +696,17 @@ seismap.ui.registerControlHandles = function() {
         Ext.Msg.alert('Guardar', 'Uy.. hubo un error!');
       }
    });
-  });
+  });*/
 
-  discardChangesButton.on('click', function() {
+  /*discardChangesButton.on('click', function() {
     saveChangesButton.disable();
     discardChangesButton.disable();
     self.mapData = seismap.ui.clone(self.originalMapData);
     self.initParameters();
     self.loadLayers();
-  });
+  });*/
 
-  saveMapAsButton.on('click', function() {
+  /*saveMapAsButton.on('click', function() {
     Ext.Msg.prompt('Guardar como', 'Enter the new map name', function (button, mapName) {
       if (mapName == null) {
         return;
@@ -740,7 +740,7 @@ seismap.ui.registerControlHandles = function() {
         }
       });
     });
-  });
+  });*/
 
   var showLegendButton = Ext.getCmp('showLegendButton');
   showLegendButton.on('toggle',  function(control, status) {
@@ -855,7 +855,7 @@ seismap.ui.initParameters = function () {
   var listUnmeasuredControl = Ext
       .getCmp('magnitudeUnmeasuredVisibilityCheckbox');
 
-  var animationTypeNoneControl = Ext.getCmp('animationByNoneRadio');
+  /*var animationTypeNoneControl = Ext.getCmp('animationByNoneRadio');
   var animationTypeDateControl = Ext.getCmp('animationByDateRadio');
   var animationTypeDepthControl = Ext.getCmp('animationByDepthRadio');
   var animationTypeMagnitudeControl = Ext.getCmp('animationByMagnitudeRadio');
@@ -863,7 +863,7 @@ seismap.ui.initParameters = function () {
   var animationStepDurationControl = Ext.getCmp('animationDurationField');
   var animationStepKeepControl = Ext.getCmp('animationKeepPreviousAmountField');
   var reverseAnimationControl = Ext.getCmp('reverseAnimationCheckbox');
-
+*/
   var showInitialViewLink = Ext.getCmp('showInitialViewLink');
   var useCurrentViewLink = Ext.getCmp('useCurrentViewLink');
   zoomControl.setValue(self.mapData.zoom);
@@ -902,7 +902,7 @@ seismap.ui.initParameters = function () {
   minMagnitudeControl.setValue(self.mapData.minMagnitude);
   listUnmeasuredControl.setValue(self.mapData.listUnmeasured);
 
-  animationTypeNoneControl.setValue(self.mapData.animationType == 'NONE');
+  /*animationTypeNoneControl.setValue(self.mapData.animationType == 'NONE');
   animationTypeDateControl.setValue(self.mapData.animationType == 'DATE');
   animationTypeDepthControl.setValue(self.mapData.animationType == 'DEPTH');
   animationTypeMagnitudeControl
@@ -910,7 +910,7 @@ seismap.ui.initParameters = function () {
   animationStepsControl.setValue(self.mapData.animationSteps);
   animationStepDurationControl.setValue(self.mapData.animationStepDuration);
   animationStepKeepControl.setValue(self.mapData.animationStepKeep);
-  reverseAnimationControl.setValue(self.mapData.reverseAnimation);
+  reverseAnimationControl.setValue(self.mapData.reverseAnimation);*/
 };
 seismap.ui.initEventParameters = function () {
   function formatDate(dateTimeValue) {
@@ -1174,22 +1174,22 @@ seismap.ui.start = function() {
     this.animationHandle = null;
   }
 };
-seismap.ui.nextFrame = function() {
+/*seismap.ui.nextFrame = function() {
   this.cycle();
   if (this.animationHandle) {
     clearInterval(this.animationHandle);
     this.animationHandle = setInterval(this.cycle.bind(this),
         this.mapData.animationStepDuration * 1000);
   }
-};
-seismap.ui.previousFrame = function() {
+};*/
+/*seismap.ui.previousFrame = function() {
   this.cycle(true);
   if (this.animationHandle) {
     clearInterval(this.animationHandle);
     this.animationHandle = setInterval(this.cycle.bind(this),
         this.mapData.animationStepDuration * 1000);
   }
-};
+};*/
 seismap.ui.cycle = function(backwards) {
   var current = this.currentFrame;
   if (current != -1) {
@@ -1304,14 +1304,14 @@ seismap.ui.buildCqlDate = function(date) {
 };
 seismap.ui.buildCqlDateFilter = function(map, limit, operator, limitType,
     effectiveLimits, windowLimit) {
-  if (limitType == 'ABSOLUTE' || limitType == 'RELATIVE'
-      || map.animationType == 'DATE') {
-    if (map.animationType == 'DATE') {
-      var limitTimestamp = windowLimit
-          * (effectiveLimits.maxDate.getTime() - effectiveLimits.minDate
-              .getTime()) + effectiveLimits.minDate.getTime();
-      limit = new Date(limitTimestamp);
-    }
+  if (limitType == 'ABSOLUTE' || limitType == 'RELATIVE') {
+    //|| map.animationType == 'DATE') {
+    //if (map.animationType == 'DATE') {
+    var limitTimestamp = windowLimit
+        * (effectiveLimits.maxDate.getTime() - effectiveLimits.minDate
+            .getTime()) + effectiveLimits.minDate.getTime();
+    limit = new Date(limitTimestamp);
+  //}
     var filter = 'date ' + operator + ' ' + this.buildCqlDate(limit);
     return filter;
   } else {
@@ -1321,12 +1321,13 @@ seismap.ui.buildCqlDateFilter = function(map, limit, operator, limitType,
 };
 seismap.ui.buildCqlDepthFilter = function(map, limit, operator, limitType,
     effectiveLimits, windowLimit) {
-  if (limitType == 'ABSOLUTE' || map.animationType == 'DEPTH') {
-    if (map.animationType == 'DEPTH') {
+  //if (limitType == 'ABSOLUTE' || map.animationType == 'DEPTH') {
+  if (limitType == 'ABSOLUTE') {
+    //if (map.animationType == 'DEPTH') {
       limit = windowLimit
           * (effectiveLimits.maxDepth - effectiveLimits.minDepth)
           + effectiveLimits.minDepth;
-    }
+    //}
     var filter = 'depth ' + operator + ' ' + limit;
     return filter;
   } else {
@@ -1336,12 +1337,13 @@ seismap.ui.buildCqlDepthFilter = function(map, limit, operator, limitType,
 };
 seismap.ui.buildCqlMagnitudeFilter = function(map, limit, operator, limitType,
     effectiveLimits, windowLimit) {
-  if (limitType == 'ABSOLUTE' || map.animationType == 'MAGNITUDE') {
-    if (map.animationType == 'MAGNITUDE') {
+  //if (limitType == 'ABSOLUTE' || map.animationType == 'MAGNITUDE') {
+  if (limitType == 'ABSOLUTE') {
+    //if (map.animationType == 'MAGNITUDE') {
       limit = windowLimit
           * (effectiveLimits.maxMagnitude - effectiveLimits.minMagnitude)
           + effectiveLimits.minMagnitude;
-    }
+    //}
     var filter = 'magnitude ' + operator + ' ' + limit;
     if (map.listUnmeasured) {
       filter = '(magnitude IS NULL OR ' + filter + ')';
@@ -1396,24 +1398,24 @@ seismap.ui.buildStaticCqlFilter = function(map, dataBounds, currentDate) {
   return filter;
 };
 seismap.ui.buildCqlFilters = function(map, dataBounds, currentDate) {
-  if (map.animationType == 'NONE') {
+  //if (map.animationType == 'NONE') {
     var filter = this.buildStaticCqlFilter(map, dataBounds, currentDate);
     return [ filter ];
-  }
+ // }
   var effectiveLimits = this.getEffectiveLimits(map, dataBounds, currentDate);
-  var steps = map.animationSteps;
+ // var steps = map.animationSteps;
   var delta;
   var windowStart;
   var windowEnd;
-  if (map.reverseAnimation) {
-    delta = -1 / steps;
-    windowStart = 1 + delta;
-    windowEnd = 1 - delta * map.animationStepKeep;
-  } else {
-    delta = 1 / steps;
-    windowStart = -delta * map.animationStepKeep;
-    windowEnd = delta;
-  }
+  //if (map.reverseAnimation) {
+  //  delta = -1 / steps;
+  //  windowStart = 1 + delta;
+  //  windowEnd = 1 - delta * map.animationStepKeep;
+  //} else {
+  //  delta = 1 / steps;
+  //  windowStart = -delta * map.animationStepKeep;
+  //  windowEnd = delta;
+  //}
   var filters = [];
   for ( var i = 0; i < steps; i++) {
     var filter = this.buildCqlFilter(map, effectiveLimits, Math.max(0,

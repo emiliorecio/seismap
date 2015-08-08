@@ -30,7 +30,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="seismap" target="1.5" />
+      <module name="seismap" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
