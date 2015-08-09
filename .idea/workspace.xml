@@ -4,29 +4,7 @@
     <option name="ANALYSIS_IN_BACKGROUND" value="true" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="884595fd-69db-47fe-8fb9-41a21ee98042" name="Default" comment="">
-      <change type="DELETED" beforePath="C:\user\workspace\seismap\.idea\libraries\Maven__org_springframework_spring_aop_3_2_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\user\workspace\seismap\.idea\libraries\Maven__org_springframework_spring_beans_3_2_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\user\workspace\seismap\.idea\libraries\Maven__org_springframework_spring_context_3_2_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\user\workspace\seismap\.idea\libraries\Maven__org_springframework_spring_context_support_3_2_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\user\workspace\seismap\.idea\libraries\Maven__org_springframework_spring_core_3_2_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\user\workspace\seismap\.idea\libraries\Maven__org_springframework_spring_expression_3_2_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\user\workspace\seismap\.idea\libraries\Maven__org_springframework_spring_jdbc_3_2_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\user\workspace\seismap\.idea\libraries\Maven__org_springframework_spring_orm_3_2_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\user\workspace\seismap\.idea\libraries\Maven__org_springframework_spring_test_3_2_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\user\workspace\seismap\.idea\libraries\Maven__org_springframework_spring_tx_3_2_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\user\workspace\seismap\.idea\libraries\Maven__org_springframework_spring_web_3_2_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\user\workspace\seismap\.idea\libraries\Maven__org_springframework_spring_webmvc_3_2_4_RELEASE.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/resources/js/SeismapViewport.ui.js" afterPath="$PROJECT_DIR$/src/main/webapp/resources/js/SeismapViewport.ui.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/jsp/map.jsp" afterPath="$PROJECT_DIR$/src/main/webapp/jsp/map.jsp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/seismap.iml" afterPath="$PROJECT_DIR$/seismap.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/resources/js/seismap.js" afterPath="$PROJECT_DIR$/src/main/webapp/resources/js/seismap.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/resources/js/seismap.xds" afterPath="$PROJECT_DIR$/src/main/webapp/resources/js/seismap.xds" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/seismap_war_exploded.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/seismap_war_exploded.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="884595fd-69db-47fe-8fb9-41a21ee98042" name="Default" comment="" />
     <ignored path="seismap.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -74,7 +52,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/seismap/controller/MapController.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="81" column="27" selection-start-line="81" selection-start-column="27" selection-end-line="81" selection-end-column="27" />
+              <caret line="94" column="0" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -83,10 +61,11 @@
       <file leaf-file-name="EventController.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/seismap/controller/EventController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.33274022">
-              <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.12099644">
+              <caret line="18" column="11" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
               <folding>
                 <element signature="e#1032#1033#0" expanded="true" />
+                <element signature="e#1071#1072#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1015,12 +994,12 @@
       <workItem from="1438788484253" duration="2444000" />
       <workItem from="1438885398914" duration="1677000" />
       <workItem from="1438905500120" duration="10083000" />
-      <workItem from="1439035241981" duration="3691000" />
+      <workItem from="1439035241981" duration="5488000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="286257000" />
+    <option name="totallyTimeSpent" value="288054000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1057,7 +1036,7 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21542554" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21542554" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1541,17 +1520,18 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/com/seismap/controller/MapController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="81" column="27" selection-start-line="81" selection-start-column="27" selection-end-line="81" selection-end-column="27" />
+          <caret line="94" column="0" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/seismap/controller/EventController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33274022">
-          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.12099644">
+          <caret line="18" column="11" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
           <folding>
             <element signature="e#1032#1033#0" expanded="true" />
+            <element signature="e#1071#1072#0" expanded="true" />
           </folding>
         </state>
       </provider>
