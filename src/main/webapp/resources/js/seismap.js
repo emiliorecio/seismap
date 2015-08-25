@@ -276,7 +276,7 @@ seismap.ui.initEventWindowMap = function() {
   var options = {
     controls : [],
     maxExtent : bounds,
-    numZoomLevels : 22,
+    numZoomLevels : 19,
     displayProjection : new OpenLayers.Projection('EPSG:4326'),
     units : 'm',
     theme : seismap.constants.baseUri
@@ -309,18 +309,18 @@ seismap.ui.initEventWindowMap = function() {
   });
   var ghyb = new OpenLayers.Layer.Google("Google Hybrid", { // the default
 	    type : google.maps.MapTypeId.HYBRID,
-	    numZoomLevels : 20
+	    numZoomLevels : 19
 	  });
   var gphy = new OpenLayers.Layer.Google("Google Physical", {
     type : google.maps.MapTypeId.TERRAIN,
   });
   var gmap = new OpenLayers.Layer.Google("Google Streets",
   {
-    numZoomLevels : 20
+    numZoomLevels : 19
   });
   var gsat = new OpenLayers.Layer.Google("Google Satellite", {
     type : google.maps.MapTypeId.SATELLITE,
-    numZoomLevels : 22
+    numZoomLevels : 19
   });
   this.eventMap.addLayers([ ghyb, gphy, gmap, gsat ]);
   
@@ -344,7 +344,7 @@ seismap.ui.initDepthWindowMap = function() {
   var options = {
     controls : [],
     maxExtent : bounds,
-    numZoomLevels : 22,
+    numZoomLevels : 19,
     projection : 'EPSG:900913',
     maxResolution: 156543.0339,
     displayProjection : new OpenLayers.Projection('EPSG:4326'),
@@ -794,8 +794,12 @@ seismap.ui.initParameters = function () {
     return dateValue;
   }
   function formatTime(dateTimeValue) {
-    var hours = dateTimeValue.getHours();
-    var minutes = dateTimeValue.getMinutes();
+    var hours = 0;
+    var minutes = 0;
+    if (dateTimeValue != null){
+      hours = dateTimeValue.getHours();
+      minutes = dateTimeValue.getMinutes();
+    }
     if (minutes > 0 && minutes < 15) {
       minutes = 0;
     } else if (minutes > 15 && minutes < 30) {
@@ -1008,7 +1012,7 @@ seismap.ui.initMap = function() {
 
   var options = {
     controls : [],
-    numZoomLevels : 22,
+    numZoomLevels : 19,
     units : 'm',
     displayProjection : new OpenLayers.Projection('EPSG:4326'),
     theme : seismap.constants.baseUri
@@ -1163,11 +1167,13 @@ seismap.ui.updateLegendWindow = function () {
   Ext.getCmp('legendImage').getEl().setStyle('background-image', 'url(' + url + ')');
 };
 seismap.ui.start = function() {
-  this.cycle();
-  if (this.layers.length > 1) {
+  this.currentFrame = 0;
+  this.addLayer(this.layers[this.currentFrame]);
+  //this.cycle();
+  /*if (this.layers.length > 1) {
     this.animationHandle = setInterval(this.cycle.bind(this),
         this.mapData.animationStepDuration * 1000);
-  }
+  }*/
 }, seismap.ui.stop = function() {
   if (this.animationHandle) {
     clearInterval(this.animationHandle);
@@ -1190,26 +1196,26 @@ seismap.ui.start = function() {
         this.mapData.animationStepDuration * 1000);
   }
 };*/
-seismap.ui.cycle = function(backwards) {
-  var current = this.currentFrame;
-  if (current != -1) {
-    this.removeLayer(this.layers[current]);
-  }
-  if (backwards == true) {
-    current--;
-    if (current == -1) {
-      current = this.layers.length - 1;
-    }
-  } else {
-    current++;
-    if (current == this.layers.length) {
-      current = 0;
-    }
-
-  }
-  this.currentFrame = current;
-  this.addLayer(this.layers[current]);
-};
+//seismap.ui.cycle = function(backwards) {
+//  var current = this.currentFrame;
+//  if (current != -1) {
+//    this.removeLayer(this.layers[current]);
+//  }
+//  if (backwards == true) {
+//    current--;
+//    if (current == -1) {
+//      current = this.layers.length - 1;
+//    }
+//  } else {
+//    current++;
+//    if (current == this.layers.length) {
+//      current = 0;
+//    }
+//
+//  }
+//  this.currentFrame = current;
+//  this.addLayer(this.layers[current]);
+//};
 seismap.ui.addLayer = function(layer) {
   layer.seismapAdded = new Date().getTime();
   var timeSinceRemoved = layer.seismapAdded - layer.seismapRemoved;

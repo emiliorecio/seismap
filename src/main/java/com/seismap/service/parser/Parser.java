@@ -33,7 +33,7 @@ public class Parser {
 				Type0Entry.class, Type1Entry.class, Type2Entry.class,
 				Type3Entry.class, Type4Entry.class, Type6Entry.class,
 				Type7Entry.class, TypeEEntry.class, TypeFEntry.class,
-				TypeIEntry.class });
+				TypeIEntry.class, TypeMEntry.class });
 
 	}
 
@@ -89,21 +89,21 @@ public class Parser {
 			LogEventConsumer logEventConsumer) throws InvalidDataException,
 			DataProviderException {
 		int lineNumber = 1;
+		//int lineNumber = 376629+1;
 		String line;
 		String previousLineId = "^";
 		Map<String, List<AbstractEntry>> entries = new HashMap<String, List<AbstractEntry>>();
 		while ((line = logLineProvider.readLogLine(lineNumber)) != null) {
-			if (line==" 2009 1218 2032 47.5 L                       SJA  0                            1") {
-				System.out.println("AHAHHHH!!!");
-			}
 			RowReader reader = getReader(line, previousLineId, lineNumber);
-			AbstractEntry entry = reader.read(lineNumber, line);
-			List<AbstractEntry> entriesOfSameType = entries.get(reader.getId());
-			if (entriesOfSameType == null) {
-				entriesOfSameType = new ArrayList<AbstractEntry>();
-				entries.put(reader.getId(), entriesOfSameType);
+			if (!(reader.getId().equalsIgnoreCase("4") || reader.getId().equalsIgnoreCase("M"))) {
+				AbstractEntry entry = reader.read(lineNumber, line);
+				List<AbstractEntry> entriesOfSameType = entries.get(reader.getId());
+				if (entriesOfSameType == null) {
+					entriesOfSameType = new ArrayList<AbstractEntry>();
+					entries.put(reader.getId(), entriesOfSameType);
+				}
+				entriesOfSameType.add(entry);
 			}
-			entriesOfSameType.add(entry);
 			if (reader.isTerminator()) {
 				LogEvent logEvent = new LogEvent(entries);
 				logEventConsumer.cosumeLogEvent(logEvent);
@@ -113,7 +113,10 @@ public class Parser {
 			} else {
 				previousLineId = reader.getId();
 			}
+
+			System.out.println("Line number:" + lineNumber);
 			lineNumber++;
+
 		}
 
 	}

@@ -1,17 +1,13 @@
 package com.seismap.service.parser;
 
-import com.seismap.service.parser.annotation.CharacterField;
-import com.seismap.service.parser.annotation.Entry;
-import com.seismap.service.parser.annotation.FloatField;
-import com.seismap.service.parser.annotation.IntegerField;
-import com.seismap.service.parser.annotation.StringField;
-import com.seismap.service.parser.annotation.Whitespace;
+import com.seismap.service.parser.annotation.*;
 
-@Entry(id = "F", after = { "I", "E", "F", "1" }, whitespaces = {
-		@Whitespace(position = 37, length = 25),
-		@Whitespace(position = 63, length = 4),
+@Entry(id = "F", after = { "1", "2", "3", "6", "I", "E", "F" }, whitespaces = {
+		//@Whitespace(position = 37, length = 25),
+		@Whitespace(position = 63, length = 1),
+		@Whitespace(position = 66, length = 1),
 		@Whitespace(position = 70, length = 1),
-		@Whitespace(position = 77, length = 1) })
+		@Whitespace(position = 79, length = 1) })
 public class TypeFEntry extends AbstractEntry {
 
 	@FloatField(position = 1, digits = 10, decimals = 0)
@@ -23,58 +19,92 @@ public class TypeFEntry extends AbstractEntry {
 	@FloatField(position = 21, digits = 10, decimals = 0)
 	private Float rake;
 
-	@IntegerField(position = 31, digits = 6)
+	@FloatField(position = 31, digits = 5, decimals = 1)
+	private Float errorStrike;
+
+	@FloatField(position = 36, digits = 5, decimals = 1)
+	private Float errorDip;
+
+	@FloatField(position = 41, digits = 5, decimals = 1)
+	private Float errorRake;
+
+	@FloatField(position = 46, digits = 5, decimals = 1)
+	private Float fitError;
+
+	@FloatField(position = 51, digits = 5, decimals = 1)
+	private Float stationDistributionRatio;
+
+	@FloatField(position = 56, digits = 5, decimals = 1)
+	private Float amplitudeRatioFit;
+
+	@IntegerField(position = 61, digits = 2)
 	private Integer badPolarities;
 
-	@IntegerField(position = 62, digits = 1)
-	private Integer undefinedNumber;
+	@IntegerField(position = 64, digits = 2)
+	private Integer badAmplitude;
 
 	@StringField(position = 67, length = 3)
 	private String agencyCode;
 
-	@StringField(position = 71, length = 6)
-	private String methodSolution;
+	@StringField(position = 71, length = 7)
+	private String programUsed;
 
-	@CharacterField(position = 78)
-	private char qualitySolution;
+	@StringField(position = 78, length = 1)
+	private String qualitySolution;
 
-	@CharacterField(position = 79)
-	private char primeSolution;
-
-	public float getStrike() {
+	public Float getStrike() {
 		return strike;
 	}
 
-	public float getDip() {
+	public Float getDip() {
 		return dip;
 	}
 
-	public float getRake() {
+	public Float getRake() {
 		return rake;
+	}
+
+	public Float getErrorStrike() {
+		return errorStrike;
+	}
+
+	public Float getErrorDip() {
+		return errorDip;
+	}
+
+	public Float getErrorRake() {
+		return errorRake;
+	}
+
+	public Float getFitError() {
+		return fitError;
+	}
+
+	public Float getStationDistributionRatio() {
+		return stationDistributionRatio;
+	}
+
+	public Float getAmplitudeRatioFit() {
+		return amplitudeRatioFit;
 	}
 
 	public Integer getBadPolarities() {
 		return badPolarities;
 	}
 
-	public Integer getUndefinedNumber() {
-		return undefinedNumber;
+	public Integer getBadAmplitude() {
+		return badAmplitude;
 	}
 
 	public String getAgencyCode() {
 		return agencyCode;
 	}
 
-	public String getMethodSolution() {
-		return methodSolution;
+	public String getProgramUsed() {
+		return programUsed;
 	}
 
-	public char getQualitySolution() {
+	public String getQualitySolution() {
 		return qualitySolution;
 	}
-
-	public char getPrimeSolution() {
-		return primeSolution;
-	}
-
 }

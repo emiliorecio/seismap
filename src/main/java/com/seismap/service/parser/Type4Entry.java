@@ -69,7 +69,7 @@ public class Type4Entry extends AbstractEntry {
 			@EnumerationMapping(value = "Sn  ", mapsTo = "SN"),
 			@EnumerationMapping(value = "AMSG", mapsTo = "AMSG"),
 			@EnumerationMapping(value = "AMPG", mapsTo = "AMPG"),
-			@EnumerationMapping(value = "IAmb", mapsTo = "IAMB"),
+			@EnumerationMapping(value = { "IVmB", "IAmb" }, mapsTo = "IVmB_BB"),
 			@EnumerationMapping(value = { "SG  ", "Sg  " }, mapsTo = "SG") })
 	private Phase phase;
 

@@ -14,7 +14,7 @@ import com.seismap.service.parser.enumeration.DistanceIndicator;
 import com.seismap.service.parser.enumeration.EventId;
 import com.seismap.service.parser.enumeration.MagnitudeType;
 
-@Entry(id = "1", after = { "^", "1" }, whitespaces = {
+@Entry(id = "1", after = { "^", "1", "6", "E" }, whitespaces = {
 		@Whitespace(position = 1, length = 1),
 		@Whitespace(position = 6, length = 1),
 		@Whitespace(position = 16, length = 1) })

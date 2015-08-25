@@ -11,7 +11,7 @@ import com.seismap.service.parser.annotation.Whitespace;
 import com.seismap.service.parser.enumeration.ActionIndicator;
 import com.seismap.service.parser.enumeration.ActionIndicatorText;
 
-@Entry(id = "I", after = { "1", "2", "3", "E" }, whitespaces = {
+@Entry(id = "I", after = { "1", "2", "3", "4", "E", "F" }, whitespaces = {
 		@Whitespace(position = 1, length = 1),
 		@Whitespace(position = 12, length = 1),
 		@Whitespace(position = 21, length = 1),

@@ -50,13 +50,13 @@ SeismapViewportUi = Ext.extend(Ext.Viewport, {
                                             text: 'Pais - Ultimas 24hs',
                                             allowChildren: false,
                                             leaf: true,
-                                            id: 62853
+                                            id: 1
                                         },
                                         {
                                             text: 'Cuyo - Ultima semana',
                                             allowChildren: false,
                                             leaf: true,
-                                            id: 62852
+                                            id: 2
                                         }
                                     ]
                                 },
@@ -69,7 +69,7 @@ SeismapViewportUi = Ext.extend(Ext.Viewport, {
                                             text: 'Pais - todos',
                                             allowChildren: false,
                                             leaf: true,
-                                            id: 62851
+                                            id: 3
                                         }
                                     ]
                                 }
@@ -175,7 +175,7 @@ SeismapViewportUi = Ext.extend(Ext.Viewport, {
                                         fieldLabel: 'Zoom inicial',
                                         anchor: '100%',
                                         name: 'initialZoom',
-                                        maxValue: 21,
+                                        maxValue: 19,
                                         id: 'initialZoomControl'
                                     },
                                     {
