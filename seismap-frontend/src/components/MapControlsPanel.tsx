@@ -1,0 +1,227 @@
+import React from 'react';
+import {
+    Box,
+    Typography,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Slider,
+    Stack,
+    Switch,
+    FormControlLabel,
+    Divider,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useMapStore } from '../store/mapStore';
+import type { DateLimitType, DepthLimitType, MagnitudeLimitType, AnimationType } from '../types/map';
+
+const MapControlsPanel: React.FC = () => {
+    const { currentMap, updateCurrentMap } = useMapStore();
+
+    if (!currentMap) {
+        return (
+            <Box sx={{ p: 2 }}>
+                <Typography variant="body2" color="text.secondary">
+                    Cargando mapa...
+                </Typography>
+            </Box>
+        );
+    }
+
+    return (
+        <Box sx={{ px: 1, py: 0.5 }}>
+
+            {/* Date Filter */}
+            <Accordion defaultExpanded disableGutters elevation={0}
+                sx={{ background: 'transparent' }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="subtitle2">Fecha</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ pt: 0 }}>
+                    <Stack spacing={1}>
+                        <FormControl size="small" fullWidth>
+                            <InputLabel>Tipo mín.</InputLabel>
+                            <Select<DateLimitType>
+                                value={currentMap.minDateType}
+                                label="Tipo mín."
+                                onChange={(e) => updateCurrentMap({ minDateType: e.target.value as DateLimitType })}
+                            >
+                                <MenuItem value="NONE">Sin límite</MenuItem>
+                                <MenuItem value="RELATIVE">Relativo</MenuItem>
+                                <MenuItem value="ABSOLUTE">Absoluto</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl size="small" fullWidth>
+                            <InputLabel>Tipo máx.</InputLabel>
+                            <Select<DateLimitType>
+                                value={currentMap.maxDateType}
+                                label="Tipo máx."
+                                onChange={(e) => updateCurrentMap({ maxDateType: e.target.value as DateLimitType })}
+                            >
+                                <MenuItem value="NONE">Sin límite</MenuItem>
+                                <MenuItem value="RELATIVE">Relativo</MenuItem>
+                                <MenuItem value="ABSOLUTE">Absoluto</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Stack>
+                </AccordionDetails>
+            </Accordion>
+
+            <Divider />
+
+            {/* Depth Filter */}
+            <Accordion disableGutters elevation={0} sx={{ background: 'transparent' }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="subtitle2">Profundidad (km)</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ pt: 0 }}>
+                    <Stack spacing={1}>
+                        <FormControl size="small" fullWidth>
+                            <InputLabel>Tipo mín.</InputLabel>
+                            <Select<DepthLimitType>
+                                value={currentMap.minDepthType}
+                                label="Tipo mín."
+                                onChange={(e) => updateCurrentMap({ minDepthType: e.target.value as DepthLimitType })}
+                            >
+                                <MenuItem value="NONE">Sin límite</MenuItem>
+                                <MenuItem value="ABSOLUTE">Absoluto</MenuItem>
+                            </Select>
+                        </FormControl>
+                        {currentMap.minDepthType === 'ABSOLUTE' && (
+                            <Box>
+                                <Typography variant="caption">Min: {currentMap.minDepth} km</Typography>
+                                <Slider
+                                    size="small"
+                                    min={0} max={700} step={5}
+                                    value={currentMap.minDepth}
+                                    onChange={(_, v) => updateCurrentMap({ minDepth: v as number })}
+                                />
+                            </Box>
+                        )}
+                        <FormControl size="small" fullWidth>
+                            <InputLabel>Tipo máx.</InputLabel>
+                            <Select<DepthLimitType>
+                                value={currentMap.maxDepthType}
+                                label="Tipo máx."
+                                onChange={(e) => updateCurrentMap({ maxDepthType: e.target.value as DepthLimitType })}
+                            >
+                                <MenuItem value="NONE">Sin límite</MenuItem>
+                                <MenuItem value="ABSOLUTE">Absoluto</MenuItem>
+                            </Select>
+                        </FormControl>
+                        {currentMap.maxDepthType === 'ABSOLUTE' && (
+                            <Box>
+                                <Typography variant="caption">Max: {currentMap.maxDepth} km</Typography>
+                                <Slider
+                                    size="small"
+                                    min={0} max={700} step={5}
+                                    value={currentMap.maxDepth}
+                                    onChange={(_, v) => updateCurrentMap({ maxDepth: v as number })}
+                                />
+                            </Box>
+                        )}
+                    </Stack>
+                </AccordionDetails>
+            </Accordion>
+
+            <Divider />
+
+            {/* Magnitude Filter */}
+            <Accordion disableGutters elevation={0} sx={{ background: 'transparent' }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="subtitle2">Magnitud</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ pt: 0 }}>
+                    <Stack spacing={1}>
+                        <FormControl size="small" fullWidth>
+                            <InputLabel>Tipo mín.</InputLabel>
+                            <Select<MagnitudeLimitType>
+                                value={currentMap.minMagnitudeType}
+                                label="Tipo mín."
+                                onChange={(e) => updateCurrentMap({ minMagnitudeType: e.target.value as MagnitudeLimitType })}
+                            >
+                                <MenuItem value="NONE">Sin límite</MenuItem>
+                                <MenuItem value="ABSOLUTE">Absoluto</MenuItem>
+                            </Select>
+                        </FormControl>
+                        {currentMap.minMagnitudeType === 'ABSOLUTE' && (
+                            <Box>
+                                <Typography variant="caption">Min: {currentMap.minMagnitude}</Typography>
+                                <Slider size="small" min={0} max={10} step={0.1} value={currentMap.minMagnitude}
+                                    onChange={(_, v) => updateCurrentMap({ minMagnitude: v as number })} />
+                            </Box>
+                        )}
+                        <FormControl size="small" fullWidth>
+                            <InputLabel>Tipo máx.</InputLabel>
+                            <Select<MagnitudeLimitType>
+                                value={currentMap.maxMagnitudeType}
+                                label="Tipo máx."
+                                onChange={(e) => updateCurrentMap({ maxMagnitudeType: e.target.value as MagnitudeLimitType })}
+                            >
+                                <MenuItem value="NONE">Sin límite</MenuItem>
+                                <MenuItem value="ABSOLUTE">Absoluto</MenuItem>
+                            </Select>
+                        </FormControl>
+                        {currentMap.maxMagnitudeType === 'ABSOLUTE' && (
+                            <Box>
+                                <Typography variant="caption">Max: {currentMap.maxMagnitude}</Typography>
+                                <Slider size="small" min={0} max={10} step={0.1} value={currentMap.maxMagnitude}
+                                    onChange={(_, v) => updateCurrentMap({ maxMagnitude: v as number })} />
+                            </Box>
+                        )}
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    size="small"
+                                    checked={currentMap.listUnmeasured}
+                                    onChange={(e) => updateCurrentMap({ listUnmeasured: e.target.checked })}
+                                />
+                            }
+                            label={<Typography variant="caption">Incluir sin magnitud</Typography>}
+                        />
+                    </Stack>
+                </AccordionDetails>
+            </Accordion>
+
+            <Divider />
+
+            {/* Animation */}
+            <Accordion disableGutters elevation={0} sx={{ background: 'transparent' }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="subtitle2">Animación</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ pt: 0 }}>
+                    <Stack spacing={1}>
+                        <FormControl size="small" fullWidth>
+                            <InputLabel>Tipo</InputLabel>
+                            <Select<AnimationType>
+                                value={currentMap.animationType}
+                                label="Tipo"
+                                onChange={(e) => updateCurrentMap({ animationType: e.target.value as AnimationType })}
+                            >
+                                <MenuItem value="NONE">Sin animación</MenuItem>
+                                <MenuItem value="DATE">Por fecha</MenuItem>
+                                <MenuItem value="DEPTH">Por profundidad</MenuItem>
+                                <MenuItem value="MAGNITUDE">Por magnitud</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControlLabel
+                            control={
+                                <Switch size="small" checked={currentMap.reverseAnimation}
+                                    onChange={(e) => updateCurrentMap({ reverseAnimation: e.target.checked })} />
+                            }
+                            label={<Typography variant="caption">Inverso</Typography>}
+                        />
+                    </Stack>
+                </AccordionDetails>
+            </Accordion>
+
+        </Box>
+    );
+};
+
+export default MapControlsPanel;

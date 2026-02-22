@@ -1,0 +1,40 @@
+package com.seismap.controller;
+
+import com.seismap.model.entity.Event;
+import com.seismap.model.entity.DataBounds;
+import com.seismap.model.entity.MagnitudeLimits;
+import com.seismap.service.EventService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/events")
+public class EventController {
+
+    private final EventService eventService;
+
+    public EventController(EventService eventService) {
+        this.eventService = eventService;
+    }
+
+    @GetMapping("/{id}")
+    public Event get(@PathVariable Long id) {
+        return eventService.getById(id);
+    }
+
+    @PutMapping("/{id}")
+    public Event update(@PathVariable Long id, @RequestBody Event event) {
+        return eventService.update(id, event);
+    }
+
+    @GetMapping("/data-bounds")
+    public DataBounds getDataBounds() {
+        return eventService.getDataBounds();
+    }
+
+    @GetMapping("/magnitude-limits")
+    public List<MagnitudeLimits> getMagnitudeLimits() {
+        return eventService.getMagnitudeLimits();
+    }
+}
