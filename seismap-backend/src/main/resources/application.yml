@@ -36,7 +36,11 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
-# GeoServer proxy target
+# GeoServer auto-configuration
 seismap:
   geoserver:
     url: http://localhost:8600/geoserver
+    admin-user: admin
+    admin-password: geoserver
+    workspace: seismap
+    datastore-name: seismap_postgis

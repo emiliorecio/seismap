@@ -1,8 +1,13 @@
 package com.seismap.controller;
 
+import com.seismap.config.GeoServerProperties;
 import com.seismap.model.entity.SeismapMap;
 import com.seismap.service.MapService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
 import java.util.Map;
@@ -12,9 +17,15 @@ import java.util.Map;
 public class MapController {
 
     private final MapService mapService;
+    private final GeoServerProperties geoServerProps;
+    private final RestClient geoServerClient;
 
-    public MapController(MapService mapService) {
+    public MapController(MapService mapService, GeoServerProperties geoServerProps) {
         this.mapService = mapService;
+        this.geoServerProps = geoServerProps;
+        this.geoServerClient = RestClient.builder()
+                .baseUrl(geoServerProps.getUrl())
+                .build();
     }
 
     @GetMapping("/default")
@@ -50,5 +61,26 @@ public class MapController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         mapService.delete(id);
+    }
+
+    /**
+     * Proxy GetLegendGraphic from GeoServer.
+     * Usage: GET /api/maps/legend?name=seismap_circles-color-by-magnitude
+     */
+    @GetMapping("/legend")
+    public ResponseEntity<byte[]> getLegend(@RequestParam String name) {
+        String layer = geoServerProps.getWorkspace() + ":eventandaveragemagnitudes";
+        byte[] image = geoServerClient.get()
+                .uri("/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic"
+                        + "&LAYER=" + layer
+                        + "&STYLE=" + name
+                        + "&FORMAT=image/png"
+                        + "&WIDTH=20&HEIGHT=20")
+                .retrieve()
+                .body(byte[].class);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        return ResponseEntity.ok().headers(headers).body(image);
     }
 }

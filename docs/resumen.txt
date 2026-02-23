@@ -1,0 +1,834 @@
+Capítulo 4.
+Método Propuesto
+En este capítulo se presenta el método implementado en la herramienta SEISMAP, que
+propone una aplicación web de visualización de los sismos registrados en Argentina; utilizando para
+ello la información que el INPRES recolecta de todas las estaciones sismológicas del país;
+permitiendo la generación de mapas. Como se vio en el capítulo anterior, los institutos más
+importantes del mundo poseen su propia herramienta para la generación de mapas. A pesar de que
+la información y la generación de mapas son de acceso público, las herramientas no lo son, es por
+eso que se tomó la iniciativa de desarrollar una aplicación web para el INPRES.
+El capítulo se organiza de la siguiente forma. En la sección 4.1 se presenta un breve análisis
+de las problemáticas que dieron origen al conjunto de requerimientos para la creación de SEISMAP.
+Luego, la sección 4.2 presenta el modelo conceptual de SEISMAP con una descripción de cada uno
+de los elementos que interactúan para alcanzar la funcionalidad propuesta. Finalmente en la sección
+4.3 se presentan las conclusiones del capítulo.
+4.1. Análisis
+En términos generales la problemática presente en el INPRES para la manipulación de
+información sísmica y la generación de mapas sismológicos se puede organizar en seis etapas (ver
+Figura 4.1) que se detallan a continuación y que serán tratados en más detalle a lo largo de este
+capítulo:
+•
+•
+•
+•
+Recolección de información cruda: consiste en la captación de datos por parte de las 50
+estaciones sismológicas distribuidas en el territorio nacional. Como se mencionó, la
+información es transmitida utilizando una amplia variedad de mecanismos como por
+ejemplo internet, radial, satelital entre otros.
+Centralización de los datos crudos: los datos capturados en la etapa anterior son enviados
+al centro de cómputo del INPRES, donde se almacenan tal cual llegan de las estaciones
+remotas.
+Correlación de datos crudos en eventos únicos: los datos almacenados son procesados
+por un sistema especializado (SEISAN), el cual toma los datos crudos de cada estación,
+interpreta los diferentes formatos y los correlaciona entre sí para identificar cuales
+corresponden a un mismo evento (movimiento sismológico). Asimismo SEISAN infiere
+diversas características del evento.
+Almacenamiento de eventos procesados: los eventos generados por la etapa anterior no
+son almacenados por el INPRES sino generados bajo la demanda de los especialistas que
+51•
+•
+desean estudiar un sismo en particular. El problema es que tarea lleva tiempo y requiere de
+pedidos específicos para cada estudio ralentizando la labor de los especialistas.
+Generación de mapas: esta etapa consiste en consultar la información almacenada
+conforme a la etapa anterior y, en base a esta, construir diferentes tipos mapas de acuerdo a
+parámetros especificados. Actualmente esta tarea se realiza manualmente y solo para los
+eventos sísmicos relevantes. Este proceso toma un tiempo considerable para llevarlo a cabo
+y además ofrece una respuesta tardía para informar al público.
+Presentación de mapas e información: esta última etapa solo presenta un evento sísmico
+por mapa. Además los mapas generados son imágenes estáticas sin ningún tipo de
+funcionalidad como zoom o desplazamiento sobre el mapa. La información presentada al
+usuario solo consiste de la fecha del evento, la profundidad, magnitud y no existe forma
+alguna de incorporar datos de manera dinámica. Por otro lado no posee una forma de
+exportar la información a otros archivos.
+Recolección de
+información
+crudaCentralización
+de los datos
+crudosCorrelación de
+datos crudos en
+eventos únicos
+Presentación de
+mapas e
+informaciónGeneración de
+mapasAlmacenamiento
+de eventos
+procesados
+Figura 4.1: Etapas de la generación de mapas sismológicos.
+El desarrollo de SEISMAP permite sistematizar de manera automática las tareas de
+manipulación y visualización expuestas con anterioridad. En referencia al proceso de etapas
+descripto, la herramienta desarrollada en este trabajo constituye una alternativa automática para las
+últimas tres etapas, ya que las tres primeras se desarrollan con la infraestructura actual que posee el
+INPRES.
+4.2. Modelo conceptual propuesto
+Para poder capturar la información de manera adecuada para la solución propuesta en este
+trabajo, SEISMAP hace uso de un proceso de parsing y almacenamiento sobre los datos resultantes
+de la tercer etapa, que luego son almacenados en bases de datos geográficas para luego ser
+utilizados como datos de entrada en la generación de las capas que posee los distintos eventos
+52sísmicos. Finalmente la información es presentada al usuario superponiendo la capa con un mapa
+provisto por OpenLayers (ver Apéndice B). A continuación se describe en detalle el
+comportamiento de cada una de estas tres etapas.
+4.2.1. Almacenamiento de eventos procesados
+Como se presentó en el Capítulo 2, la información que el INPRES reúne proviene de
+diferentes estaciones sismológicas. Estas producen datos heterogéneos ya que están fabricadas por
+diferentes proveedores y cada uno define un formato distinto para almacenar la información. A
+medida que los datos son recogidos, son analizados para darles un formato homogéneo y luego son
+almacenados de forma distribuida, utilizando para esto la herramienta SEISAN.
+Finalizada esta etapa del proceso, SEISMAP entra en escena. En primer lugar se realiza una
+búsqueda a intervalos regulares de tiempo un lote de datos con los últimos sismos detectados del
+día. Mediante un archivo de configuración, que puede ser modificado mientras la aplicación está
+corriendo, el administrador del sistema puede cambiar el intervalo de tiempo para ajustar la
+búsqueda de sismos.
+El análisis de los datos procesados (Ver Figura 4.2) se realiza automáticamente mediante un
+proceso de parsing. Los eventos poseen varios campos de información, de los cuales, los más
+importantes para registrar en la base de datos son: la hora y fecha del sismo, la magnitud, la
+profundidad, las coordenadas geográficas y la escala de dicha magnitud o magnitudes, ya que un
+sismo puede ser detectado por varias estaciones y cada una puede proveer un valor de la magnitud
+levemente diferente e inclusive puede utilizar una escala diferente. Este conjunto de datos se
+denomina evento y cada uno de ellos será persistido en la base de datos para su futura consulta.
+Figura 4.2: Datos enviados por el INPRES para procesar.
+53La base de datos utilizada para dar soporte al sistema es PostGIS, esta elección se hizo ya
+que provee soporte para almacenar información georeferenciada (ver Apéndice C). Además posee
+funciones optimizadas para recuperar la información, que de otra forma sería muy complejo realizar
+si se utilizara una base de datos común. Por ejemplo, utilizando una función de PostGIS es posible
+recuperar los eventos sísmicos que se encuentran dentro de un área geográfica determinada,
+utilizando como parámetros de entrada una lista de coordenadas geográficas que delimitan un área
+cerrada.
+El sistema de referenciación utilizado por los eventos sísmicos son las coordenadas
+geográficas (latitud y longitud) dadas en grados sexagesimales. Como se mencionó en el Capítulo 2
+es necesario realizar la proyección correspondiente de las coordenadas de cada evento utilizando
+para ello una proyección similar a la de UTM, denominada “EPSG: 900913”. La utilización de esta
+proyección se debe a que OpenLayers se basa en ella para marcar los puntos sobre los mapas.
+Durante el proceso de parsing, una vez que se tienen los datos completos del evento, se
+toman las coordenadas geográficas y se transforman utilizando la proyección “EPSG: 900913”
+mediante un modulo diseñado específicamente para esta aplicación. Cuando todos los datos
+correspondientes a un evento sísmico están listos se procede a almacenarlo. Es necesario indicarle a
+la base de datos que sistema de referencia se utiliza cuando se va almacenar el evento ya que las
+consultas y operaciones futuras que involucren a las coordenadas, se van a realizar siempre
+basándose en el estándar que se definió, en este caso el “EPSG:900913”.
+4.2.1.1. Escalas de Magnitud
+La aplicación utiliza distintas escalas de magnitud, debido a la heterogeneidad de los
+eventos. Es así que surge un problema a la hora de representar los puntos sobre el mapa, debido a
+que sería necesario definir un estilo distinto para cada una de las escalas de magnitud que es posible
+visualizar, haciendo que la manipulación y las operaciones con los datos sea una tarea muy
+compleja. Para solucionar esto se normalizan cada una de las escalas de la magnitud y así obtener
+un indicador único, de cada magnitud, de su gravedad de la manera que se describe a continuación.
+Siendo:
+•
+•
+•
+•
+•
+•
+•
+)*, +, ,- la magnitud , -ésima medición en la escala + para el evento * .
+.)+- el límite superior de los valores en la escala de magnitud + sobre el cual la ocurrencia
+de un sismo es improbable (por ejemplo, uno al año).
+/)+- el límite inferior esperado de los valores en la escala de magnitud + sobre el cual la
+ocurrencia de un sismo es prácticamente irrelevante (por ejemplo, no son percibidos y no
+generan daños).
+* el identificador del evento.
++ el código de la escala (por ejemplo, ML para Richter, MC para Mercalli)
+, el número de la medición
+0 la cantidad de mediciones
+54Se define la magnitud del sismo * en la escala + como:
+∑23 )*, +, ,-
+)*, +- =
+0
+Ecuación 4.1: Promedio de todas las magnitudes.
+La Ecuación 4.1corresponde al promedio de todas las magnitudes calculadas por las
+agencias, estas magnitudes son promediadas ya que todas las agencias entregan valores de igual
+validez. Es decir, el promedio de las mediciones en la escala +. Esto evita la necesidad de trabajar
+con la multiplicidad de mediciones en una misma escala de magnitud.
+La magnitud normalizada –también llamada índice- para el sismo * en la escala +, se define como:
+4 )*, +- =
+5)6,7-8)7-
+9)7-8)7-
+Ecuación 4.2: Magnitud normalizada.
+Es decir, la magnitud transpolada desde el rango /)+- - .)+- al rango 0 - 1. Esto permite realizar una
+comparación cuantitativa de la gravedad de un sismo entre las distintas escalas de magnitud. Este
+número se encontrara normalmente dentro del rango de cero a uno, excepto por los outlayers
+(sismos muy graves o sismos despreciables).
+Luego, se definen el ranking “R” y el índice global “I” del evento * como:
+•
+•
+;)*- = $(′ )*, /-, ′ )*, 0-, … ), corresponde al índice más alto de entre los índices de
+cada una de las escalas de magnitud. Este índice global permite realizar operaciones de
+visualización y cálculo de manera sencilla dado que provee –al igual q la matriz ′- un
+indicador usualmente dentro del rango 0 - 1. En la mayoría de las operaciones se utiliza de
+la forma: ;=($(;)*-, 0), 1) para mantenerlo dentro del rango.
+>)*- = ;)*- ∗ 10, es decir, el índice llevado al rango 0 - 10, simplemente para llevarlo a
+órdenes de magnitud numérica comparables con las escalas reales de magnitud.
+4.2.1.2. Vistas Materializadas
+Como se explicó anteriormente, el sistema normaliza las mediciones, de las escalas de
+magnitud, para obtener un indicador único para cada escala. Dado que el sistema recibe una gran
+cantidad de datos por día, realizar la normalización de los datos cada vez que el usuario realiza una
+consulta hace que el servidor incurra en una baja en la performance debido a la gran cantidad de
+cálculos que debe realizar. Para resolver este problema se decidió utilizar vistas materializadas
+provistas por PostGIS.
+55Una vista materializada además de almacenar la definición de la vista propiamente dicha,
+también almacena los registros que resultan de ejecutar una consulta sobre la base de datos que
+define a la vista. Al igual que en las vistas normales, las consultas normales son la base de las
+vistas, pero las sentencias SQL se ejecutan cuando se crea la vista y los resultados se almacenan
+físicamente constituyendo una tabla que ocupa espacio en disco. Las vistas materializadas también
+admiten índices que permiten mejorar el rendimiento de las sentencias SQL. Por otro lado, ya que
+las tablas base de la vista sufren modificaciones desde su creación, debido a que todos los días se
+incorporan al sistema loa datos nuevos enviados por el INPRES, es necesario actualizar o refrescar
+las vistas materializadas. Para ello se definió una función que actualizan las vistas cada vez que se
+agregan datos nuevos al sistema.
+4.2.2. Generación de mapas
+Una vez que los eventos se encuentran almacenados, el proceso siguiente es la generación
+de capas (o layers) que son utilizadas para superponer sobre el mapa base. Para lograr esto es
+necesario recuperar los eventos de la base de datos, utilizando los distintos parámetros disponibles
+para realizar la consulta, que pueden ser:
+•
+•
+•
+•
+•
+Valor de la magnitud: Valor numérico que puede ser cero o mayor.
+Escala de la magnitud: En la Argentina se utiliza la escala de Ritcher o escala de
+Magnitud Local y se denota como ML, este valor es utilizado por defecto. El sistema
+soporta búsquedas de otras escalas.
+Profundidad del sismo: Este valor está dado en kilómetros y puede ser cero o mayor.
+Fecha Inicial/Final: Rango de fechas por los cuales buscar los sismos.
+Agencia: Consiste de una sigla que define a la agencia. En este caso el INPRES está
+identificado por la sigla SJA.
+Una vez realizada la consulta, se obtiene el conjunto de datos que es necesario mostrar,
+entonces SEISMAP procede a generar la capa con los eventos sísmicos. Esta tarea es realizada
+utilizando GeoServer (ver Apéndice D). Esta aplicación es un servidor simple que permite conectar
+una base de datos; que posee información georeferenciada; con servicios de mapas web como
+Google Maps y Bing Maps. SEISMAP está integrado con GeoServer para darle soporte en la
+creación de capas y permitir la conexión con los servicios de mapas web.
+GeoServer recibe los datos georeferenciados para crear una capa, toma cada uno de los
+eventos y los ubica en la posición que le corresponde según las coordenadas de cada uno. El
+resultado de este proceso es una capa (ver Figura 4.3) que luego, es utilizada para ser superpuesta
+en el mapa base. Es importante resaltar que es posible combinar varias capas de información sobre
+un solo mapa complejo. Por ejemplo se podría definir una capa con la densidad demográfica de la
+zona, combinarla con la capa de eventos sísmicos y luego realizar un análisis de los efectos que
+puede llegar a producir un sismo en un punto densamente poblado.
+564.2.2.1. Mosaicos
+A la hora de realizar zoom sobre un mapa que ya posee una capa con los eventos sísmicos,
+surge un problema de desfasaje entre el mapa y los puntos pertenecientes a la capa.
+capa. O sea,
+sea las
+coordenadas del punto ya no se corresponden con las coordenadas del mapa
+mapa,, eesto
+sto se debe a que la
+capa generada es una imagen estática. Por otro lado, si el usuario se encuentra observando el mapa
+en un determinado nivel de zoom, el servidor debería generar una imagen muy grande para cubrir
+todo el planeta y esto generaría problemas de performance para el servidor y grandes demoras para
+el cliente mientras descara la capa. Para resolver esto se utiliza el concepto de mosaico (o tile).
+Cuando no hay zoom (el zoom es igual a 0), el mapa se encuentra sobre un solo mosaico. Cuando el
+nivel de zoom es 1, el mapa se divide en una matriz de 2 x 2 (4 mosaicos). A medida que el zoom se
+incrementa el mapa es dividido en 4N mosaicos, siendo N el nivel del zoom (ver Figura 4.44).
+Figura 4.3:
+4 : Capa generada con OpenLayers de eventos sí
+sísmicos.
+57Figura 4.4:: Cantidad de mosaicos generados segun el nivel de zoom del mapa.
+Cuando el usuario realiza zoom sobre el mapa es necesario volver a crear una capa desde
+cero compuesta por los mosaicos correspondientes.
+correspondientes. Es así que el servidor recibe una nueva solicitud
+para que genere la capa, los parámetros que recibe del cliente son el valor del nuevo nivel de zoom
+y los cuatro puntos extremos; dados en coordenadas; que encierran al mapa. Luego GeoServ
+GeoServer
+utilizando estos datos realiza una nueva consulta a la base de datos y genera una nueva capa
+compuesta por 4N mosaicos,, que es retornada al cliente. Este proceso también se realiza cuando el
+cliente se desplaza en alguna dirección sobre el mapa que no es visible actualmente. Por ejemplo si
+el usuario está observando el mapa en el nivel dos de zoom y el recuadro del mapa involucra los
+mosaicos 20, 21, 22 y 23, al desplazar el mapa hacia la derecha, el cliente envía al servidor el nivel
+de zoom y los cuat
+cuatro
+ro puntos extremos que encierran al recuadro visible.. Por su parte, el servidor
+realiza una nueva consulta a la base de datos y luego crea la capa que está compuesta de los nuevos
+mosaicos visibles
+visibles, enviándolos al cliente para que sean superpuestos sobre ell mapa.
+mapa En este ejemplo
+el nivel de zoom se mantiene constante, el servidor debe calcular solamente los nuevos mosaicos
+que
+ue son visibles para el usuario
+usuario, creando solamente los mosaicos 30 y 32. Si el nivel de zoom fuese
+modificado, el servidor debe crear ttodos
+modificado,
+odos los mosaicos que componen la capa
+capa,, eliminando la capa
+antigua
+antigua.
+4.2.2.2. Aplicación de estilos
+A los eventos sísmicos se les aplica un estilo antes de ser visualizados en el mapa. Esto
+obedece a que es necesario distinguir los eventos en base a tres caracterís
+características
+ticas principales, la
+magnitud de cada sismo
+sismo,, la antigüedad y la profundidad
+profundidad.. Para ello se utiliza SLD (Styled Layer
+58Descriptor [16]),, el cual está basado en el esquema XML. Estos atributos son estilizados de la
+siguiente manera:
+•
+•
+•
+Magnitud: Como se mencionó anteriormente, la magnitud es normalizada para obtener una
+visualización homogénea. De esta forma se define un estilo que es aplicado sobre los
+eventos sísmicos, variando el tamaño de cada evento en base al valor de la magnitud
+normalizado.
+Antigüedad: Para distinguir los eventos sismos según su antigüedad, se definió un estilo
+que colorea los mismos según el siguiente criterio. R
+Rojo
+ojo para los eventos registrados en la
+última hora, celeste para los eventos registrados en el día y por último se utiliza el color
+verde para visualizar los que fueron registrados en la última semana.
+Profundidad: Para la visualización de la profundidad se aplica un estilo similar al de la
+antigüedad. Los colores utilizados son rojo para sismos que se encuentran entre la
+superficie
+icie de la tierra y llegan hasta los 30 km. El violeta para los que van de 30 km a 70
+km, amarillo para los que se encuentran entre 70 km y 300 km y por último, azul para los
+que están a mas de 300km
+300km.
+La utilización de SLD permite definir estilos que se aplican
+plican sobre la capa. Los estilos
+pueden cambiar dinámicamente en base a los valores que poseen las distintas propiedades. Por
+ejemplo un evento sísmico se indica utilizando un punto sobre el mapa, y según el valor que posea
+la magnitud se le aplica un est
+estilo dinámico que dibuja el punto con un tamaño diferente, según el
+valor que posee.
+posee La Figura 4.5
+4 muestra un ejemplo de cómo varia el tamaño del punto según el
+valor que posee la magnitud.
+magnitud La utilización de esta descripción de estilos, permite aplicar a los
+eventos sísmicos distintas formas de visualizarlos, ayudando en la comprensión de los mapas al
+usuario y los especialistas. Además el administrador del sitio puede modificar los estilos para
+cambiar la forma en que estos se muestran.
+Figura 4.5:: Eventos que varían de tamaño según el valor que posee llaa magnitud.
+594.2.3. Presentación de mapas e información
+Para visualizar el mapa que solicita un usuario se utiliza la librería OpenLayers que permite
+la integración de mapas interactivos a los navegadores web. Además ofrece una API que permite
+obtener información cartográfica de diferentes servicios como Google Maps, Bing Maps, entre
+otros, que al ser combinados con las capas generadas por GeoServer, se obtiene como resultado un
+mapa compuesto por capas que poseen la información sísmica.
+La librería OpenLayers; escrita en Javascript; es cargada en el navegador del usuario
+cuando entra al sitio por primera vez. Esta reside ahí, mientras el usuario navega, reduciendo la
+carga de trabajo del lado del servidor. Una de las funciones principales de OpenLayers es
+interactuar con los servidores de mapas para obtener los mapas y la información cartográfica. En
+esta aplicación, OpenLayers interactúa con el servidor GeoServer que provee de estos elementos.
+Cada vez que el usuario navega sobre el mapa, realiza zoom, etc., una petición es enviada a
+SEISMAP solicitando los diferentes mosaicos o tiles que están involucrados en dicha acción y
+luego OpenLayers se encarga de unir estos elementos (el mapa con las capas retornadas por el
+servidor) para luego ser mostrados al usuario.
+4.2.3.1. Mapa en profundidad
+Uno de los requerimientos solicitados por el INPRES consiste en que los usuarios puedan
+crear mapas en base a la profundidad de los eventos sísmicos. Este tipo de mapa corresponde a un
+corte transversal de la tierra, como se puede observar en la, permitiendo visualizar y analizar la
+actividad sísmica entra la placa tectónica de Nazca y la Sudamericana.
+Figura 4.6: Perfil transversal Oeste-Este mostrando la distribución en profundidad de los sismos ocurridos entre
+21 y 28 latitud sur. Fuente: INPRES.
+60Para el desarrollo de este mapa es necesario recibir los cuatro puntos extremos de un
+rectángulo que es marcado sobre el mapa (ver Figura 4.7). Estos puntos corresponden a
+coordenadas geográficas y delimitan la superficie sobre la cual el usuario desea realizar el corte
+transversal de la tierra, que le permitirán observar los sismos en profundidad.
+Otro punto que se tuvo en cuenta para crear la imagen de corte transversal, fue la necesidad
+de ajustar la escala respecto a la longitud, para poder visualizarla en el mapa de corte de forma
+proporcional. Como se puede ver en la Figura 4.7 se define un punto A y A’ y se calcula la distancia
+entre ellos en grados, de esta forma se define en el eje de las “X” la distancia de ambos puntos y se
+ajusta para generar la imagen con la escala. Por otro lado, en el eje de las “Y” la escala es estática
+ya que los sismos van desde el kilómetro cero a los 700 km de profundidad.
+Utilizando el valor de la profundidad y el valor de la longitud de cada evento sísmico
+SEISMAP puede crear la imagen de corte transversal mediante GeoServer. Esta imagen será
+enviada luego a OpenLayers para ser mostrada en el navegador del usuario.
+Figura 4.7: Distribución de epicentros en el límite de placas (Nazca y Sudamericana). Fuente: USGS.
+614.2.3.2. Animación del mapa
+Otro de los requerimientos solicitados por el INPRES fue que la aplicación posea la
+capacidad de crear una animación de los sismos ocurridos, en un intervalo de tiempo definido por el
+usuario.
+Dado que OpenLayers y GeoServer no proveen un mecanismo para realizar animaciones
+sobre los mapas, la solución que se decidió implementar para resolver este problema fue utilizar
+Javascript para generar la animación. SEISMAP provee de un campo para definir el tipo de
+animación que se desea, estas pueden ser por magnitud, profundidad o por un rango de fechas.
+La implementación de esta solución consiste de realizar una consulta cuadro por cuadro al
+servidor, almacenarlas en un arreglo y luego visualizarlas utilizando temporizadores que provee
+Javascript. Mediante un combo se definieron las distintas funciones que posibilitan pausar, animar y
+parar la animación.
+Figura 4.8: Animación de eventos sísmicos. Fuente: NEIC.
+4.3. Conclusiones
+En las diferentes secciones que constituyen este capítulo, se han mencionado los
+requerimientos solicitados por el INPRES y se han presentado y explicado las distintas soluciones
+para cumplir con ellos. El enfoque propuesto propone la integración de varias herramientas como
+base y la generación de una aplicación que las integre. De esta manera, al materializar este enfoque,
+62es posible desarrollar una herramienta que permite a los distintos usuarios; público en general y
+especialistas; consultar mediante la generación de mapas, la activad sísmica de la Argentina. En el
+Capítulo 5 se presenta la implantación de la herramienta que materializa el enfoque propuesto. Se
+abordará en detalle la manera en que la herramienta funciona.
+63Capítulo 5.
+Desarrollo de la aplicación
+5.1. Introducción
+El sistema desarrollado denominado SEISMAP, es una aplicación interactiva que ofrece la
+posibilidad de obtener los eventos sísmicos detallados bajo la forma de un mapa. Actualmente el
+sistema está configurado para la obtención de datos de cualquier lugar de la Argentina y países
+limítrofes ya que la información proviene de las estaciones que posee el INPRES, pero es posible
+incorporar datos provenientes de otras instituciones extendiendo el mapa a otras regiones. Por otro
+lado, el sistema carga constantemente los sismos que se registran día a día manteniendo la base de
+datos actualizada constantemente para poder realizar futuras consultas.
+SEISMAP permite al administrador del sitio, crear y guardar mapas predefinidos como
+vistas que pueden ser accedidas por usuarios anónimos sin necesidad de que se registren. Además la
+aplicación puede registrar usuarios, ofreciendo la opción de crear sus propios mapas, en base a sus
+preferencias, y almacenarlos. Esto evita que el usuario tenga que definir una nueva búsqueda cada
+vez que consulta el sitio y por lo tanto se reduce considerablemente el tiempo de consulta.
+Adicionalmente el sistema permite crear una animación de los sismos ocurridos utilizando
+diferentes parámetros para su creación, permitiendo visualizar la actividad sísmica de una zona en
+el transcurso del tiempo. También el sistema provee un mecanismo para exportar los eventos
+sísmicos y almacenarlos en un archivo para incorporarlo a otras herramientas que el usuario posea.
+Por otro lado SEISMAP cuenta con la posibilidad de definir un mapa de corte transversal donde se
+pueden apreciar los sismos en profundidad.
+5.2. Tipos de usuario
+SEISMAP distingue entre tres tipos de usuarios con roles y permisos diferenciados. De
+acuerdo con el tipo de usuario con el que se ingresa al sistema, se puede acceder a diferentes
+secciones, así como también dar de alta, baja o modificar información del mismo. A continuación se
+detallan las diferencias más notables entre los distintos tipos de usuario dentro de la aplicación.
+645.2.1. Administrador
+Este usuario tiene acceso total a todas las funcionalidades del sistema, podría operar de la
+misma manera que cualquier usuario registrado, pero a su vez tiene privilegios sobre toda la
+información persistida en el mismo, pudiendo dar de alta, baja o modificar cualquier dato persistido
+ya sea información de usuarios, mapas u otros datos. Además es el encargado de definir las capas
+que luego serán publicadas en la página principal. Por ejemplo, es posible definir una capa que
+muestre los sismos de la última hora, esta al ser consultada, siempre se actualizará con los sismos
+detectados en la última hora. De esta forma cuando un usuario realiza una consulta de los sismos de
+la ultima hora, directamente accede a la capa que creó y publicó el administrador.
+Para definir un mapa nuevo y publicarlo en el sitio el administrador debe crear un mapa
+como cualquier usuario completando todos los campos correspondientes a los filtros y vistas. Luego
+debe almacenarlo y finalmente oprimir el botón de “Publicar” para que este pueda ser accedido por
+cualquier usuario.
+Por otro lado el administrador del sitio puede realizar la configuración de GeoServer, entre
+las funciones más destacadas se encuentran la creación de nuevas capas y la modificación de los
+estilos definidos.
+El rol de administrador es el único tipo de usuario con acceso a un panel, el cual permite
+realizar estas operaciones privilegiadas. Un usuario con estos permisos privilegiados deberá ser
+otorgado a una persona de confianza ya que dispone de las herramientas necesarias para controlar
+todo el sistema. SEISMAP no permite crear un usuario con estos privilegios, solo otro usuario
+administrador puede crearlo.
+5.2.2. Usuario registrado
+Un usuario registrado, luego de que se registra en el sistema puede comenzar a interactuar
+con la aplicación, pudiendo realizar operaciones de alta, baja o modificación de los mapas. Puede
+generarlos en base a cualquiera de los filtros que posee la aplicación que permite la confección de
+los mapas. Además le permite declarar sus mapas como públicos o privados con el fin de
+compartirlo con el resto de la comunidad interesada. Las distintas operaciones que le permiten
+administrar los mapas al usuario se encuentran en la parte superior central de la vista del mapa.
+5.2.3. Usuario anónimo
+No es necesario registrarse en el sitio para poder operar con el sistema. SEISMAP permite
+acceder a mapas detallados de sismos siendo un usuario anónimo, pudiendo utilizar los filtros para
+la confección de los mismos. Dado que este usuario no está registrado en el sistema, y no dispone
+de un código de identificación único, el mismo no podrá persistir ningún dato dentro de la
+aplicación, es decir, no tiene acceso a las secciones para dar de alta, editar o borrar sus mapas.
+655.3. Servicios provistos
+En esta sección se van a describir las principales funcionalidades del sistema desarrollado.
+En la Figura 5.1 puede observarse la pantalla principal de la aplicación en la cual se pueden
+visualizar los mapas generados, ya sean los creados por el administrador que son de acceso público
+o los que se puede obtener mediante una consulta como usuario anónimo.
+Figura 5.1: Pantalla principal de SEISMAP.
+5.3.1. Filtros
+Para realizar una consulta sobre eventos sísmicos el usuario puede utilizar un conjunto de
+filtros disponibles. Indistintamente del tipo de usuario que realice la consulta, puede utilizar
+cualquiera de los campos que se encuentran disponibles para filtrar los eventos. A su vez, los
+campos a filtrar están agrupados en tres pestañas con el objetivo de agrupar las distintas funciones
+según el grupo y hacer más amigable el sistema con el usuario. A continuación se describen cada
+una de las pestañas y los campos que estas poseen.
+Filtro por Fecha: Con este filtro el usuario puede seleccionar los eventos sísmicos
+ocurridos en una fecha y hora determinada o entre dos fechas. En esta opción el usuario posee tres
+variantes para definir la fecha de comienzo por la cual filtrar los eventos sísmicos. Una opción es
+seleccionar “Siempre” para obtener los eventos desde que se almacenaron por primera vez. La otra
+66opción es “Hace” que permite seleccionar la cantidad de días, semanas, meses o años hacia atrás
+que se desea consultar. Por último el usuario puede ingresar una fecha y hora de forma manual.
+Filtro por Profundidad: Este filtro permite seleccionar eventos sísmicos a través del nivel
+de profundidad de su epicentro. Para ello existen dos opciones. Una es “Las profundidades” que
+utiliza como límite inferior, dado en kilómetros, el evento más profundo encontrado. La otra opción
+posible es ingresar manualmente la profundidad máxima en kilometros.
+Figura 5.2: Filtro que posee distintos campos para realizar las consultas.
+Filtro por Escala: Esta opción permite seleccionar el tipo de magnitud en la que se desean
+obtener los eventos. Puede ser Ritcher, cuerpo de onda, onda superficial, etc. A su vez posee dos
+opciones que pueden ser “Lo más suave” que representa el valor más pequeño registrado en la base
+de datos. Y como límite superior se puede seleccionar “Lo más intenso” que es el valor más alto
+registrado para el tipo de magnitud seleccionada. Tanto el valor del límite inferior como el valor del
+límite superior pueden ser ingresados manualmente para realizar la consulta.
+675.3.2. Animación
+Para crear una animación es necesario tener un mapa generado como resultado de algún
+filtro. Una vez finalizado este paso, el usuario debe seleccionar la pestaña de animación y completar
+algunos campos adicionales (ver Figura 5.3) que están relacionados con la misma. Estos son:
+Criterio: el campo “Por” define en qué se basa la animación de los eventos sísmicos que
+solicita el usuario. Si va ha ser realiza por la profundidad, la magnitud o por fecha.
+Tamaño: La opción cantidad de cuadros permite definir la cantidad los frames que
+compondrán la animación. Hay que recordar que cada cuadro genera una consulta al servidor, por lo
+tanto, si el usuario ingresa un número grande de cuadros esto incurre en una elevada carga hacia el
+servidor de mapas. Según la información que ingresó el usuario en la pestaña de filtros darán como
+resultado un volumen de eventos que serán divididos para que la información sea distribuida de
+forma homogénea en la cantidad de cuadros solicitados.
+Figura 5.3: Pestaña con los campos para realizar las animaciones.
+Duración: Representa el tiempo que dura cada cuadro. Por ejemplo si el usuario solicita 60
+cuadros en 60 segundos el resultado es un cuadro por segundo.
+Preservar: Esta opción preserva un porcentaje de eventos del cuadro anterior. Por ejemplo
+si se definen 24 cuadros y en cada uno se muestran los sismos por hora, es posible definir que
+preserve el 50% de los sismos. Esto da como resultado la visualización de los sismos de una hora
+correspondientes al cuadro que se está observando más los eventos de la media hora del cuadro
+anterior.
+68Dirección: Mediante esta opción es posible definir si se desea ver la animación en sentido
+inverso o no.
+5.3.3. Administración de vistas
+La última pestaña se denomina “Vista” (ver Figura 5.4) y posee opciones que permiten
+modificar la forma en que son presentados los mapas, utilizando para ello distintos estilos que
+pueden ser aplicados sobre el mapa. Entre las opciones se pueden encontrar las siguientes:
+Zoom Inicial: Es el nivel de zoom con el que se muestra el mapa. Una vez guardado el
+mapa, este se mostrará con el nivel de zoom seleccionado.
+Latitud y longitud inicial: En estos campos el usuario puede definir el centro del mapa al
+momento de visualizarlo o cuando realice futuras visitas sobre el mapa guardado.
+Figura 5.4: Pestaña con diferentes opciones para visualizar el mapa, aplicando distintos estilos.
+69Figura 5.5: Mapa realizado con el estilo “Círculos – Color según magnitud”.
+Estilo: Dentro de los estilos, el usuario puede elegir entre dos grandes grupos para
+distinguir los sismos. Por un lado puede seleccionar el estilo de “Círculos” que dibuja los eventos
+de distintos tamaños según el valor de la intensidad de la magnitud (ver Figura 5.5). Y por el otro
+lado puede seleccionar el estilo “Puntos” que dibuja los eventos del mismo tamaño. En cualquiera
+de los dos casos el estilo posee una referencia que indica que los eventos serán discriminados
+utilizando colores según la propiedad que el usuario seleccione. Esta puede ser la profundidad, la
+magnitud o la antigüedad.
+5.4. Mapas detallados
+Es posible ver la información detallada de los sismos simplemente posicionando sobre
+algún evento sísmico que se encuentre en un el mapa. Si al realizar esta acción existe más de un
+evento debido a que existen sismos que se superponen, la aplicación despliega una lista con todos
+los eventos involucrados, como puede observarse en la Figura 5.6. Luego se puede seleccionar el
+evento que desea visualizar que a su vez es desplegado en una nueva pantalla. En la Figura 5.7 se
+puede observar a la derecha del mapa los datos del evento. Una característica importante es que el
+usuario puede agregarle un nombre al sismo que luego es integrado en el mapa permitiendo futuras
+referencias. Además es posible incorporar una descripción al evento.
+Los datos del evento sísmico junto con la información adicional agregada por el usuario,
+puede ser exportada como se describe más adelante en este capítulo.
+70Figura 5.6: Lista de eventos sísmicos.
+En caso de que exista un solo evento sísmico la aplicación mostrará directamente una
+ventana con el mapa (ver Figura 5.7) que posee la información correspondiente al mismo.
+Figura 5.7: Visualización de un evento sísmico.
+Es posible ver todos los datos que posee un sismo, haciendo clic en la pestaña “Datos” que
+se encuentra encima del mapa. Entre estos datos se encuentran todas las escalas de magnitud en las
+que fue detectado el evento.
+71Otra característica de la aplicación es que permite habilitar una capa con información
+respecto a la escala de Mercalli. Para ello se debe hacer clic en el botón con el signo “+” que se
+encuentra sobre el mapa. Esta acción despliega un menú para habilitar la capa de “Área afectada”
+y/o la ubicación del sismo en cuestión. Por otro lado es posible utilizar las distintas capas que
+provee Google Maps como mapa de fondo. Esto se debe a que OpenLayers utiliza a Google Maps
+como proveedor de mapas y este a su vez provee distintas capas de mapas como por ejemplo la capa
+de calles, la capa de imagen satelital. De esta forma se pueden combinar las capas provistas por
+Google Maps y SEISMAP para obtener un mapa mas complejo (ver Figura 5.8).
+Figura 5.8: Layers del mapa.
+Es posible ver información adicional del sismo. En primer lugar se puede observar la
+distancia máxima en la que fue percibido el sismo la cual es representada por un círculo amarillo
+que encierra al sismo. En segundo lugar el usuario puede observar la distancia máxima de los daños
+realizados por el sismo, el cual se encuentra representado por un círculo rojo (ver Figura 5.9).
+72Figura 5.9: Evento sísmico con la capa de "Área de daños" activa.
+5.5. Administración de capas
+Como se mencionó anteriormente, el administrador del sitio es el único que posee los
+privilegios para generar nuevas capas de información para visualizar en los mapas y además es el
+encargado de definir los distintos estilos para visualizar los sismos. A continuación se describen
+ambas funciones.
+Nuevas capas: Para crear una nueva capa el administrador debe indicarle a GeoServer de que
+esquema de la base de datos y de que tabla tiene que extraer los datos. Luego es necesario
+configurar el tipo de proyección que será utilizada. Como ya se mencionó SEISMAP utiliza la
+proyección “EPSG: 900913”, pero es posible utilizar otras proyección como se observa en la Figura
+5.10. Además, es posible definir las coordenadas del mapa que se quiere visualizar. Por ejemplo si
+solo se quiere mostrar en el mapa a la Argentina se deben cargar los puntos extremos utilizando la
+latitud y la longitud mediante el combo de “Bounding Boxes”. Esta acción limitará al usuario a ver
+solo esa porción del mapa, impidiendo que se desplace a otros lugares.
+Al momento de crear una capa nueva es necesario definir que tabla de la base de datos se va
+a utilizar para recuperar la información, en el ejemplo de la Figura 5.10 se puede observar las
+columnas de la base que serán utilizadas.
+73Figura 5.10: Administrador web de GeoServer para crear nuevas capas.
+Modificación de estilos: Es interesante destacar que GeoServer permite crear nuevos estilos de
+visualización y modificar los existentes. En la Figura 5.11 se puede observar el editor de estilos.
+Este tiene la capacidad de validar la sintaxis y en caso de que el administrador cometa un descuido,
+informarle, evitando así, guardar estilos que pueden generar errores en el futuro.
+Figura 5.11: Definición de nuevos estilos en GeoServer.
+745.6. Mapas de profundidad
+Otra opción interesante que provee la herramienta web desarrollada es la visualización del
+mapa en profundidad de un conjunto de eventos sísmicos en un área determinada, tal como puede
+observarse en la Figura 5.12. Para ello se definió una función que permite marcar un polígono,
+utilizando para ello el mouse, sobre cualquier parte del mapa que toma los puntos extremos. Luego
+las coordenadas son enviadas a GeoServer para crear el mapa con las profundidades de los sismos.
+La Figura 5.13 muestra los sismos según las profundidades de cada uno. A la derecha del mapa se
+puede observar la escala de la profundidad dada en kilómetros y arriba está definida la longitud en
+la que se encuentran los sismos.
+Figura 5.12: Marcado de puntos extremos para generar el mapa de los sismos en profundidad.
+75Figura 5.13: Imagen que muestra los sismos en profundidad.
+5.7. Exportar eventos sísmicos
+Los eventos sísmicos pueden ser exportados a archivos en dos tipos de formato KML y
+CSV. Esto permite levar la información de esta aplicación a otra que utilice el usuario, como por
+ejemplo Google Earth que utiliza KML o alguna aplicación propia del usuario utilizando los
+archivos CSV para incorporar los datos a esta.
+Para los archivos CSV la información se encuentra en texto plano separada por comas. Los
+campos se encuentran ubicados como se muestra en la Figura 5.14:
+76Figura 5.14: Archivo CSV con los eventos sísmicos.
+77Capítulo 6.
+Conclusiones y trabajos futuros
+En los capítulos previos se presentaron los métodos desarrollados que se implementaron en
+la aplicación SEISMAP, una herramienta web para la visualización de sismos, que se basa en un
+proceso interactivo. Mediante el análisis y almacenamiento de la información recibida que proviene
+de las estaciones sismológicas, la aplicación desarrollada permite la creación de mapas sísmicos,
+que pueden ser generados en base a distintos parámetros.
+Este capítulo se encuentra dividido en tres secciones. En la sección 6.1 se elaboran las
+conclusiones del trabajo junto con las características más importantes de la aplicación, continuando
+luego con una descripción de las limitaciones en la sección 6.2. Por otro lado, y reconociendo la
+potencialidad de extensión de este proyecto se enumeran en el sección 6.3 algunos de los posibles
+trabajos futuros relacionados con la aplicación.
+6.1. Conclusiones
+La aplicación desarrollada con los métodos propuestos permite la creación de mapas para
+visualizar distintos eventos sísmicos. Los mapas son generados utilizando parámetros inherentes a
+los sismos de manera sistemática e instantánea. Esto ayuda en la visualización de mapas históricos
+dando soporte para el estudio y su respectiva comparación. Al mismo tiempo SEISMAP realiza de
+manera automática la recolección de los datos que son recibidos en el INPRES, procesándolos y
+almacenándolos dentro de una base de datos con características geográficas, manteniendo el
+historial de los eventos para futuras consultas.
+A continuación se resaltan las características más importantes de SEISMAP:
+Las diferentes herramientas que componen SEISMAP son Open Source. Una ventaja
+importante de su utilización es que existe una gran comunidad que mantiene estos sistemas,
+haciendo que estén permanentemente actualizados. Por otro lado al ser código abierto es posible
+modificar el código para crear nueva funcionalidad.
+El modulo de parsing fue desarrollado para recoger la información que es procesada por
+SEISAN. Estas tareas se realizan de manera automática y no necesita la intervención del
+administrador. Por otro lado, al ser SEISAN un estándar de facto, es posible incorporar en el futuro
+información proveniente de otras instituciones internacionales, permitiendo el intercambio de
+información y la cooperación de manera conjunta.
+78Es posible agregar al sistema distintas capas de información geográfica. Por ejemplo se
+puede agregar una capa de densidad demográfica y superponerla con la capa de sismos existente,
+esta información permitiría realizar un análisis de los daños y/o personas afectadas que un sismo, de
+elevado poder destructivo, puede efectuar.
+La aplicación permite exportar la información en distintos formatos de archivo que son
+estándares ampliamente utilizados. Posibilitando incorporar los datos en aplicaciones como Google
+Earth u otras aplicaciones que utilicen estos formatos.
+A diferencia de otras aplicaciones, SEISMAP genera mapas dinámicos que además pueden
+ser consumidos desde otros sitios o aplicaciones ya que los servicios provistos utilizan un estándar
+de comunicación.
+6.2. Limitaciones
+El sistema requiere de una elevada capacidad de hardware de cálculo. Esto se debe a que las
+consultas a PostGIS generan una cantidad considerable de operaciones cuando se realizan consultas
+al obtener la información sísmica. Por otro lado el servidor GeoServer también consume recursos
+cuando debe generar las capas con los datos obtenidos. Esto se debe a que cada vez que un usuario
+realiza zoom sobre el mapa, el servidor debe volver a calcular los mosaicos que serán mostrados en
+el mapa.
+El soporte de la herramienta para indicar el alcance de los daños y la intensidad de un sismo
+a lo largo de un área geográfica es limitado ya que solo se permite la especificación de dos círculos
+concéntricos mostrando el radio en el que el sismo fue percibido y aquel en el que causó daños. Un
+soporte completo debería permitir la creación y manipulación de isosistas.
+6.3. Trabajos futuros
+La elaboración de este trabajo, junto con la implementación de la aplicación, puso en
+evidencia posibilidades de desarrollo a futuro, como así también algunas posibles mejoras a la
+implementación existente. En esta sección se describen algunas de ellas.
+Una mejora que puede ser desarrollada a futuro es el desarrollo de un mapa sísmico que
+permita visualizar la intensidad basado en la escala de Mercalli, utilizando para ello isosistas y
+reemplazando el soporte actual. Esto permitiría mostrar los efectos producidos por el sismo en
+función de los datos aportados por el relevamiento que realizan los profesionales del INPRES. Dado
+que la escala de intensidad es subjetiva, los datos recolectados deben ser ingresados por el
+administrador del sitio.
+Otra posible incorporación al trabajo es la de permitirle al usuario acceder a los
+sismogramas que registra cada estación sismológica. Utilizando para ello un mapa con la ubicación
+de las estaciones sismológicas y conectando cada estación con los datos procesados por SEISAN.
+79Dado que la implementación del sistema fue pensada para que esté modularizado, es
+posible desarrollar diferentes módulos de parsing que correspondan a otro tipo de fuente de datos
+que no sean los utilizados por SEISAN. Esto se puede lograr realizando pequeños cambios sobre el
+sistema.
+80Apéndice A.
+A.1. Arquitectura
+La arquitectura de SEISMAP está orientada a la modificabilidad y a la escalabilidad de la
+solución para ambientes reales de producción. Para poder dar soporte a estos requerimientos se
+orientó el sistema al uso de estándares y a la modularización de los componentes para hacerlos
+reemplazables y replicables.
+A.2. Componentes
+Desde una perspectiva de alto nivel, el sistema completo de SEISMAP consta de los
+siguientes componentes:
+Figura A.1: Componentes globales del sistema SEISMAP.
+•
+•
+•
+SEISMAP: Es el artefacto desarrollado durante este trabajo. Se encarga de coordinar a los
+demás componentes y de proveer la funcionalidad aplicada a los sismos propiamente.
+Navegador: Es la plataforma en la que los usuarios interactúan con el sistema. Es un simple
+navegador web.
+GeoServer: Es el servicio de generación de mapas.
+81•
+Postgre/PostGIS: Es la base de datos con capacidades georeferenciales.
+El navegador y geoserver son componentes existentes. Más adelante se mostrará el modelo de datos
+contenido en la base, ahora se explica la arquitectura interna de SEISMAP.
+A.2.1. Componente SEISMAP
+El componente SEISMAP utiliza la arquitectura Model-View-Controller:
+Figura A.2: Arquitectura interna del componente SEISMAP.
+Donde, en verdad, existan varias vistas, varios controladores y el modelo esta
+implementado mediante una serie de servicios y DAOs como puede observarse en la Figura A.3.
+Este diseño permite el fácil mantenimiento de los componentes aislados como así también la
+posibilidad del uso de SEISMAP como servicio, dado que los controladores están expuestos
+públicamente y utilizan es estándar JSON para sus operaciones. También hace posible la futura
+provisión de diferentes vistas según las diversas necesidades de los usuarios.
+82Figura A.3: Ejemplo de los componentes que implementan cada macrocomponente del patrón MVC.
+A.3. Deployment
+Con el fin de alcanzar el objetivo de escalabilidad, se planteó un esquema de deployment en
+el cual los componentes sensibles son replicables.
+•
+•
+•
+•
+Clientes: Los clientes claramente replicables dada la naturaleza de internet, la cantidad de
+clientes web es la variable según la que el sistema se debe dimensionar.
+Postgre/PostGIS: El motor de base de datos Postgre posee capacidad para la clusterización,
+esto es de utilidad desde dos aspectos: la cantidad de sismos almacenados que es creciente a
+lo largo del tiempo, y la cantidad de accesos a esos datos dependiendo de la cantidad de
+clientes.
+GeoServer: La generación de imágenes de tiles mapas es una tarea relativamente costosa,
+más aun cuando se permite a los clientes un gran control sobre los parámetros de los mapas
+a generar, haciendo el cacheo en algunos casos imposible o inútil. Por este motivo
+GeoServer debe ser replicable. Afortunadamente, solo se le da a GeoServer requests de sólo
+lectura, haciendo la replicación trivial, es suficiente con instalar delante de este un load
+balancer stateless para distribuir la carga. La única dificultad adicional es que las pocas, y
+esporádicas, tareas administrativas deben ser realizadas en broadcast a todos los servidores.
+SEISMAP: El sistema SEISMAP propiamente dicho está diseñado para ser replicable, sin
+embargo, dadas sus características interactivas, el cliente realiza mediante este tanto
+lecturas como escrituras cuya seguridad es lograda mediante el uso de sesiones web. Entre
+las formas de posibilitar el mantenimiento de sesiones están la clusterización de sesiones
+83compartidas y el “stikyness” de sesiones, esto hace que los clientes deban preservar la
+comunicación con el servidor con el cual iniciaron la sesión, este último es el enfoque
+adoptado pues es transparente para la aplicación y no requiere el overhead típico del manejo
+de un cluster.
+Figura A.4: Diagrama de deployment del sistema SEISMAP.
+A.4. Modelo de datos
+El modelo de datos consta de tres secciones, la primera da soporte al almacenamiento de los
+eventos sísmicos, la segunda da soporte a los requerimientos de persistencia de la aplicación, y la
+última consta de vistas de los eventos sísmicos.
+84A.4.1. Sismos
+En el siguiente diagrama se muestran las principales tablas involucradas en la persistencia
+de los eventos sísmicos.
+Figura A.5: Esquema de datos de los sismos, magnitudes, estaciones que reportan y agencias informadoras.
+A.4.2. Aplicación
+En el siguiente diagrama se muestran las tablas más importantes que dan soporte a la
+gestión de usuarios y mapas por parte de la aplicación.
+Figura A.6: Esquema de datos de los elementos de la aplicación para la generación de mapas.
+85A.4.3. Vistas
+El este diagrama se ve la vista principal de la cual se extrae la información sísmica para
+generar los mapas, la vista aplana datos para permitir a GeoServer la operación sobre los mismos.
+Cabe notar que existen algunas vistas auxiliares de menor importancia.
+Figura A.7: Vista principal de la cual GeoServer extrae datos para poblar los mapas.
+86Apéndice B.
+B.1. OpenLayers
+En los últimos años, la popularidad de los mapas interactivos en internet ha aumentado de
+manera considerable. En el pasado estas aplicaciones eran exclusivas de grandes empresas que
+poseían fondos para el desarrollo de estas aplicaciones. Con la llegada de servicios gratuitos como
+Google Maps, Bing Maps, etc., se puede acceder fácilmente desde cualquier parte del mundo a
+estos servicios que proveen mapas interactivos online. OpenLayers es una herramienta de código
+abierto, gratuita y muy poderosa que permite el desarrollo de mapas web interactivos de manera
+simple y rápida. Está orientado tanto a desarrolladores novatos como a profesionales.
+OpenLayers es una biblioteca escrita en Javascript que permite el desarrollo de mapas web
+interactivos. Al ser ejecutada del lado del cliente le permite correr en cualquier navegador web,
+disminuyendo la carga de trabajo del servidor. También es posible solicitar información de distintos
+servidores a la vez. Por otro lado al ser una librería que reside en el cliente no necesita de software
+especial del lado del servidor ni realizar configuraciones especiales.
+A continuación se describe las diferencias principales respecto a los servicios que proveen
+los servidores web de mapas y los clientes web de mapas.
+B.2. Cliente web de mapas
+OpenLayers reside en el cliente, una de las principales tareas que el cliente lleva a cabo es
+solicitar imágenes de mapas a los servidores que proveen este tipo de servicio. En esencia, el cliente
+tiene que solicitar las imágenes que desea ver al servidor de mapas. Cuando el cliente navega o al
+realizar zoom sobre la página, este tiene que realizar nuevas peticiones al servidor ya que el usuario
+está solicitando nuevas imágenes. OpenLayers se encarga de realizar todo esto utilizando llamadas
+asíncronas en AJAX al servidor.
+B.3. Servidor web de mapas
+Por otro lado, un servidor de mapas ofrece los mapas en sí. Existe una gran variedad de
+servidores que ofrecen estos servicios. Por ejemplo Google Maps, ArcGIS, WMS, WFS,
+OpenStreet, etc. El principio básico detrás de todos estos servicios es que permiten especificar al
+usuario el área del mapa que se desea visualizar y luego el servidor retorna la imagen solicitada.
+OpenLayers no es un servidor de mapas, sino que consume los datos que proveen los servidores.
+87Apéndice C.
+C.1. PostGIS
+Es una extensión al sistema de base de datos objeto-relacional PostgreSQL. Esta creado por
+Refractions Research Inc, como un proyecto de investigación de tecnologías de bases de datos
+espaciales y publicado bajo la licencia GNU. Un aspecto importante es que PostGIS ha sido
+certificado en 2006 por el “Open Geospatial Consortium” (OGC) lo que garantiza la
+interoperabilidad con otros sistemas. Con PostGIS es posible utilizar todos los objetos que aparecen
+en la especificación OpenGIS como puntos, líneas, polígonos, multipuntos, y colecciones
+geométricas. Además incluye soporte para índices GiST y funciones básicas para el análisis de
+objetos GIS.
+C.1.1. Objetos GIS
+Los objetos GIS soportados por PostGIS son de características simples definidas por
+OpenGIS. Actualmente PostGIS soporta las características y el API de representación de la
+especificación OpenGIS pero no posee varios de los operadores de comparación de esta
+especificación.
+C.2. OpenGIS WKB and WKT
+OpenGIS define dos formas de representar los objetos espaciales:
+1. (WKT)Well-know text como los ejemplos anteriores.
+2. (WKB)Well-know binary.
+Las dos formas guardan información del tipo de objeto y sus coordenadas. Además la
+especificación OpenGIS requiere que los objetos incluyan el identificador del sistema de referencia
+espacial (SRID).El SRID es requerido cuando insertamos un objeto espacial en la base de datos.
+Ejemplos de la representación en modo texto (WKT):
+POINT(0 0 0)
+POLYGON((0 0 0,4 0 0,4 4 0,0 4 0,0 0 0),(1 1 0,2 1 0,2 2 0,1 2 0,1 1 0))
+GEOMETRYCOLLECTION(POINT(2 3 9),LINESTRING((2 3 4,3 4 5))
+88La función GeometryFromText requiere un numero SRID. En PostgreSQL tenemos la
+representación en forma canónica, es una representación en modo texto. Esta representación es
+distinta al estándar OpenGIS.
+C.3. Usar el estándar OpenGIS.
+La especificación para SQL de características simples de OpenGIS define tipos de objetos GIS
+estándar, los cuales son manipulados por funciones, y un conjunto de tablas de metadatos.
+Existen dos tablas de meta
+GEOMETRY_COLUMNS.
+datos,
+una
+es
+SPATIAL_REF_SYS
+y
+la
+otra
+es
+C.3.1. SPATIAL_REF_SYS
+Esta tabla contiene los ID’s y las descripciones textuales de los sistemas de coordenadas
+utilizados en la base de datos espacial. Además posee más de 3000 sistemas de referencias
+espaciales y la especificación necesaria para realizar las transformaciones o re proyecciones entre
+ellos. Entre estos sistemas se encuentran WGS 84 UTM, ESG 900913, entre otros.
+C.3.2. GEOMETRY_COLUMNS
+Esta tabla está compuesta de las siguientes columnas:
+F_TABLE_CATALOG, F_TABLE_SCHEMA, F_TABLE_NAME: Distingue totalmente la tabla
+de características que contiene la columna geométrica.
+F_GEOMETRY_COLUMN: Nombre de la columna geométrica en la tabla de características.
+COORD_DIMENSION: Dimensión espacial de la columna (2D o 3D).
+SRID: Corresponde al ID del sistema de referenciación espacial que es una clave foránea
+perteneciente a la tabla SPATIAL_REF_SYS.
+TYPE: Tipo de objeto espacial. POINT, LINESTRING, POLYGON, MULTYPOINT,
+GEOMETRYCOLLECTION. Para un tipo heterogéneo es necesario utilizar el tipo GEOMETRY.
+89Apéndice D.
+D.1. GeoServer
+El proyecto GeoServer en una aplicación Java EE que permite ser portada a cualquier
+contenedor de servlets soportando arquitecturas de 64 bits. Posee una herramienta integrada para la
+configuración y administración web. Además el proyecto es open source y distribuido bajo la
+licencia GPL
+Por otro lado, GeoServer posee certificaciones de la Open Geospatial Consortium (OGC)
+en los estándares WCS 1.0, WMS 1.1.1 y WFS 1.0 y además actúan de referencia para la
+implementación de los mismos.
+GeoServer tiene en cuenta cuatro metas principales en el ámbito de desarrollo, ordenadas
+por importancia:
+Cumplimiento de los estándares: El proyecto GeoServer intenta promover la estandarización y
+soporta tantos estándares como le es posible. Permitiendo a todos compartir su información
+geoespacial rápidamente y de manera interoperable, disminuyendo así las barreras entre
+proveedores de información geográfica.
+Soporte para diferentes formatos información: GeoServer intenta traducir todos los formatos de
+datos de información geográfica en uno solo. Sin embargo, el soporte para varios formatos de datos,
+es una de las prioridades. Actualmente soporta eficientemente almacenamiento en los formatos
+Shapefiles, PostGIS, DB2, Oracle, ArcSDE y, además ofrece servicio para soportes en prueba como
+MySQL, Vector Product Format Library (VPF), Web Feature Server (WFS) y MapInfo. Respecto a
+los formatos de salida GeoServer puede generar como respuesta a peticiones WFS-T y WMS los
+siguientes formatos: JPEG, PNG, SVG, GML, PDF, Shapefiles, KML/KMZ, entre otros.
+Simple de utilizar: Otra de las prioridades es que sea fácil de instalar, configurar y ejecutar
+permitiendo a las organizaciones que poseen bajos recursos técnicos y/o con poca experiencia
+técnica.
+Eficiencia: El procesamiento de información geográfica normalmente requiere mucha carga
+computacional y ancho de banda, GeoServer intenta minimizar ambas. Desde el punto de vista del
+usuario, GeoServer es una herramienta necesaria para mostrar mapas en las páginas web, donde el
+usuario puede hacer zoom, cambiar la vista y hacer operaciones soportadas por las especificaciones
+WMS y WFS de OGC. Es usado en conjunto con clientes como MapBuilder, con el objetivo de
+conectar fácil y eficientemente bases de datos geográficas con clientes GIS. El uso de estándares
+permite combinar la información del GeoServer fácilmente con otra información geográfica.

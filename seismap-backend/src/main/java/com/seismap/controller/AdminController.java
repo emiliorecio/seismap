@@ -30,7 +30,6 @@ public class AdminController {
 
     @PostMapping("/load-data-file")
     public Map<String, Object> loadDataFile(@RequestParam String file) throws IOException {
-        dataLoadService.loadDataFile(file);
-        return Map.of("success", true, "file", file);
+        return dataLoadService.loadDataFile(file);
     }
 }

@@ -17,7 +17,7 @@ public class Event extends EventInfo {
     @JoinColumn(name = "event_id", nullable = false)
     private List<Magnitude> magnitudes = new ArrayList<>();
 
-    protected Event() {
+    public Event() {
     }
 
     public Long getId() {
