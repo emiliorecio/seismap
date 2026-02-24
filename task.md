@@ -79,7 +79,7 @@
 - [x] `PUT /api/maps/{id}`
 - [x] `GET /api/maps/{id}`
 - [x] `GET /api/maps?userId={id}`
-- [ ] `GET /api/maps/legend?name={sld}` (Phase 6, requiere GeoServer)
+- [x] `GET /api/maps/legend?name={sld}` (Phase 6, requiere GeoServer)
 
 ### 3.4 Styles ✅
 - [x] `POST /api/styles`
@@ -120,9 +120,9 @@
 ### 5.1 Mapa Principal ✅
 - [x] Panel de parámetros (`MapControlsPanel`: filtros de fecha, profundidad, magnitud)
 - [x] Controles de animación
-- [ ] Selector de estilos (pendiente — requiere datos en BD)
-- [ ] Conexión con capas GeoServer (Phase 6)
-- [ ] Leyenda del mapa (Phase 6)
+- [x] Selector de estilos
+- [x] Conexión con capas GeoServer (Phase 6)
+- [x] Leyenda del mapa (Phase 6)
 
 ### 5.2 Gestión de Mapas ✅
 - [x] Guardar mapa (botón en `SavedMapsPanel`)

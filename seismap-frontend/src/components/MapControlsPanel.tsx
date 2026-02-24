@@ -20,7 +20,7 @@ import { useMapStore } from '../store/mapStore';
 import type { DateLimitType, DepthLimitType, MagnitudeLimitType, AnimationType } from '../types/map';
 
 const MapControlsPanel: React.FC = () => {
-    const { currentMap, updateCurrentMap } = useMapStore();
+    const { currentMap, updateCurrentMap, selectedStyle, setSelectedStyle } = useMapStore();
 
     if (!currentMap) {
         return (
@@ -217,6 +217,33 @@ const MapControlsPanel: React.FC = () => {
                             label={<Typography variant="caption">Inverso</Typography>}
                         />
                     </Stack>
+                </AccordionDetails>
+            </Accordion>
+
+            <Divider />
+
+            {/* Style Selector */}
+            <Accordion disableGutters elevation={0} sx={{ background: 'transparent' }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="subtitle2">Vista</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ pt: 0 }}>
+                    <FormControl size="small" fullWidth>
+                        <InputLabel>Estilo</InputLabel>
+                        <Select
+                            value={selectedStyle}
+                            label="Estilo"
+                            onChange={(e) => setSelectedStyle(e.target.value)}
+                        >
+                            <MenuItem value="seismap_default">Por defecto</MenuItem>
+                            <MenuItem value="seismap_circles_magnitude">Círculos — Magnitud</MenuItem>
+                            <MenuItem value="seismap_circles_depth">Círculos — Profundidad</MenuItem>
+                            <MenuItem value="seismap_circles_age">Círculos — Antigüedad</MenuItem>
+                            <MenuItem value="seismap_points_magnitude">Puntos — Magnitud</MenuItem>
+                            <MenuItem value="seismap_points_depth">Puntos — Profundidad</MenuItem>
+                            <MenuItem value="seismap_points_age">Puntos — Antigüedad</MenuItem>
+                        </Select>
+                    </FormControl>
                 </AccordionDetails>
             </Accordion>
 

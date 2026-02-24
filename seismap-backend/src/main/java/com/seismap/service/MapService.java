@@ -21,9 +21,8 @@ public class MapService {
                 .orElseThrow(() -> new RuntimeException("Map not found: " + id));
     }
 
-    public SeismapMap getDefault(Long userId) {
-        return mapRepository.findFirstByUserIdOrderByIdAsc(userId)
-                .orElseThrow(() -> new RuntimeException("No default map for user: " + userId));
+    public java.util.Optional<SeismapMap> getDefault(Long userId) {
+        return mapRepository.findFirstByUserIdOrderByIdAsc(userId);
     }
 
     public List<SeismapMap> listByUser(Long userId) {

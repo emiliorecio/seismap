@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import SeismapMapView from './SeismapMapView';
 import MapControlsPanel from './MapControlsPanel';
 import SavedMapsPanel from './SavedMapsPanel';
+import MapLegend from './MapLegend';
 import { useMapStore } from '../store/mapStore';
 import { mapService } from '../services/seismap';
 
@@ -26,7 +27,7 @@ const DRAWER_WIDTH = 320;
 const MainLayout: React.FC = () => {
     const [open, setOpen] = useState(true);
     const [tab, setTab] = useState(0);
-    const { currentMap, setCurrentMap, savedMaps, setSavedMaps } = useMapStore();
+    const { currentMap, setCurrentMap, savedMaps, setSavedMaps, selectedStyle } = useMapStore();
 
     useEffect(() => {
         (async () => {
@@ -104,13 +105,17 @@ const MainLayout: React.FC = () => {
                     pt: '40px',
                     transition: 'margin 0.2s',
                     ml: open ? `${DRAWER_WIDTH}px` : 0,
+                    position: 'relative',
                 }}
             >
                 <SeismapMapView
                     centerLon={currentMap?.center?.x ?? -65}
                     centerLat={currentMap?.center?.y ?? -32}
                     zoom={currentMap?.zoom ?? 5}
+                    currentMap={currentMap}
+                    styleName={selectedStyle}
                 />
+                <MapLegend styleName={selectedStyle} />
             </Box>
         </Box>
     );

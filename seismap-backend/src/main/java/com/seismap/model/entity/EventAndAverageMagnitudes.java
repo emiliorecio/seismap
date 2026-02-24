@@ -14,25 +14,25 @@ public class EventAndAverageMagnitudes extends EventInfo {
     @Id
     private Long id;
 
-    @Column(name = "rank_magnitude")
+    @Column(name = "rankmagnitude")
     private Float rankMagnitude;
 
-    @Column(name = "mb_magnitude")
+    @Column(name = "mbmagnitude")
     private Float mbMagnitude;
 
-    @Column(name = "mblg_magnitude")
+    @Column(name = "mblgmagnitude")
     private Float mblgMagnitude;
 
-    @Column(name = "mc_magnitude")
+    @Column(name = "mcmagnitude")
     private Float mcMagnitude;
 
-    @Column(name = "ml_magnitude")
+    @Column(name = "mlmagnitude")
     private Float mlMagnitude;
 
-    @Column(name = "ms_magnitude")
+    @Column(name = "msmagnitude")
     private Float msMagnitude;
 
-    @Column(name = "mw_magnitude")
+    @Column(name = "mwmagnitude")
     private Float mwMagnitude;
 
     protected EventAndAverageMagnitudes() {
