@@ -36,7 +36,7 @@ const MainLayout: React.FC = () => {
                     mapService.getDefault(),
                     mapService.listByUser(),
                 ]);
-                setCurrentMap(defaultMap);
+                if (defaultMap) setCurrentMap(defaultMap);
                 setSavedMaps(maps);
             } catch (err) {
                 console.error('Failed to load initial map data', err);

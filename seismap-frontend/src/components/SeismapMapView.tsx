@@ -2,8 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
+import ImageLayer from 'ol/layer/Image';
 import OSM from 'ol/source/OSM';
-import TileWMS from 'ol/source/TileWMS';
+import ImageWMS from 'ol/source/ImageWMS';
 import { fromLonLat } from 'ol/proj';
 import 'ol/ol.css';
 import type { SeismapMap } from '../types/map';
@@ -29,26 +30,27 @@ const SeismapMapView: React.FC<SeismapMapViewProps> = ({
 }) => {
     const mapRef = useRef<HTMLDivElement>(null);
     const olMapRef = useRef<Map | null>(null);
-    const wmsLayerRef = useRef<TileLayer<TileWMS> | null>(null);
+    const wmsLayerRef = useRef<ImageLayer<ImageWMS> | null>(null);
 
     // ── Initialize map + WMS layer ─────────────────────────────────
     useEffect(() => {
         if (!mapRef.current) return;
 
-        const wmsSource = new TileWMS({
+        // ImageWMS sends ONE request per viewport instead of many tiles,
+        // avoiding GeoServer 429 rate limiting errors.
+        const wmsSource = new ImageWMS({
             url: GEOSERVER_WMS_URL,
             params: {
                 LAYERS: LAYER_NAME,
-                TILED: true,
                 SRS: 'EPSG:900913',
                 STYLES: styleName,
-                CQL_FILTER: currentMap ? buildCqlFilter(currentMap) : undefined,
+                CQL_FILTER: currentMap ? buildCqlFilter(currentMap) || undefined : undefined,
             },
             serverType: 'geoserver',
-            transition: 250,
+            ratio: 1,
         });
 
-        const wmsLayer = new TileLayer({
+        const wmsLayer = new ImageLayer({
             source: wmsSource,
             opacity: 0.85,
         });
@@ -81,7 +83,7 @@ const SeismapMapView: React.FC<SeismapMapViewProps> = ({
         const source = wmsLayerRef.current?.getSource();
         if (!source) return;
 
-        const cql = currentMap ? buildCqlFilter(currentMap) : undefined;
+        const cql = currentMap ? buildCqlFilter(currentMap) : '';
         source.updateParams({
             STYLES: styleName,
             CQL_FILTER: cql || undefined,

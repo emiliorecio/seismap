@@ -3,7 +3,7 @@ import type { SeismapMap } from '../types/map';
 
 export const mapService = {
     getDefault: (userId = 1) =>
-        api.get<SeismapMap>(`/maps/default?userId=${userId}`).then(r => r.data),
+        api.get<SeismapMap>(`/maps/default?userId=${userId}`).then(r => r.status === 204 ? null : r.data),
 
     getById: (id: number) =>
         api.get<SeismapMap>(`/maps/${id}`).then(r => r.data),

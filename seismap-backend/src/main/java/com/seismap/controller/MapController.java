@@ -29,8 +29,10 @@ public class MapController {
     }
 
     @GetMapping("/default")
-    public SeismapMap getDefault(@RequestParam(defaultValue = "1") Long userId) {
-        return mapService.getDefault(userId);
+    public ResponseEntity<SeismapMap> getDefault(@RequestParam(defaultValue = "1") Long userId) {
+        return mapService.getDefault(userId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.noContent().build());
     }
 
     @GetMapping("/{id}")

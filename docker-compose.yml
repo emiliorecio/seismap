@@ -25,6 +25,15 @@ services:
       GEOSERVER_ADMIN_USER: admin
       GEOSERVER_ADMIN_PASSWORD: geoserver
       GEOSERVER_DATA_DIR: /opt/geoserver/data_dir
+      # Disable CSRF check so proxied requests from nginx work
+      GEOSERVER_CSRF_WHITELIST: "*"
+      # Disable GeoServer's OWS service flood protection
+      GEOSERVER_OWS_SERVICE_EXCEPTIONS_MAX_COUNT: "0"
+      # Allow many concurrent WMS requests
+      JAVA_OPTS: >-
+        -Xms256m -Xmx1g
+        -DGEOSERVER_CSRF_DISABLED=true
+        -Dorg.geowebcache.default.max.concurrent.connections=32
     ports:
       - "8600:8080"
     volumes:
