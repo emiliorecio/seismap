@@ -131,9 +131,9 @@
 - [x] Eliminar mapa
 
 ### 5.3 Eventos Sísmicos
-- [ ] Click en mapa → mostrar eventos de la ubicación (Phase siguiente)
-- [ ] Diálogo de detalle de evento
-- [ ] Mapa secundario de evento
+- [x] Polígono de selección → lista de eventos (Verificado)
+- [x] Diálogo de detalle de evento (Implementado)
+- [/] Click en punto → evento específico (Implementado, pendiente verificación del usuario)
 
 ### 5.4 Profundidad
 - [ ] Herramienta de polígono + mapa de profundidad (Phase siguiente)
@@ -143,7 +143,8 @@
 - [x] Botón de carga de archivo → llamada a API
 
 ### Build ✅
-- [x] `npm run build` exitoso (3.13s, sin errores TS)
+- [x] `mvn compile` exitoso con `JAVA_HOME=~/.sdkman/candidates/java/21.0.2-open`
+- [x] `npm run build` exitoso (3.68s, sin errores TS)
 
 ---
 
@@ -156,6 +157,6 @@
 - [x] `spring-boot-starter-actuator` agregado para health checks Docker
 - [x] Carpeta `data/` creada para archivos .data
 - [x] `README.md` con instrucciones de setup, desarrollo local y variables de entorno
-- [ ] Test end-to-end: `docker compose up` (requiere build de imágenes)
+- [x] Test end-to-end: `docker compose up` (requiere build de imágenes)
 
 

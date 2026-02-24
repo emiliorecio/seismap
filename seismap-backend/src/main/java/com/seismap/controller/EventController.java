@@ -1,5 +1,7 @@
 package com.seismap.controller;
 
+import com.seismap.dto.EventSummaryDto;
+import com.seismap.dto.PolygonQueryRequest;
 import com.seismap.model.entity.Event;
 import com.seismap.model.entity.DataBounds;
 import com.seismap.model.entity.MagnitudeLimits;
@@ -36,5 +38,14 @@ public class EventController {
     @GetMapping("/magnitude-limits")
     public List<MagnitudeLimits> getMagnitudeLimits() {
         return eventService.getMagnitudeLimits();
+    }
+
+    /**
+     * Returns all events within the given polygon (WKT, EPSG:900913).
+     * Body: { "wkt": "POLYGON((x1 y1, x2 y2, ...))" }
+     */
+    @PostMapping("/within")
+    public List<EventSummaryDto> findWithin(@RequestBody PolygonQueryRequest request) {
+        return eventService.findWithinPolygon(request.getWkt());
     }
 }

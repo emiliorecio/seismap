@@ -56,9 +56,9 @@ SELECT
         CASE WHEN mclim.max <> mclim.min THEN (avg(mcmag.value) - mclim.min) / (mclim.max - mclim.min) END
     )::real AS rankindex,
     -- Location (EPSG:900913)
-    event.location,
+    event.location::geometry(Point, 900913) AS location,
     -- Depth location: same X as event, Y = negative depth in meters
-    ST_SetSRID(ST_MakePoint(ST_X(event.location), -event.depth * 1000), 900913) AS depthlocation
+    ST_SetSRID(ST_MakePoint(ST_X(event.location), CAST(-event.depth * 1000 AS float8)), 900913)::geometry(Point, 900913) AS depthlocation
 FROM event
     LEFT JOIN magnitude mlmag   ON event.id = mlmag.event_id   AND mlmag.type   = 'ML'
     LEFT JOIN magnitude mbmag   ON event.id = mbmag.event_id   AND mbmag.type   = 'MB'

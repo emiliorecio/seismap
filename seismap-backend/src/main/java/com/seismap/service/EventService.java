@@ -1,11 +1,13 @@
 package com.seismap.service;
 
+import com.seismap.dto.EventSummaryDto;
 import com.seismap.model.entity.Event;
 import com.seismap.model.entity.DataBounds;
 import com.seismap.model.entity.MagnitudeLimits;
 import com.seismap.repository.EventRepository;
 import com.seismap.repository.DataBoundsRepository;
 import com.seismap.repository.MagnitudeLimitsRepository;
+import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,5 +51,23 @@ public class EventService {
 
     public List<MagnitudeLimits> getMagnitudeLimits() {
         return magnitudeLimitsRepository.findAll();
+    }
+
+    public List<EventSummaryDto> findWithinPolygon(String wkt) {
+        return eventRepository.findWithinPolygon(wkt).stream()
+                .map(e -> {
+                    Point loc = e.getLocation();
+                    return new EventSummaryDto(
+                            e.getId(),
+                            e.getDate(),
+                            e.getDepth(),
+                            loc != null ? loc.getY() : 0,
+                            loc != null ? loc.getX() : 0,
+                            e.getName(),
+                            e.getReference(),
+                            null // rankMagnitude not on Event entity; comes from materialized view
+                    );
+                })
+                .toList();
     }
 }

@@ -1,5 +1,6 @@
 import api from './api';
 import type { SeismapMap } from '../types/map';
+import type { EventSummary } from '../components/EventsWithinDialog';
 
 export const mapService = {
     getDefault: (userId = 1) =>
@@ -33,6 +34,9 @@ export const eventService = {
 
     getMagnitudeLimits: () =>
         api.get('/events/magnitude-limits').then(r => r.data),
+
+    findWithin: (wkt: string): Promise<EventSummary[]> =>
+        api.post<EventSummary[]>('/events/within', { wkt }).then(r => r.data),
 };
 
 export const styleService = {

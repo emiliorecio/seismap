@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Box,
     Drawer,
@@ -9,24 +9,38 @@ import {
     Tabs,
     Tab,
     Tooltip,
+    CircularProgress,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MapIcon from '@mui/icons-material/Map';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import PolylineIcon from '@mui/icons-material/Polyline';
+import CancelIcon from '@mui/icons-material/Cancel';
 import { Link } from 'react-router-dom';
 import SeismapMapView from './SeismapMapView';
 import MapControlsPanel from './MapControlsPanel';
 import SavedMapsPanel from './SavedMapsPanel';
 import MapLegend from './MapLegend';
+import EventsWithinDialog from './EventsWithinDialog';
+import EventDialog from './EventDialog';
+import type { EventSummary } from './EventsWithinDialog';
 import { useMapStore } from '../store/mapStore';
-import { mapService } from '../services/seismap';
+import { mapService, eventService } from '../services/seismap';
 
 const DRAWER_WIDTH = 320;
 
 const MainLayout: React.FC = () => {
     const [open, setOpen] = useState(true);
     const [tab, setTab] = useState(0);
+    const [drawingMode, setDrawingMode] = useState(false);
+    const [loadingEvents, setLoadingEvents] = useState(false);
+    const [eventsWithin, setEventsWithin] = useState<EventSummary[]>([]);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [eventDetailId, setEventDetailId] = useState<number | null>(null);
+    const [eventDetailOpen, setEventDetailOpen] = useState(false);
+    const clearPolygonRef = useRef<(() => void) | null>(null);
+
     const { currentMap, setCurrentMap, savedMaps, setSavedMaps, selectedStyle } = useMapStore();
 
     useEffect(() => {
@@ -44,6 +58,37 @@ const MainLayout: React.FC = () => {
         })();
     }, []);
 
+    const handlePolygonComplete = async (wkt: string) => {
+        setDrawingMode(false);
+        setLoadingEvents(true);
+        try {
+            const events = await eventService.findWithin(wkt);
+            setEventsWithin(events);
+            setDialogOpen(true);
+        } catch (err) {
+            console.error('Failed to query events within polygon', err);
+        } finally {
+            setLoadingEvents(false);
+        }
+    };
+
+    const handleClearPolygon = () => {
+        clearPolygonRef.current?.();
+        setEventsWithin([]);
+    };
+
+    const toggleDrawing = () => {
+        if (drawingMode) {
+            handleClearPolygon();
+        }
+        setDrawingMode(prev => !prev);
+    };
+
+    const handlePointClick = (eventId: number) => {
+        setEventDetailId(eventId);
+        setEventDetailOpen(true);
+    };
+
     return (
         <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
             <AppBar position="fixed" sx={{ zIndex: (t) => t.zIndex.drawer + 1 }}>
@@ -55,6 +100,23 @@ const MainLayout: React.FC = () => {
                     <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
                         {currentMap?.name ?? 'Seismap'}
                     </Typography>
+
+                    {/* Polygon selection tool */}
+                    <Tooltip title={drawingMode ? 'Cancelar selección' : 'Seleccionar área (polígono)'}>
+                        <IconButton
+                            color={drawingMode ? 'warning' : 'inherit'}
+                            onClick={toggleDrawing}
+                            size="small"
+                            sx={{ mr: 0.5 }}
+                        >
+                            {loadingEvents
+                                ? <CircularProgress size={20} color="inherit" />
+                                : drawingMode
+                                    ? <CancelIcon />
+                                    : <PolylineIcon />}
+                        </IconButton>
+                    </Tooltip>
+
                     <Tooltip title="Administración">
                         <IconButton color="inherit" component={Link} to="/admin" size="small">
                             <AdminPanelSettingsIcon />
@@ -114,9 +176,36 @@ const MainLayout: React.FC = () => {
                     zoom={currentMap?.zoom ?? 5}
                     currentMap={currentMap}
                     styleName={selectedStyle}
+                    drawingMode={drawingMode}
+                    onPolygonComplete={handlePolygonComplete}
+                    onClearPolygon={(fn) => { clearPolygonRef.current = fn; }}
+                    onPointClick={handlePointClick}
                 />
                 <MapLegend styleName={selectedStyle} />
+
+                {drawingMode && (
+                    <Box sx={{
+                        position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)',
+                        bgcolor: 'rgba(0,0,0,0.7)', color: '#fff', px: 2, py: 1,
+                        borderRadius: 2, pointerEvents: 'none', fontSize: 13,
+                    }}>
+                        Hacé clic para dibujar el polígono · Doble clic para cerrar
+                    </Box>
+                )}
             </Box>
+
+            <EventsWithinDialog
+                open={dialogOpen}
+                events={eventsWithin}
+                onClose={() => setDialogOpen(false)}
+                onClearPolygon={handleClearPolygon}
+            />
+
+            <EventDialog
+                open={eventDetailOpen}
+                eventId={eventDetailId}
+                onClose={() => setEventDetailOpen(false)}
+            />
         </Box>
     );
 };
