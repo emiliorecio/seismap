@@ -55,6 +55,38 @@ const MapControlsPanel: React.FC = () => {
                                 <MenuItem value="ABSOLUTE">Absoluto</MenuItem>
                             </Select>
                         </FormControl>
+                        {currentMap.minDateType === 'ABSOLUTE' && (
+                            <input
+                                type="datetime-local"
+                                value={currentMap.minDate ? currentMap.minDate.substring(0, 16) : ''}
+                                onChange={(e) => updateCurrentMap({ minDate: e.target.value + ':00' })}
+                                style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                            />
+                        )}
+                        {currentMap.minDateType === 'RELATIVE' && (
+                            <Stack direction="row" spacing={1}>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    value={currentMap.minDateRelativeAmount || 0}
+                                    onChange={(e) => updateCurrentMap({ minDateRelativeAmount: Number(e.target.value) })}
+                                    style={{ width: '50%', padding: '8px', boxSizing: 'border-box' }}
+                                />
+                                <Select
+                                    size="small"
+                                    value={currentMap.minDateRelativeUnits || 'DAY'}
+                                    onChange={(e) => updateCurrentMap({ minDateRelativeUnits: e.target.value as any })}
+                                    sx={{ width: '50%' }}
+                                >
+                                    <MenuItem value="MINUTE">Minutos</MenuItem>
+                                    <MenuItem value="HOUR">Horas</MenuItem>
+                                    <MenuItem value="DAY">Días</MenuItem>
+                                    <MenuItem value="WEEK">Semanas</MenuItem>
+                                    <MenuItem value="MONTH">Meses</MenuItem>
+                                    <MenuItem value="YEAR">Años</MenuItem>
+                                </Select>
+                            </Stack>
+                        )}
                         <FormControl size="small" fullWidth>
                             <InputLabel>Tipo máx.</InputLabel>
                             <Select<DateLimitType>
@@ -67,6 +99,38 @@ const MapControlsPanel: React.FC = () => {
                                 <MenuItem value="ABSOLUTE">Absoluto</MenuItem>
                             </Select>
                         </FormControl>
+                        {currentMap.maxDateType === 'ABSOLUTE' && (
+                            <input
+                                type="datetime-local"
+                                value={currentMap.maxDate ? currentMap.maxDate.substring(0, 16) : ''}
+                                onChange={(e) => updateCurrentMap({ maxDate: e.target.value + ':00' })}
+                                style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                            />
+                        )}
+                        {currentMap.maxDateType === 'RELATIVE' && (
+                            <Stack direction="row" spacing={1}>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    value={currentMap.maxDateRelativeAmount || 0}
+                                    onChange={(e) => updateCurrentMap({ maxDateRelativeAmount: Number(e.target.value) })}
+                                    style={{ width: '50%', padding: '8px', boxSizing: 'border-box' }}
+                                />
+                                <Select
+                                    size="small"
+                                    value={currentMap.maxDateRelativeUnits || 'DAY'}
+                                    onChange={(e) => updateCurrentMap({ maxDateRelativeUnits: e.target.value as any })}
+                                    sx={{ width: '50%' }}
+                                >
+                                    <MenuItem value="MINUTE">Minutos</MenuItem>
+                                    <MenuItem value="HOUR">Horas</MenuItem>
+                                    <MenuItem value="DAY">Días</MenuItem>
+                                    <MenuItem value="WEEK">Semanas</MenuItem>
+                                    <MenuItem value="MONTH">Meses</MenuItem>
+                                    <MenuItem value="YEAR">Años</MenuItem>
+                                </Select>
+                            </Stack>
+                        )}
                     </Stack>
                 </AccordionDetails>
             </Accordion>

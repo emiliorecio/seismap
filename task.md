@@ -133,10 +133,13 @@
 ### 5.3 Eventos Sísmicos
 - [x] Polígono de selección → lista de eventos (Verificado)
 - [x] Diálogo de detalle de evento (Implementado)
-- [/] Click en punto → evento específico (Implementado, pendiente verificación del usuario)
+- [x] Click en punto → evento específico (Verificado, solucionado WKB y Lat/Lon EPSG:3857)
 
-### 5.4 Profundidad
-- [ ] Herramienta de polígono + mapa de profundidad (Phase siguiente)
+### 5.4 Filtros Avanzados
+- [x] Herramienta de polígono + mapa de profundidad (Filtros base operativos en MapControlsPanel)
+- [x] Filtros por Fecha (Relativa y Absoluta)
+- [x] Filtros por Magnitud
+- [x] Filtros por Profundidad
 
 ### 5.5 Admin ✅
 - [x] Página de listado de archivos `.data`

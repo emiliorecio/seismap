@@ -50,8 +50,42 @@ const MainLayout: React.FC = () => {
                     mapService.getDefault(),
                     mapService.listByUser(),
                 ]);
-                if (defaultMap) setCurrentMap(defaultMap);
-                setSavedMaps(maps);
+                if (defaultMap) {
+                    setCurrentMap(defaultMap);
+                } else {
+                    setCurrentMap({
+                        id: 0,
+                        name: 'Mapa inicial',
+                        description: '',
+                        zoom: 5,
+                        center: { x: -65, y: -32 },
+                        minDateType: 'RELATIVE',
+                        minDateRelativeAmount: 1,
+                        minDateRelativeUnits: 'YEAR',
+                        minDate: '',
+                        maxDateType: 'NONE',
+                        maxDateRelativeAmount: 0,
+                        maxDateRelativeUnits: 'DAY',
+                        maxDate: '',
+                        minDepthType: 'NONE',
+                        minDepth: 0,
+                        maxDepthType: 'NONE',
+                        maxDepth: 700,
+                        magnitudeType: 1,
+                        minMagnitudeType: 'NONE',
+                        minMagnitude: 0,
+                        maxMagnitudeType: 'NONE',
+                        maxMagnitude: 10,
+                        listUnmeasured: true,
+                        animationType: 'NONE',
+                        animationStepKeep: 1,
+                        animationSteps: 10,
+                        animationStepDuration: 1000,
+                        reverseAnimation: false,
+                        style: { id: 0, sld: 'seismap_default', name: 'seismap_default', variables: {} },
+                    });
+                }
+                setSavedMaps(maps || []);
             } catch (err) {
                 console.error('Failed to load initial map data', err);
             }
