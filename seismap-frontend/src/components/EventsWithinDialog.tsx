@@ -2,8 +2,9 @@ import React from 'react';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions,
     Button, Typography, Table, TableBody, TableCell,
-    TableContainer, TableHead, TableRow, Paper, Chip, Box,
+    TableContainer, TableHead, TableRow, Paper, Chip, Box, TablePagination
 } from '@mui/material';
+import type { Page } from '../services/seismap';
 import PlaceIcon from '@mui/icons-material/Place';
 import { toLonLat } from 'ol/proj';
 
@@ -20,9 +21,10 @@ export interface EventSummary {
 
 interface Props {
     open: boolean;
-    events: EventSummary[];
+    eventsPage: Page<EventSummary> | null;
     onClose: () => void;
     onClearPolygon: () => void;
+    onPageChange: (newPage: number) => void;
 }
 
 function formatDate(iso: string) {
@@ -32,7 +34,7 @@ function formatDate(iso: string) {
     });
 }
 
-const EventsWithinDialog: React.FC<Props> = ({ open, events, onClose, onClearPolygon }) => {
+const EventsWithinDialog: React.FC<Props> = ({ open, eventsPage, onClose, onClearPolygon, onPageChange }) => {
     const handleClear = () => {
         onClearPolygon();
         onClose();
@@ -44,11 +46,11 @@ const EventsWithinDialog: React.FC<Props> = ({ open, events, onClose, onClearPol
             <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <PlaceIcon color="primary" />
                 Eventos en el área seleccionada
-                <Chip label={events.length} size="small" color="primary" sx={{ ml: 'auto' }} />
+                <Chip label={eventsPage?.totalElements || 0} size="small" color="primary" sx={{ ml: 'auto' }} />
             </DialogTitle>
 
             <DialogContent dividers sx={{ p: 0 }}>
-                {events.length === 0 ? (
+                {!eventsPage || eventsPage.content.length === 0 ? (
                     <Box sx={{ p: 4, textAlign: 'center' }}>
                         <Typography color="text.secondary">
                             No se encontraron eventos en esta área.
@@ -67,7 +69,7 @@ const EventsWithinDialog: React.FC<Props> = ({ open, events, onClose, onClearPol
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {events.map(ev => {
+                                {eventsPage.content.map(ev => {
                                     const [lonDeg, latDeg] = toLonLat([ev.longitude, ev.latitude], 'EPSG:3857');
                                     return (
                                         <TableRow key={ev.id} hover>
@@ -88,6 +90,17 @@ const EventsWithinDialog: React.FC<Props> = ({ open, events, onClose, onClearPol
                             </TableBody>
                         </Table>
                     </TableContainer>
+                )}
+
+                {eventsPage && eventsPage.totalElements > 0 && (
+                    <TablePagination
+                        component="div"
+                        count={eventsPage.totalElements}
+                        page={eventsPage.number}
+                        onPageChange={(_, newPage) => onPageChange(newPage)}
+                        rowsPerPage={eventsPage.size}
+                        rowsPerPageOptions={[]} // keep fixed size to avoid complex logic
+                    />
                 )}
             </DialogContent>
 

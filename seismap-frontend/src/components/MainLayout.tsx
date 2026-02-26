@@ -25,6 +25,7 @@ import MapLegend from './MapLegend';
 import EventsWithinDialog from './EventsWithinDialog';
 import EventDialog from './EventDialog';
 import type { EventSummary } from './EventsWithinDialog';
+import type { Page } from '../services/seismap';
 import { useMapStore } from '../store/mapStore';
 import { mapService, eventService } from '../services/seismap';
 import { extractFilterBounds } from '../utils/cqlFilter';
@@ -36,7 +37,8 @@ const MainLayout: React.FC = () => {
     const [tab, setTab] = useState(0);
     const [drawingMode, setDrawingMode] = useState(false);
     const [loadingEvents, setLoadingEvents] = useState(false);
-    const [eventsWithin, setEventsWithin] = useState<EventSummary[]>([]);
+    const [eventsPage, setEventsPage] = useState<Page<EventSummary> | null>(null);
+    const [currentWkt, setCurrentWkt] = useState<string | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [eventDetailId, setEventDetailId] = useState<number | null>(null);
     const [eventDetailOpen, setEventDetailOpen] = useState(false);
@@ -93,13 +95,12 @@ const MainLayout: React.FC = () => {
         })();
     }, []);
 
-    const handlePolygonComplete = async (wkt: string) => {
-        setDrawingMode(false);
+    const fetchPolygonEvents = async (wkt: string, page: number = 0) => {
         setLoadingEvents(true);
         try {
             const bounds = currentMap ? extractFilterBounds(currentMap) : {};
-            const events = await eventService.findWithin({ wkt, ...bounds });
-            setEventsWithin(events);
+            const pageData = await eventService.findWithin({ wkt, page, size: 50, ...bounds });
+            setEventsPage(pageData);
             setDialogOpen(true);
         } catch (err) {
             console.error('Failed to query events within polygon', err);
@@ -108,9 +109,16 @@ const MainLayout: React.FC = () => {
         }
     };
 
+    const handlePolygonComplete = (wkt: string) => {
+        setDrawingMode(false);
+        setCurrentWkt(wkt);
+        fetchPolygonEvents(wkt, 0);
+    };
+
     const handleClearPolygon = () => {
         clearPolygonRef.current?.();
-        setEventsWithin([]);
+        setEventsPage(null);
+        setCurrentWkt(null);
     };
 
     const toggleDrawing = () => {
@@ -232,9 +240,14 @@ const MainLayout: React.FC = () => {
 
             <EventsWithinDialog
                 open={dialogOpen}
-                events={eventsWithin}
+                eventsPage={eventsPage}
                 onClose={() => setDialogOpen(false)}
                 onClearPolygon={handleClearPolygon}
+                onPageChange={(newPage) => {
+                    if (currentWkt) {
+                        fetchPolygonEvents(currentWkt, newPage);
+                    }
+                }}
             />
 
             <EventDialog

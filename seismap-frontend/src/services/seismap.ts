@@ -25,6 +25,26 @@ export const mapService = {
         api.delete(`/maps/${id}`),
 };
 
+export interface Page<T> {
+    content: T[];
+    totalElements: number;
+    totalPages: number;
+    size: number;
+    number: number;
+}
+
+export interface PolygonQuery {
+    wkt: string;
+    minDate?: string;
+    maxDate?: string;
+    minDepth?: number;
+    maxDepth?: number;
+    minMagnitude?: number;
+    maxMagnitude?: number;
+    page?: number;
+    size?: number;
+}
+
 export const eventService = {
     getById: (id: number) =>
         api.get(`/events/${id}`).then(r => r.data),
@@ -35,8 +55,8 @@ export const eventService = {
     getMagnitudeLimits: () =>
         api.get('/events/magnitude-limits').then(r => r.data),
 
-    findWithin: (request: { wkt: string; minDate?: string; maxDate?: string; minDepth?: number; maxDepth?: number; minMagnitude?: number; maxMagnitude?: number; }): Promise<EventSummary[]> =>
-        api.post<EventSummary[]>('/events/within', request).then(r => r.data),
+    findWithin: (request: PolygonQuery): Promise<Page<EventSummary>> =>
+        api.post<Page<EventSummary>>('/events/within', request).then(r => r.data),
 };
 
 export const styleService = {

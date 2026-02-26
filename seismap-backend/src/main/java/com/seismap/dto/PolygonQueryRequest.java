@@ -14,6 +14,10 @@ public class PolygonQueryRequest {
     private Float minMagnitude;
     private Float maxMagnitude;
 
+    // Pagination
+    private int page = 0;
+    private int size = 50;
+
     public PolygonQueryRequest() {
     }
 
@@ -71,5 +75,21 @@ public class PolygonQueryRequest {
 
     public void setMaxMagnitude(Float maxMagnitude) {
         this.maxMagnitude = maxMagnitude;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 }

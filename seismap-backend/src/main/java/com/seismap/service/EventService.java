@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 @Service
 public class EventService {
@@ -60,48 +63,69 @@ public class EventService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<EventSummaryDto> findWithinPolygon(PolygonQueryRequest request) {
-        StringBuilder sql = new StringBuilder(
-                "SELECT id, date, depth, ST_Y(location) as lat, ST_X(location) as lon, " +
-                        "name, reference, rankmagnitude " +
-                        "FROM eventandaveragemagnitudes " +
+    public Page<EventSummaryDto> findWithinPolygon(PolygonQueryRequest request) {
+        StringBuilder baseWhere = new StringBuilder(
+                "FROM eventandaveragemagnitudes " +
                         "WHERE ST_Within(location, ST_GeomFromText(:wkt, 900913)) ");
 
         if (request.getMinDate() != null)
-            sql.append("AND date >= :minDate ");
+            baseWhere.append("AND date >= :minDate ");
         if (request.getMaxDate() != null)
-            sql.append("AND date <= :maxDate ");
+            baseWhere.append("AND date <= :maxDate ");
         if (request.getMinDepth() != null)
-            sql.append("AND depth >= :minDepth ");
+            baseWhere.append("AND depth >= :minDepth ");
         if (request.getMaxDepth() != null)
-            sql.append("AND depth <= :maxDepth ");
+            baseWhere.append("AND depth <= :maxDepth ");
         if (request.getMinMagnitude() != null)
-            sql.append("AND rankmagnitude >= :minMagnitude ");
+            baseWhere.append("AND rankmagnitude >= :minMagnitude ");
         if (request.getMaxMagnitude() != null)
-            sql.append("AND rankmagnitude <= :maxMagnitude ");
+            baseWhere.append("AND rankmagnitude <= :maxMagnitude ");
 
-        // Sort by date descending
-        sql.append("ORDER BY date DESC LIMIT 500");
+        // Count Query
+        Query countQuery = entityManager.createNativeQuery("SELECT count(*) " + baseWhere.toString());
 
-        Query query = entityManager.createNativeQuery(sql.toString());
-        query.setParameter("wkt", request.getWkt());
+        // Data Query
+        StringBuilder dataSql = new StringBuilder(
+                "SELECT id, date, depth, ST_Y(location) as lat, ST_X(location) as lon, name, reference, rankmagnitude ")
+                .append(baseWhere).append("ORDER BY date DESC LIMIT :limit OFFSET :offset");
 
-        if (request.getMinDate() != null)
-            query.setParameter("minDate", request.getMinDate());
-        if (request.getMaxDate() != null)
-            query.setParameter("maxDate", request.getMaxDate());
-        if (request.getMinDepth() != null)
-            query.setParameter("minDepth", request.getMinDepth());
-        if (request.getMaxDepth() != null)
-            query.setParameter("maxDepth", request.getMaxDepth());
-        if (request.getMinMagnitude() != null)
-            query.setParameter("minMagnitude", request.getMinMagnitude());
-        if (request.getMaxMagnitude() != null)
-            query.setParameter("maxMagnitude", request.getMaxMagnitude());
+        Query dataQuery = entityManager.createNativeQuery(dataSql.toString());
 
-        List<Object[]> results = query.getResultList();
+        // Set parameters for both queries
+        countQuery.setParameter("wkt", request.getWkt());
+        dataQuery.setParameter("wkt", request.getWkt());
+        dataQuery.setParameter("limit", request.getSize());
+        dataQuery.setParameter("offset", request.getPage() * request.getSize());
 
-        return results.stream().map(row -> new EventSummaryDto(
+        if (request.getMinDate() != null) {
+            countQuery.setParameter("minDate", request.getMinDate());
+            dataQuery.setParameter("minDate", request.getMinDate());
+        }
+        if (request.getMaxDate() != null) {
+            countQuery.setParameter("maxDate", request.getMaxDate());
+            dataQuery.setParameter("maxDate", request.getMaxDate());
+        }
+        if (request.getMinDepth() != null) {
+            countQuery.setParameter("minDepth", request.getMinDepth());
+            dataQuery.setParameter("minDepth", request.getMinDepth());
+        }
+        if (request.getMaxDepth() != null) {
+            countQuery.setParameter("maxDepth", request.getMaxDepth());
+            dataQuery.setParameter("maxDepth", request.getMaxDepth());
+        }
+        if (request.getMinMagnitude() != null) {
+            countQuery.setParameter("minMagnitude", request.getMinMagnitude());
+            dataQuery.setParameter("minMagnitude", request.getMinMagnitude());
+        }
+        if (request.getMaxMagnitude() != null) {
+            countQuery.setParameter("maxMagnitude", request.getMaxMagnitude());
+            dataQuery.setParameter("maxMagnitude", request.getMaxMagnitude());
+        }
+
+        long total = ((Number) countQuery.getSingleResult()).longValue();
+        List<Object[]> results = dataQuery.getResultList();
+
+        List<EventSummaryDto> dtoList = results.stream().map(row -> new EventSummaryDto(
                 ((Number) row[0]).longValue(),
                 ((java.sql.Timestamp) row[1]).toLocalDateTime(),
                 ((Number) row[2]).floatValue(),
@@ -110,5 +134,7 @@ public class EventService {
                 (String) row[5],
                 (String) row[6],
                 row[7] != null ? ((Number) row[7]).floatValue() : null)).toList();
+
+        return new PageImpl<>(dtoList, PageRequest.of(request.getPage(), request.getSize()), total);
     }
 }

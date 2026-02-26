@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 @RestController
 @RequestMapping("/api/events")
 public class EventController {
@@ -42,10 +44,10 @@ public class EventController {
 
     /**
      * Returns all events within the given polygon (WKT, EPSG:900913).
-     * Body: { "wkt": "POLYGON((x1 y1, x2 y2, ...))" }
+     * Body: { "wkt": "POLYGON((x1 y1, x2 y2, ...))", "page": 0, "size": 50 }
      */
     @PostMapping("/within")
-    public List<EventSummaryDto> findWithin(@RequestBody PolygonQueryRequest request) {
+    public Page<EventSummaryDto> findWithin(@RequestBody PolygonQueryRequest request) {
         return eventService.findWithinPolygon(request);
     }
 }
