@@ -209,8 +209,6 @@ const MainLayout: React.FC = () => {
                     flexGrow: 1,
                     height: '100vh',
                     pt: '40px',
-                    transition: 'margin 0.2s',
-                    ml: open ? `${DRAWER_WIDTH}px` : 0,
                     position: 'relative',
                 }}
             >
