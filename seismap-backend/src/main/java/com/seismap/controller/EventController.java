@@ -46,6 +46,6 @@ public class EventController {
      */
     @PostMapping("/within")
     public List<EventSummaryDto> findWithin(@RequestBody PolygonQueryRequest request) {
-        return eventService.findWithinPolygon(request.getWkt());
+        return eventService.findWithinPolygon(request);
     }
 }

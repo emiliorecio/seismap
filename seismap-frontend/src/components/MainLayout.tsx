@@ -27,6 +27,7 @@ import EventDialog from './EventDialog';
 import type { EventSummary } from './EventsWithinDialog';
 import { useMapStore } from '../store/mapStore';
 import { mapService, eventService } from '../services/seismap';
+import { extractFilterBounds } from '../utils/cqlFilter';
 
 const DRAWER_WIDTH = 320;
 
@@ -96,7 +97,8 @@ const MainLayout: React.FC = () => {
         setDrawingMode(false);
         setLoadingEvents(true);
         try {
-            const events = await eventService.findWithin(wkt);
+            const bounds = currentMap ? extractFilterBounds(currentMap) : {};
+            const events = await eventService.findWithin({ wkt, ...bounds });
             setEventsWithin(events);
             setDialogOpen(true);
         } catch (err) {

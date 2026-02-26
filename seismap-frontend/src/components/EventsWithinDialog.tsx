@@ -5,6 +5,7 @@ import {
     TableContainer, TableHead, TableRow, Paper, Chip, Box,
 } from '@mui/material';
 import PlaceIcon from '@mui/icons-material/Place';
+import { toLonLat } from 'ol/proj';
 
 export interface EventSummary {
     id: number;
@@ -66,21 +67,24 @@ const EventsWithinDialog: React.FC<Props> = ({ open, events, onClose, onClearPol
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {events.map(ev => (
-                                    <TableRow key={ev.id} hover>
-                                        <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                                            {formatDate(ev.date)}
-                                        </TableCell>
-                                        <TableCell align="right">{ev.depth.toFixed(1)}</TableCell>
-                                        <TableCell align="right">{ev.latitude.toFixed(3)}</TableCell>
-                                        <TableCell align="right">{ev.longitude.toFixed(3)}</TableCell>
-                                        <TableCell>
-                                            <Typography variant="body2" noWrap>
-                                                {ev.name || ev.reference || '—'}
-                                            </Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
+                                {events.map(ev => {
+                                    const [lonDeg, latDeg] = toLonLat([ev.longitude, ev.latitude], 'EPSG:3857');
+                                    return (
+                                        <TableRow key={ev.id} hover>
+                                            <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                                                {formatDate(ev.date)}
+                                            </TableCell>
+                                            <TableCell align="right">{ev.depth.toFixed(1)}</TableCell>
+                                            <TableCell align="right">{latDeg.toFixed(4)}</TableCell>
+                                            <TableCell align="right">{lonDeg.toFixed(4)}</TableCell>
+                                            <TableCell>
+                                                <Typography variant="body2" noWrap>
+                                                    {ev.name || ev.reference || '—'}
+                                                </Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
                             </TableBody>
                         </Table>
                     </TableContainer>

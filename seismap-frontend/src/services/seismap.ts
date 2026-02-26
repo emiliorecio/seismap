@@ -35,8 +35,8 @@ export const eventService = {
     getMagnitudeLimits: () =>
         api.get('/events/magnitude-limits').then(r => r.data),
 
-    findWithin: (wkt: string): Promise<EventSummary[]> =>
-        api.post<EventSummary[]>('/events/within', { wkt }).then(r => r.data),
+    findWithin: (request: { wkt: string; minDate?: string; maxDate?: string; minDepth?: number; maxDepth?: number; minMagnitude?: number; maxMagnitude?: number; }): Promise<EventSummary[]> =>
+        api.post<EventSummary[]>('/events/within', request).then(r => r.data),
 };
 
 export const styleService = {

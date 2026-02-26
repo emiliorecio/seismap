@@ -34,18 +34,18 @@
   <text x="170" y="18" font-weight="bold" font-size="14">Profundidad(km)</text>
 
   <!-- <30: red -->
-  <circle cx="182" cy="45" r="7" fill="#e8231a"/>
+  <circle cx="182" cy="45" r="7" fill="#F44336" stroke="#B71C1C" stroke-width="0.5"/>
   <text x="198" y="49">&lt;30</text>
 
-  <!-- 30-70: orange -->
-  <circle cx="182" cy="70" r="7" fill="#f5a623"/>
+  <!-- 30-70: purple -->
+  <circle cx="182" cy="70" r="7" fill="#9C27B0" stroke="#6A1B9A" stroke-width="0.5"/>
   <text x="198" y="74">30-70</text>
 
-  <!-- 70-300: yellow-green -->
-  <circle cx="182" cy="95" r="7" fill="#c8e000"/>
+  <!-- 70-300: yellow -->
+  <circle cx="182" cy="95" r="7" fill="#FFEB3B" stroke="#F9A825" stroke-width="0.5"/>
   <text x="198" y="99">70-300</text>
 
-  <!-- >300: blue/purple -->
-  <circle cx="182" cy="120" r="7" fill="#7b3fa0"/>
+  <!-- >300: blue -->
+  <circle cx="182" cy="120" r="7" fill="#2196F3" stroke="#1565C0" stroke-width="0.5"/>
   <text x="198" y="124">&gt;300</text>
 </svg>
