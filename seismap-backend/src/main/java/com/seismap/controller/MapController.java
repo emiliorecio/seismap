@@ -66,11 +66,29 @@ public class MapController {
     }
 
     /**
-     * Proxy GetLegendGraphic from GeoServer.
-     * Usage: GET /api/maps/legend?name=seismap_circles-color-by-magnitude
+     * Proxy GetLegendGraphic from GeoServer or serve static legend images.
+     * Usage: GET /api/maps/legend?name=seismap_circles_magnitude
      */
     @GetMapping("/legend")
     public ResponseEntity<byte[]> getLegend(@RequestParam String name) {
+        String staticFilename = mapToStaticLegendFilename(name);
+        if (staticFilename != null) {
+            try {
+                org.springframework.core.io.ClassPathResource imgFile = new org.springframework.core.io.ClassPathResource(
+                        "legends/" + staticFilename);
+                if (imgFile.exists()) {
+                    byte[] bytes = org.springframework.util.StreamUtils.copyToByteArray(imgFile.getInputStream());
+                    MediaType mediaType = staticFilename.endsWith(".svg") ? MediaType.valueOf("image/svg+xml")
+                            : MediaType.IMAGE_PNG;
+                    return ResponseEntity.ok()
+                            .contentType(mediaType)
+                            .body(bytes);
+                }
+            } catch (java.io.IOException e) {
+                // Fallback to GeoServer on error
+            }
+        }
+
         String layer = geoServerProps.getWorkspace() + ":eventandaveragemagnitudes";
         byte[] image = geoServerClient.get()
                 .uri("/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic"
@@ -84,5 +102,14 @@ public class MapController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
         return ResponseEntity.ok().headers(headers).body(image);
+    }
+
+    private String mapToStaticLegendFilename(String styleName) {
+        return switch (styleName) {
+            case "seismap_circles_magnitude", "seismap_points_magnitude" -> "seismap_leyenda_magnitud.svg";
+            case "seismap_circles_depth", "seismap_points_depth" -> "seismap_leyenda_profundidad.svg";
+            case "seismap_circles_age", "seismap_points_age" -> "seismap_leyenda_antiguedad.svg";
+            default -> null;
+        };
     }
 }

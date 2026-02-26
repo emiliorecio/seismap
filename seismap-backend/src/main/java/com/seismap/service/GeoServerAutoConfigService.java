@@ -47,9 +47,9 @@ public class GeoServerAutoConfigService {
     try {
       createWorkspace();
       createDatastore();
-      publishLayer("eventandaveragemagnitudes", "location",
+      publishLayer("eventandaveragemagnitudes_live", "location",
           "Eventos sísmicos con magnitudes promedio");
-      publishLayer("eventandaveragemagnitudes", "depthlocation",
+      publishLayer("eventandaveragemagnitudes_live", "depthlocation",
           "Eventos sísmicos — vista de profundidad");
       uploadDefaultStyle();
       uploadThemedStyles();
@@ -147,10 +147,12 @@ public class GeoServerAutoConfigService {
   // ─── Feature Type (Layer) ────────────────────────────────────────────────────
 
   private void publishLayer(String tableName, String geometryColumn, String title) {
-    // Use a unique layer name when geometry is not 'location'
+    // Strip "_live" suffix for the exposed layer name to avoid breaking the
+    // frontend
+    String logicalTableName = tableName.endsWith("_live") ? tableName.substring(0, tableName.length() - 5) : tableName;
     String layerName = "location".equals(geometryColumn)
-        ? tableName
-        : tableName + "_" + geometryColumn;
+        ? logicalTableName
+        : logicalTableName + "_" + geometryColumn;
 
     String uri = "/workspaces/" + props.getWorkspace()
         + "/datastores/" + props.getDatastoreName()
@@ -161,7 +163,6 @@ public class GeoServerAutoConfigService {
       return;
     }
 
-    // EPSG:900913 is the legacy code for Web Mercator; GeoServer uses EPSG:3857
     String json = """
         {
           "featureType": {
@@ -170,26 +171,10 @@ public class GeoServerAutoConfigService {
             "title": "%s",
             "srs": "EPSG:900913",
             "nativeCRS": "EPSG:900913",
-            "enabled": true,
-            "metadata": {
-              "entry": [
-                {"@key": "JDBC_VIRTUAL_TABLE",
-                 "virtualTable": {
-                   "name": "%s",
-                   "sql": "SELECT * FROM %s",
-                   "escapeSql": false,
-                   "geometry": {
-                     "name": "%s",
-                     "type": "Point",
-                     "srid": 900913
-                   }
-                 }
-                }
-              ]
-            }
+            "enabled": true
           }
         }
-        """.formatted(layerName, layerName, title, layerName, tableName, geometryColumn);
+        """.formatted(layerName, tableName, title);
 
     restClient.post()
         .uri("/workspaces/" + props.getWorkspace()
@@ -294,8 +279,28 @@ public class GeoServerAutoConfigService {
                 <Graphic>
                   <Mark>
                     <WellKnownName>circle</WellKnownName>
-                    <Fill><CssParameter name="fill">#4FC3F7</CssParameter><CssParameter name="fill-opacity">0.7</CssParameter></Fill>
-                    <Stroke><CssParameter name="stroke">#0288D1</CssParameter><CssParameter name="stroke-width">1</CssParameter></Stroke>
+                    <Fill>
+                      <CssParameter name="fill">
+                        <ogc:Function name="if_then_else">
+                          <ogc:Function name="isNull"><ogc:PropertyName>rankindex</ogc:PropertyName></ogc:Function>
+                          <ogc:Literal>#7F7F7F</ogc:Literal>
+                          <ogc:Function name="categorize">
+                            <ogc:PropertyName>rankindex</ogc:PropertyName>
+                            <ogc:Literal>#00FF00</ogc:Literal>
+                            <ogc:Literal>0.25</ogc:Literal>
+                            <ogc:Literal>#7FFF00</ogc:Literal>
+                            <ogc:Literal>0.50</ogc:Literal>
+                            <ogc:Literal>#FFFF00</ogc:Literal>
+                            <ogc:Literal>0.75</ogc:Literal>
+                            <ogc:Literal>#FF7F00</ogc:Literal>
+                            <ogc:Literal>1.00</ogc:Literal>
+                            <ogc:Literal>#FF0000</ogc:Literal>
+                          </ogc:Function>
+                        </ogc:Function>
+                      </CssParameter>
+                      <CssParameter name="fill-opacity">0.7</CssParameter>
+                    </Fill>
+                    <Stroke><CssParameter name="stroke">#333333</CssParameter><CssParameter name="stroke-width">0.5</CssParameter></Stroke>
                   </Mark>
                   <Size>
                     <ogc:Add><ogc:Mul><ogc:PropertyName>rankindex</ogc:PropertyName><ogc:Literal>20</ogc:Literal></ogc:Mul><ogc:Literal>4</ogc:Literal></ogc:Add>
@@ -327,15 +332,148 @@ public class GeoServerAutoConfigService {
 
     uploadSldStyle("seismap_circles_age", "Círculos por antigüedad",
         """
-            <Rule><Title>Eventos</Title>
-              <PointSymbolizer><Graphic><Mark><WellKnownName>circle</WellKnownName><Fill><CssParameter name="fill">#4FC3F7</CssParameter><CssParameter name="fill-opacity">0.7</CssParameter></Fill><Stroke><CssParameter name="stroke">#0288D1</CssParameter><CssParameter name="stroke-width">1</CssParameter></Stroke></Mark><Size><ogc:Add><ogc:Mul><ogc:PropertyName>rankindex</ogc:PropertyName><ogc:Literal>16</ogc:Literal></ogc:Mul><ogc:Literal>4</ogc:Literal></ogc:Add></Size></Graphic></PointSymbolizer>
+            <Rule>
+              <ogc:Filter>
+                <ogc:Not>
+                  <ogc:PropertyIsNull>
+                    <ogc:PropertyName>name</ogc:PropertyName>
+                  </ogc:PropertyIsNull>
+                </ogc:Not>
+              </ogc:Filter>
+              <TextSymbolizer>
+                <Label>
+                  <ogc:PropertyName>name</ogc:PropertyName>
+                </Label>
+                <Font>
+                  <CssParameter name="font-family">Arial</CssParameter>
+                  <CssParameter name="font-size">12</CssParameter>
+                  <CssParameter name="font-style">normal</CssParameter>
+                  <CssParameter name="font-weight">bold</CssParameter>
+                </Font>
+                <LabelPlacement>
+                  <PointPlacement>
+                    <AnchorPoint>
+                      <AnchorPointX>0.5</AnchorPointX>
+                      <AnchorPointY>2.0</AnchorPointY>
+                    </AnchorPoint>
+                    <Displacement>
+                      <DisplacementX>0</DisplacementX>
+                      <DisplacementY>
+                        <ogc:Function name="if_then_else">
+                          <ogc:Function name="isNull">
+                            <ogc:PropertyName>rankindex</ogc:PropertyName>
+                          </ogc:Function>
+                          <ogc:Literal>-3</ogc:Literal>
+                          <ogc:Function name="categorize">
+                            <ogc:PropertyName>rankindex</ogc:PropertyName>
+                            <ogc:Literal>-3</ogc:Literal>
+                            <ogc:Literal>0.25</ogc:Literal>
+                            <ogc:Literal>-4.5</ogc:Literal>
+                            <ogc:Literal>0.50</ogc:Literal>
+                            <ogc:Literal>-7.5</ogc:Literal>
+                            <ogc:Literal>0.75</ogc:Literal>
+                            <ogc:Literal>-13</ogc:Literal>
+                            <ogc:Literal>1.00</ogc:Literal>
+                            <ogc:Literal>-24</ogc:Literal>
+                          </ogc:Function>
+                        </ogc:Function>
+                      </DisplacementY>
+                    </Displacement>
+                  </PointPlacement>
+                </LabelPlacement>
+                <Halo/>
+                <Fill/>
+              </TextSymbolizer>
+            </Rule>
+            <Rule>
+              <PointSymbolizer>
+                <Graphic>
+                  <Mark>
+                    <WellKnownName>circle</WellKnownName>
+                    <Fill>
+                      <CssParameter name="fill">
+                        <ogc:Function name="categorize">
+                          <ogc:PropertyName>age</ogc:PropertyName>
+                          <ogc:Literal>#FF0000</ogc:Literal>
+                          <ogc:Literal>3600</ogc:Literal>
+                          <ogc:Literal>#FF00FF</ogc:Literal>
+                          <ogc:Literal>86400</ogc:Literal>
+                          <ogc:Literal>#FFFF00</ogc:Literal>
+                          <ogc:Literal>604800</ogc:Literal>
+                          <ogc:Literal>#0000FF</ogc:Literal>
+                        </ogc:Function>
+                      </CssParameter>
+                      <CssParameter name="fill-opacity">0.75</CssParameter>
+                    </Fill>
+                    <Stroke/>
+                  </Mark>
+                  <Size>
+                    <ogc:Function name="if_then_else">
+                      <ogc:Function name="isNull"><ogc:PropertyName>rankindex</ogc:PropertyName></ogc:Function>
+                      <ogc:Literal>6</ogc:Literal>
+                      <ogc:Function name="categorize">
+                        <ogc:PropertyName>rankindex</ogc:PropertyName>
+                        <ogc:Literal>6</ogc:Literal>
+                        <ogc:Literal>0.25</ogc:Literal>
+                        <ogc:Literal>9</ogc:Literal>
+                        <ogc:Literal>0.50</ogc:Literal>
+                        <ogc:Literal>15</ogc:Literal>
+                        <ogc:Literal>0.75</ogc:Literal>
+                        <ogc:Literal>26</ogc:Literal>
+                        <ogc:Literal>1.00</ogc:Literal>
+                        <ogc:Literal>48</ogc:Literal>
+                      </ogc:Function>
+                    </ogc:Function>
+                  </Size>
+                </Graphic>
+              </PointSymbolizer>
+            </Rule>
+            <Rule>
+              <PointSymbolizer>
+                <Graphic>
+                  <Mark>
+                    <WellKnownName>circle</WellKnownName>
+                    <Stroke/>
+                  </Mark>
+                  <Size>3</Size>
+                </Graphic>
+              </PointSymbolizer>
             </Rule>
             """);
 
     uploadSldStyle("seismap_points_magnitude", "Puntos por magnitud",
         """
             <Rule><Title>Magnitud</Title>
-              <PointSymbolizer><Graphic><Mark><WellKnownName>circle</WellKnownName><Fill><CssParameter name="fill">#4FC3F7</CssParameter><CssParameter name="fill-opacity">0.8</CssParameter></Fill><Stroke><CssParameter name="stroke">#0288D1</CssParameter><CssParameter name="stroke-width">1</CssParameter></Stroke></Mark><Size>8</Size></Graphic></PointSymbolizer>
+              <PointSymbolizer>
+                <Graphic>
+                  <Mark>
+                    <WellKnownName>circle</WellKnownName>
+                    <Fill>
+                      <CssParameter name="fill">
+                        <ogc:Function name="if_then_else">
+                          <ogc:Function name="isNull"><ogc:PropertyName>rankindex</ogc:PropertyName></ogc:Function>
+                          <ogc:Literal>#7F7F7F</ogc:Literal>
+                          <ogc:Function name="categorize">
+                            <ogc:PropertyName>rankindex</ogc:PropertyName>
+                            <ogc:Literal>#00FF00</ogc:Literal>
+                            <ogc:Literal>0.25</ogc:Literal>
+                            <ogc:Literal>#7FFF00</ogc:Literal>
+                            <ogc:Literal>0.50</ogc:Literal>
+                            <ogc:Literal>#FFFF00</ogc:Literal>
+                            <ogc:Literal>0.75</ogc:Literal>
+                            <ogc:Literal>#FF7F00</ogc:Literal>
+                            <ogc:Literal>1.00</ogc:Literal>
+                            <ogc:Literal>#FF0000</ogc:Literal>
+                          </ogc:Function>
+                        </ogc:Function>
+                      </CssParameter>
+                      <CssParameter name="fill-opacity">0.8</CssParameter>
+                    </Fill>
+                    <Stroke><CssParameter name="stroke">#333333</CssParameter><CssParameter name="stroke-width">0.5</CssParameter></Stroke>
+                  </Mark>
+                  <Size>8</Size>
+                </Graphic>
+              </PointSymbolizer>
             </Rule>
             """);
 
@@ -361,17 +499,83 @@ public class GeoServerAutoConfigService {
 
     uploadSldStyle("seismap_points_age", "Puntos por antigüedad",
         """
-            <Rule><Title>Eventos</Title>
-              <PointSymbolizer><Graphic><Mark><WellKnownName>circle</WellKnownName><Fill><CssParameter name="fill">#4FC3F7</CssParameter><CssParameter name="fill-opacity">0.8</CssParameter></Fill><Stroke><CssParameter name="stroke">#0288D1</CssParameter><CssParameter name="stroke-width">1</CssParameter></Stroke></Mark><Size>8</Size></Graphic></PointSymbolizer>
+            <Rule>
+              <ogc:Filter>
+                <ogc:Not>
+                  <ogc:PropertyIsNull>
+                    <ogc:PropertyName>name</ogc:PropertyName>
+                  </ogc:PropertyIsNull>
+                </ogc:Not>
+              </ogc:Filter>
+              <TextSymbolizer>
+                <Label>
+                  <ogc:PropertyName>name</ogc:PropertyName>
+                </Label>
+                <Font>
+                  <CssParameter name="font-family">Arial</CssParameter>
+                  <CssParameter name="font-size">12</CssParameter>
+                  <CssParameter name="font-style">normal</CssParameter>
+                  <CssParameter name="font-weight">bold</CssParameter>
+                </Font>
+                <LabelPlacement>
+                  <PointPlacement>
+                    <AnchorPoint>
+                      <AnchorPointX>0.5</AnchorPointX>
+                      <AnchorPointY>2.0</AnchorPointY>
+                    </AnchorPoint>
+                    <Displacement>
+                      <DisplacementX>0</DisplacementX>
+                      <DisplacementY>-3</DisplacementY>
+                    </Displacement>
+                  </PointPlacement>
+                </LabelPlacement>
+                <Halo/>
+                <Fill/>
+              </TextSymbolizer>
+            </Rule>
+            <Rule>
+              <PointSymbolizer>
+                <Graphic>
+                  <Mark>
+                    <WellKnownName>circle</WellKnownName>
+                    <Fill>
+                      <CssParameter name="fill">
+                        <ogc:Function name="categorize">
+                          <ogc:PropertyName>age</ogc:PropertyName>
+                          <ogc:Literal>#FF0000</ogc:Literal>
+                          <ogc:Literal>3600</ogc:Literal>
+                          <ogc:Literal>#FF00FF</ogc:Literal>
+                          <ogc:Literal>86400</ogc:Literal>
+                          <ogc:Literal>#FFFF00</ogc:Literal>
+                          <ogc:Literal>604800</ogc:Literal>
+                          <ogc:Literal>#0000FF</ogc:Literal>
+                        </ogc:Function>
+                      </CssParameter>
+                      <CssParameter name="fill-opacity">0.75</CssParameter>
+                    </Fill>
+                    <Stroke/>
+                  </Mark>
+                  <Size>6</Size>
+                </Graphic>
+              </PointSymbolizer>
+            </Rule>
+            <Rule>
+              <PointSymbolizer>
+                <Graphic>
+                  <Mark>
+                    <WellKnownName>circle</WellKnownName>
+                    <Stroke/>
+                  </Mark>
+                  <Size>3</Size>
+                </Graphic>
+              </PointSymbolizer>
             </Rule>
             """);
   }
 
   private void uploadSldStyle(String styleName, String title, String rulesBody) {
-    if (resourceExists("/styles/" + styleName)) {
-      log.debug("Style '{}' already exists", styleName);
-      return;
-    }
+    boolean exists = resourceExists("/styles/" + styleName);
+
     String sld = """
         <?xml version="1.0" encoding="UTF-8"?>
         <StyledLayerDescriptor version="1.0.0"
@@ -393,16 +597,18 @@ public class GeoServerAutoConfigService {
         </StyledLayerDescriptor>
         """.formatted(styleName, title, rulesBody);
 
-    String json = """
-        {"style": {"name": "%s", "filename": "%s.sld"}}
-        """.formatted(styleName, styleName);
+    if (!exists) {
+      String json = """
+          {"style": {"name": "%s", "filename": "%s.sld"}}
+          """.formatted(styleName, styleName);
 
-    restClient.post()
-        .uri("/styles")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(json)
-        .retrieve()
-        .toBodilessEntity();
+      restClient.post()
+          .uri("/styles")
+          .contentType(MediaType.APPLICATION_JSON)
+          .body(json)
+          .retrieve()
+          .toBodilessEntity();
+    }
 
     restClient.put()
         .uri("/styles/" + styleName)
@@ -411,7 +617,7 @@ public class GeoServerAutoConfigService {
         .retrieve()
         .toBodilessEntity();
 
-    log.info("Uploaded SLD style: {}", styleName);
+    log.info("Uploaded/Updated SLD style: {}", styleName);
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────────────────
