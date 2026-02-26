@@ -239,6 +239,7 @@ const MainLayout: React.FC = () => {
             <EventsWithinDialog
                 open={dialogOpen}
                 eventsPage={eventsPage}
+                wkt={currentWkt}
                 onClose={() => setDialogOpen(false)}
                 onClearPolygon={handleClearPolygon}
                 onPageChange={(newPage) => {
