@@ -6,7 +6,16 @@ import {
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import { eventService } from '../services/seismap';
-import { toLonLat } from 'ol/proj';
+import { toLonLat, fromLonLat } from 'ol/proj';
+import Map from 'ol/Map';
+import View from 'ol/View';
+import TileLayer from 'ol/layer/Tile';
+import OSM from 'ol/source/OSM';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import Feature from 'ol/Feature';
+import Point from 'ol/geom/Point';
+import { Style, Circle as CircleStyle, Fill, Stroke } from 'ol/style';
 
 interface Magnitude {
     id: number;
@@ -47,6 +56,8 @@ const EventDialog: React.FC<Props> = ({ open, eventId, onClose }) => {
     const [event, setEvent] = useState<EventDetail | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const mapRef = React.useRef<HTMLDivElement>(null);
+    const olMapRef = React.useRef<Map | null>(null);
 
     useEffect(() => {
         if (open && eventId) {
@@ -76,8 +87,54 @@ const EventDialog: React.FC<Props> = ({ open, eventId, onClose }) => {
 
         } else {
             setEvent(null);
+            if (olMapRef.current) {
+                olMapRef.current.setTarget(undefined);
+                olMapRef.current = null;
+            }
         }
+
+        return () => {
+            if (olMapRef.current) {
+                olMapRef.current.setTarget(undefined);
+                olMapRef.current = null;
+            }
+        };
     }, [open, eventId]);
+
+    useEffect(() => {
+        if (event && mapRef.current && !olMapRef.current) {
+            const centerPoint = fromLonLat([event.longitude, event.latitude]);
+
+            const markerFeature = new Feature({
+                geometry: new Point(centerPoint),
+            });
+
+            markerFeature.setStyle(
+                new Style({
+                    image: new CircleStyle({
+                        radius: 8,
+                        fill: new Fill({ color: 'rgba(255, 0, 0, 0.6)' }),
+                        stroke: new Stroke({ color: 'red', width: 2 }),
+                    }),
+                })
+            );
+
+            const vectorSource = new VectorSource({ features: [markerFeature] });
+            const vectorLayer = new VectorLayer({ source: vectorSource });
+
+            olMapRef.current = new Map({
+                target: mapRef.current,
+                layers: [
+                    new TileLayer({ source: new OSM() }),
+                    vectorLayer,
+                ],
+                view: new View({
+                    center: centerPoint,
+                    zoom: 6,
+                }),
+            });
+        }
+    }, [event]);
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth
@@ -100,6 +157,20 @@ const EventDialog: React.FC<Props> = ({ open, eventId, onClose }) => {
                 )}
                 {event && !loading && (
                     <Grid container spacing={2}>
+                        <Grid size={{ xs: 12 }}>
+                            <Box
+                                ref={mapRef}
+                                sx={{
+                                    width: '100%',
+                                    height: 250,
+                                    borderRadius: 1,
+                                    overflow: 'hidden',
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                    mb: 1
+                                }}
+                            />
+                        </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <Typography variant="subtitle2" color="text.secondary">Fecha y Hora</Typography>
                             <Typography variant="body1" gutterBottom>{formatDate(event.date)}</Typography>

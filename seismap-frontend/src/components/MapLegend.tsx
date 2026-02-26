@@ -31,77 +31,74 @@ const MapLegend: React.FC<MapLegendProps> = ({ styleName }) => {
 
     return (
         <Draggable nodeRef={nodeRef} handle=".drag-handle" bounds="parent">
-            <Paper
-                ref={nodeRef}
-                elevation={6}
-                sx={{
-                    position: 'absolute',
-                    top: 100, // Move it up instead of bottom
-                    right: 24,
-                    zIndex: 1000,
-                    bgcolor: 'rgba(18, 18, 30, 0.92)',
-                    backdropFilter: 'blur(8px)',
-                    borderRadius: 2,
-                    minWidth: 160,
-                    overflow: 'hidden',
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}
-            >
-                {/* Header / Drag Handle */}
-                <Box
-                    className="drag-handle"
+            <div ref={nodeRef} style={{ position: 'absolute', top: 100, right: 24, zIndex: 1000 }}>
+                <Paper
+                    elevation={6}
                     sx={{
+                        bgcolor: 'rgba(18, 18, 30, 0.92)',
+                        backdropFilter: 'blur(8px)',
+                        borderRadius: 2,
+                        minWidth: 160,
+                        overflow: 'hidden',
                         display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        p: 1,
-                        bgcolor: 'rgba(255, 255, 255, 0.05)',
-                        cursor: 'grab',
-                        '&:active': { cursor: 'grabbing' },
-                        borderBottom: isExpanded ? '1px solid rgba(255, 255, 255, 0.1)' : 'none'
+                        flexDirection: 'column'
                     }}
                 >
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <DragIndicatorIcon sx={{ color: 'grey.500', fontSize: 20, mr: 0.5 }} />
-                        <Typography
-                            variant="subtitle2"
-                            sx={{ color: 'grey.100', fontWeight: 600, userSelect: 'none' }}
-                        >
-                            Leyenda: {label}
-                        </Typography>
-                    </Box>
-                    <IconButton
-                        size="small"
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        sx={{ ml: 1, color: 'grey.400' }}
+                    {/* Header / Drag Handle */}
+                    <Box
+                        className="drag-handle"
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            p: 1,
+                            bgcolor: 'rgba(255, 255, 255, 0.05)',
+                            cursor: 'grab',
+                            '&:active': { cursor: 'grabbing' },
+                            borderBottom: isExpanded ? '1px solid rgba(255, 255, 255, 0.1)' : 'none'
+                        }}
                     >
-                        {isExpanded ? <KeyboardArrowUpIcon fontSize="small" /> : <KeyboardArrowDownIcon fontSize="small" />}
-                    </IconButton>
-                </Box>
-
-                {/* Collapsible Content */}
-                {isExpanded && (
-                    <Box sx={{ p: 2, bgcolor: 'white', borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }}>
-                        <Box
-                            component="img"
-                            src={legendUrl}
-                            alt="Leyenda del mapa"
-                            sx={{
-                                display: 'block',
-                                maxWidth: '100%', // Allows it to be as wide as the legend needs
-                                width: 'auto',
-                                minWidth: 200,   // Make it much larger
-                                height: 'auto',
-                                borderRadius: 1
-                            }}
-                            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                                e.currentTarget.style.display = 'none';
-                            }}
-                        />
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <DragIndicatorIcon sx={{ color: 'grey.500', fontSize: 20, mr: 0.5 }} />
+                            <Typography
+                                variant="subtitle2"
+                                sx={{ color: 'grey.100', fontWeight: 600, userSelect: 'none' }}
+                            >
+                                Leyenda: {label}
+                            </Typography>
+                        </Box>
+                        <IconButton
+                            size="small"
+                            onClick={() => setIsExpanded(!isExpanded)}
+                            sx={{ ml: 1, color: 'grey.400' }}
+                        >
+                            {isExpanded ? <KeyboardArrowUpIcon fontSize="small" /> : <KeyboardArrowDownIcon fontSize="small" />}
+                        </IconButton>
                     </Box>
-                )}
-            </Paper>
+
+                    {/* Collapsible Content */}
+                    {isExpanded && (
+                        <Box sx={{ p: 2, bgcolor: 'white', borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }}>
+                            <Box
+                                component="img"
+                                src={legendUrl}
+                                alt="Leyenda del mapa"
+                                sx={{
+                                    display: 'block',
+                                    maxWidth: '100%', // Allows it to be as wide as the legend needs
+                                    width: 'auto',
+                                    minWidth: 200,   // Make it much larger
+                                    height: 'auto',
+                                    borderRadius: 1
+                                }}
+                                onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                                    e.currentTarget.style.display = 'none';
+                                }}
+                            />
+                        </Box>
+                    )}
+                </Paper>
+            </div>
         </Draggable>
     );
 };
