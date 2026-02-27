@@ -1,16 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions,
     Button, Typography, Table, TableBody, TableCell,
-    TableContainer, TableHead, TableRow, Paper, Chip, Box, TablePagination, Tabs, Tab
+    TableContainer, TableHead, TableRow, Paper, Chip, Box, TablePagination, Tabs, Tab,
+    CircularProgress
 } from '@mui/material';
 import type { Page } from '../services/seismap';
 import PlaceIcon from '@mui/icons-material/Place';
 import { toLonLat } from 'ol/proj';
-import Map from 'ol/Map';
-import View from 'ol/View';
-import ImageLayer from 'ol/layer/Image';
-import ImageWMS from 'ol/source/ImageWMS';
 import WKT from 'ol/format/WKT';
 import { useMapStore } from '../store/mapStore';
 import { buildCqlFilter } from '../utils/cqlFilter';
@@ -44,8 +41,8 @@ function formatDate(iso: string) {
 
 const EventsWithinDialog: React.FC<Props> = ({ open, eventsPage, wkt, onClose, onClearPolygon, onPageChange }) => {
     const [tab, setTab] = useState(0);
-    const mapRef = useRef<HTMLDivElement>(null);
-    const mapInstance = useRef<Map | null>(null);
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [lonBounds, setLonBounds] = useState<[string, string]>(['', '']);
 
     const { currentMap } = useMapStore();
 
@@ -63,102 +60,41 @@ const EventsWithinDialog: React.FC<Props> = ({ open, eventsPage, wkt, onClose, o
     }, [open]);
 
     useEffect(() => {
-        if (tab !== 1 || !mapRef.current || !open || !wkt) return;
+        if (tab !== 1 || !open || !wkt) return;
 
-        // WKT bbox calculation and CQL conversion
-        // The wkt from the map is natively EPSG:3857, which matches GeoServer's location column (EPSG:900913)
+        setImageUrl(null); // Show loading state briefly
+
         const format = new WKT();
         const feature = format.readFeature(wkt);
 
-        const cqlWkt = wkt;
-        let mapExtent: number[] | undefined;
-
+        let minX = 0, maxX = 0;
         const geom = feature.getGeometry();
         if (geom) {
             const extent = geom.getExtent();
             if (extent && extent.length === 4 && extent.every(isFinite)) {
-                let minX = extent[0];
-                let maxX = extent[2];
+                minX = extent[0];
+                maxX = extent[2];
                 if (minX >= maxX) {
                     minX -= 1000;
                     maxX += 1000;
                 }
-                // For the depth map, X is longitude *in meters* (EPSG:3857), Y is depth *in meters* (negative)
-                // mapExtent defines the view viewport bounds in map units
-                mapExtent = [minX, -750000, maxX, 0];
             }
         }
 
-        // Base filters from Map Controls 
-        const cqlParts: string[] = [];
-        cqlParts.push(`WITHIN(location, ${cqlWkt})`);
+        const minLonLat = toLonLat([minX, 0], 'EPSG:3857');
+        const maxLonLat = toLonLat([maxX, 0], 'EPSG:3857');
+        setLonBounds([minLonLat[0].toFixed(2), maxLonLat[0].toFixed(2)]);
 
+        const cqlParts: string[] = [`WITHIN(location, ${wkt})`];
         if (currentMap) {
             const mapCql = buildCqlFilter(currentMap);
-            if (mapCql) {
-                cqlParts.push(`(${mapCql})`);
-            }
+            if (mapCql) cqlParts.push(`(${mapCql})`);
         }
 
-        const cqlFilter = cqlParts.join(' AND ');
+        const cqlFilter = encodeURIComponent(cqlParts.join(' AND '));
+        const url = `/geoserver/seismap/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=seismap%3Aeventandaveragemagnitudes_depthlocation&CRS=EPSG%3A3857&STYLES=seismap_circles_depth&WIDTH=1200&HEIGHT=600&BBOX=${minX},-750000,${maxX},0&CQL_FILTER=${cqlFilter}`;
 
-        if (!mapInstance.current) {
-            const wmsSource = new ImageWMS({
-                url: '/geoserver/seismap/wms',
-                params: {
-                    'LAYERS': `seismap:eventandaveragemagnitudes_depthlocation`,
-                    'CQL_FILTER': cqlFilter,
-                    'STYLES': `seismap_circles_depth`, // Enforce depth coloring for depth map
-                    'SRS': 'EPSG:3857'
-                },
-                serverType: 'geoserver',
-            });
-
-            const layer = new ImageLayer({
-                source: wmsSource,
-            });
-
-            mapInstance.current = new Map({
-                target: mapRef.current,
-                layers: [layer],
-                view: new View({
-                    projection: 'EPSG:3857',
-                    center: [0, -375000],
-                    zoom: 2,
-                    showFullExtent: true,
-                }),
-            });
-        } else {
-            // Update filter
-            const layers = mapInstance.current.getLayers().getArray();
-            if (layers.length > 0) {
-                const source = (layers[0] as ImageLayer<ImageWMS>).getSource();
-                source?.updateParams({ 'CQL_FILTER': cqlFilter, 'STYLES': `seismap_circles_depth` });
-            }
-        }
-
-        if (mapExtent) {
-            try {
-                // Ensure container size is updated before fitting
-                setTimeout(() => {
-                    if (mapInstance.current) {
-                        mapInstance.current.updateSize();
-                        mapInstance.current.getView().fit(mapExtent!, { padding: [20, 20, 20, 20] });
-                    }
-                }, 100);
-            } catch (e) {
-                console.warn('Could not fit extent for depth map:', e);
-            }
-        }
-
-        return () => {
-            // Let the instance persist during tab switching if possible to avoid flickering,
-            // or destroy it cleanly. Since the div refs unmounts when tab changes, we should clean up.
-            if (mapInstance.current) {
-                mapInstance.current.setTarget(undefined);
-                mapInstance.current = null;
-            }
-        };
+        setImageUrl(url);
     }, [tab, open, wkt, currentMap]);
 
 
@@ -242,15 +178,20 @@ const EventsWithinDialog: React.FC<Props> = ({ open, eventsPage, wkt, onClose, o
 
                 {tab === 1 && (
                     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                        <Box sx={{ p: 1, bgcolor: '#f5f5f5', borderBottom: '1px solid #e0e0e0', textAlign: 'center' }}>
+                        <Box sx={{ p: 1, bgcolor: '#f5f5f5', borderBottom: '1px solid #e0e0e0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="body2" color="text.secondary">Oeste {lonBounds[0]}°</Typography>
                             <Typography variant="body2" color="text.secondary">
-                                Profundidad (km) v/s Longitud
+                                <strong>Profundidad (0 a 750 km) v/s Longitud</strong>
                             </Typography>
+                            <Typography variant="body2" color="text.secondary">Este {lonBounds[1]}°</Typography>
                         </Box>
-                        <Box
-                            ref={mapRef}
-                            sx={{ flex: 1, width: '100%', bgcolor: '#ffffff' }}
-                        />
+                        <Box sx={{ flex: 1, width: '100%', bgcolor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                            {imageUrl ? (
+                                <Box component="img" src={imageUrl} alt="Corte Transversal" sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                            ) : (
+                                <CircularProgress />
+                            )}
+                        </Box>
                     </Box>
                 )}
             </DialogContent>
